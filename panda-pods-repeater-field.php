@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Description: If you are using Pods Framework for your post types and data storage, you may want a repeater field. Panda Pods Repeater Field offers you an solution. It takes the advantage of Pods table storage, so you don't need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.1.7
+Version: 1.1.8
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.1.7' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.1.8' );
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -43,9 +43,7 @@ class Panda_Pods_Repeater_Field {
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct() {
-		
-		
+	public function __construct() {		
 		
 		$files_arr   = array('panda_pods_repeater_field_db',  'podsfield_pandarepeaterfield', 'panda_pods_repeater_field_ajax');
 		
@@ -144,7 +142,7 @@ class Panda_Pods_Repeater_Field {
 	 */
 	public static function init() {
 		static $prf_cla = false;
-
+		
 		if ( ! $prf_cla ) {
 			$prf_cla 	 = new Panda_Pods_Repeater_Field();
 
@@ -232,17 +230,20 @@ class Panda_Pods_Repeater_Field {
 		/**
 		 * All admin styles goes here
 		 */
-		wp_enqueue_style( 'panda-pods-repeater-admin-styles', plugins_url( 'css/admin.css', __FILE__ ) );
+		wp_register_style(  'panda-pods-repeater-admin-styles', plugins_url( 'css/admin.css', __FILE__ ) );
+		wp_enqueue_style( 'panda-pods-repeater-admin-styles' );
 
 		/**
 		 * All admin scripts goes here
 		 */
 		if( isset( $_GET ) && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ 
-			wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.css', __FILE__ ), array( 'pods-admin') );
+			wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.css', __FILE__ ), array( 'panda-pods-repeater-admin-styles') );
 			wp_enqueue_style('pprf_fields');		 
+
 		}
 		//wp_enqueue_script( 'panda-pods-repeater-resize-iframe', plugins_url( 'js/resize-iframe/iframeResizer.min.js', __FILE__ ), array( 'jquery' ), false, true );
-		wp_enqueue_script( 'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true );
+		wp_register_script(  'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true  );
+		wp_enqueue_script( 'panda-pods-repeater-admin-scripts' );
 		// prepare ajax
 		wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
@@ -372,7 +373,7 @@ class Panda_Pods_Repeater_Field {
 	function filter_pods_api_field_types( $field_types  ){
 	//	print_r( $field_types  );
 		if( !in_array( 'pandarepeaterfield', $field_types ) ){
-			array_push( $field_types, 'pandarepeaterfield' );
+		//	array_push( $field_types, 'pandarepeaterfield' );
 			
 		}
 		return $field_types ;
@@ -419,7 +420,9 @@ function panda_repeater_safe_activate() {
 		//$GLOBALS[ 'Panda_Pods_Repeater_Field' ] = Panda_Pods_Repeater_Field::init();
 		
 	}
-
+	if( function_exists( 'pods_register_field_type' ) ){
+		pods_register_field_type( 'pandarepeaterfield', PANDA_PODS_REPEATER_DIR . 'classes/podsfield_pandarepeaterfield.php' );
+	}
 	  //plugin is activated
 	  
 	add_action( 'admin_menu',  'pprf_add_admin_menu_fn' );	
@@ -489,13 +492,13 @@ function pprf_load_fn(){
  */
 add_action( 'admin_init', 'check_some_other_plugin', 20 );
 function check_some_other_plugin() {
-  if ( is_plugin_active( 'pods/init.php' ) ) {
-
+	
+  //if ( is_plugin_active( 'pods/init.php' ) ) {
 	if ( defined( 'PODS_VERSION' ) ) {
 		$GLOBALS[ 'Panda_Pods_Repeater_Field' ] = Panda_Pods_Repeater_Field::init();
 		
 	}
-  }
+  //}
  
 }
  
@@ -750,12 +753,12 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 				$relatePick_arr	 = array('user', 'post_type', 'pod', 'media');
 				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'file' ) || ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pick' && in_array( $v_arr['pick_object'], $relatePick_arr ) ) ){
 					$fields_str .= ',(
-									SELECT GROUP_CONCAT( psl' . $i .  '_tb.related_item_id )
+									SELECT GROUP_CONCAT( psl' . $i .  '_tb.related_item_id ORDER BY psl' . $i .  '_tb.weight ASC SEPARATOR "," )
 									FROM `' . $table_prefix . 'podsrel` AS psl' . $i .  '_tb
 									WHERE psl' . $i .  '_tb.pod_id = "' . $child_pod->pod_id . '" 
 									AND psl' . $i .  '_tb.field_id = "' . $v_arr['id'] . '" 
 									AND psl' . $i .  '_tb.item_id = pod_tb.id
-									GROUP BY psl' . $i .  '_tb.item_id
+									GROUP BY psl' . $i .  '_tb.item_id									
 									) AS ' . $k_str;
 
 					$i++;				

@@ -330,9 +330,36 @@ jQuery(document).ready( function($) {
 			$('#panda-repeater-save-' + ids_str + '-loader' ).removeClass('hidden');
 			
 			$('#' + iframe_str ).contents().find('.pods-submit-button').trigger( "click" );	
-				
+			pprfChanged_bln	=	false;		
 		 }
 	 });
 	 
-	
+
+	 
+	 /**
+	  * if a pods is is clicked, flag it as saved
+	  */
+	 $('.pods-field-input').on('click keyup', function(){
+		// if( typeof $('#pprf-on-page-data').data('saved') != 'undefined' ){
+//			$('#pprf-on-page-data').data('saved', '1');			
+//		 }
+		 pprfChanged_bln	=	true;
+	 });
+	 $('#publishing-action .button, #save-action .button').click( function( evt ){
+		
+		  if( pprfChanged_bln ){
+			evt.preventDefault();
+			var leave_bln = confirm('It seems like you have made some changes in a repeater field. Ignore the changes?');
+			if ( leave_bln == true){
+				pprfChanged_bln	=	false;
+				$( this ).click();
+			} 
+			if ( leave_bln == false){
+				return false;
+			}
+		  }
+	 });
+
 });
+
+var pprfChanged_bln	=	false;	

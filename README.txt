@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 4.8.1
-Stable tag: 1.1.7
+Tested up to: 4.8.2
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,13 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 = 1.1.7 - 19th August 2017 =
 * debug: fixed the problem if the number of entries was set to 0, the "Add New" would disappear.
 
+= 1.1.8 - 15th October 2017 =
+* debug: Now use pods_register_field_type() to register Panda Pods Repeater Field.
+* debug: Fixed some styling problems
+* debug: Fixed the pods relationship fields ordering problem
+* add: Now give alerts if changes not saved
+
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -234,3 +241,9 @@ Add: Now you can limit the number of entries
 
 = 1.1.7 =
 Debug: fixed the problem if the number of entries was set to 0, the "Add New" would disappear.
+
+= 1.1.8 =
+Debug: now use pods_register_field_type() to register Panda Pods Repeater Field.
+Debug: Fixed some styling problems
+Debug: Fixed the pods relationship fields ordering problem
+Add: Now give alerts if changes not saved

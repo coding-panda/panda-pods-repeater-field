@@ -87,7 +87,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 */
 	 
 	public function __construct () {
-
+		if( !class_exists( 'panda_pods_repeater_field_db' ) ){
+			include_once( PANDA_PODS_REPEATER_DIR . 'classes/panda_pods_repeater_field_db.php' );
+		}
 		self::$actTbs_arr = $this->pods_tables_fn();		
 		
 	}
@@ -372,7 +374,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$title_str   = apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
 						$title_str	 = esc_attr( $title_str );
 						echo '<li data-id="' . $row_obj['id'] . '" class="" id="li-' . $ids_str . '">';						
-						echo 	'<div class="row pprf-row mgb8 alignleft ">
+						echo 	'<div class="row pprf-row alignleft ">
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . $bg_str . '"><strong>' . get_the_title( $options['id'] ) . ' ID:</strong> ' . $row_obj['id'] . ' - ' . $title_str . '</div>
 										<div class="button pprf-right-col center pprf-trash-btn" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >

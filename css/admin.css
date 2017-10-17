@@ -148,3 +148,12 @@
 .hidden{
 	display:none;
 }
+.toplevel_page_panda-pods-repeater-field #wpcontent{
+	margin-left: 0;   
+}
+.toplevel_page_panda-pods-repeater-field  {
+    background: #fff;
+}
+.pods-form-front .pods-form-ui-row-type-pandarepeaterfield .pods-field-input{
+	width:80%
+}

@@ -51,6 +51,7 @@ global $current_user;
 $iframeID_int  = isset( $_GET['iframe_id'] ) ? esc_attr( $_GET['iframe_id'] ) : ''; 
 $piframeID_int = isset( $_GET['piframe_id'] ) ?  esc_attr( $_GET['piframe_id'] ) : ''; 
 $wid_int	   = 25;
+$wid_str		= 'quater';
 if( isset( $_GET['poditemid'] ) && is_numeric( $_GET['poditemid'] ) ){
 	$wid_int  = get_post_meta( $_GET['poditemid'], 'pandarepeaterfield_field_width' , true);
 	
@@ -62,9 +63,15 @@ $mgr_int	=	0;
 if( $wid_int != 100 ){
 	$wid_int	=	$wid_int - 1;
 	$mgr_int	=	1;
+} else {
+	$wid_str	= 'full';
+}
+if( $wid_int == 50 ){
+	$wid_str	= 'half';
 }
 ?>
 <style>
+
 @media  (min-width: 992px) {
 .pods-form-fields .pods-field {
 	width: <?php echo $wid_int;?>%;
@@ -82,7 +89,7 @@ if( $wid_int != 100 ){
 </style>
 
 <?php
-
+echo '<div class="pprf-wid-' . $wid_str . '">';
 $get_arr = isset( $_GET )? $_GET : array();
 do_action('pandarf_item_top', $get_arr );
 
@@ -106,7 +113,9 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 } else {
 	exit();	
 }
+echo '</div>';
 ?>
+<div id="pprf-on-page-data" data-saved="0"></div>
 <!--
 <div class="click-to-expand" ></div>
 <div class="click-to-close" ></div>
@@ -238,6 +247,13 @@ jQuery(document).ready( function($) {
 	}
 	
 	?>	
+	// saved, so don't popup the confirm box to ask if to ignore changes
+	 $('.pods-submit-button').click( function (){		
+		parent.pprfChanged_bln	=	false;		
+	 })	
+	$('.pods-field-input').on('click keyup change', function(){	 
+		parent.pprfChanged_bln	=	true;		
+	});	 
 }).click( 
 	//pprf_resize_fn
 

@@ -8,7 +8,7 @@
 #wpadminbar,
 #wpfooter,
 #screen-meta-links{
-	display:none;	
+	display:none !important;	
 }
 html.wp-toolbar{	
 	padding-top: 0;
@@ -145,9 +145,15 @@ body #wpwrap{
 	top:auto;
 	bottom: 0;	
 }
+.pods-form-front .pods-field .pods-form-ui-field-type-file,
+.pods-form-ui-row-type-pick .pods-form-ui-field select,
 .pods-form-front .pods-field .pods-field-input select,
-.pods-form-front .pods-field .pods-file-add{
-	margin-top:1;	
+.pods-form-front .pods-field .pods-file-add,
+.pods-form-front .pods-field .pods-form-ui-field-type-wysiwyg{
+	width:95%;
+}
+.pods-form-front .pods-validate-error-message{
+	position:absolute;
 }
 .panda-repeater-field-delete-bn{
 	padding: 5px 15px;
@@ -165,6 +171,9 @@ body #wpwrap{
 	border-radius: 5px;
 	font-weight: 600;
 	cursor: pointer;	
+}
+.toplevel_page_panda-pods-repeater-field .compat-item{
+	display: none;
 }
 /* Resposnive */
 
