@@ -339,7 +339,7 @@ jQuery(document).ready( function($) {
 	 /**
 	  * if a pods is is clicked, flag it as saved
 	  */
-	 $('.pods-field-input').on('click keyup', function(){
+	 $('.toplevel_page_panda-pods-repeater-field .pods-field-input').on('click keyup change', function(){
 		// if( typeof $('#pprf-on-page-data').data('saved') != 'undefined' ){
 //			$('#pprf-on-page-data').data('saved', '1');			
 //		 }
