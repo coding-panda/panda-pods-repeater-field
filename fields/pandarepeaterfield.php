@@ -2,7 +2,6 @@
 /**
  * field by iframe
  *
- * @version: 1.0.0
  * @package panda-pods-repeater-field
  * @author Dongjie Xu
  * @since 09/02/2016 
@@ -160,7 +159,7 @@ function pprf_update_parent_fn() {
 		}		
 	}
 	
-	if( typeof updateIframeSize == 'function' ){
+	if( typeof parent.updateIframeSize == 'function' ){
 		parent.updateIframeSize('<?=$iframeID_int ?>', hei_int);	
 	}
 	<?php
@@ -221,10 +220,10 @@ jQuery(document).ready( function($) {
 	//pprf_resize_fn();
 	//var iframeWin = window.parent.document.getElementById('<?= $iframeID_int ?>-<?= $_GET['poditemid']; ?>').contentWindow;
 	//console.log( iframeWin );
-    parent.window.addEventListener('resize', function(){
+    //parent.window.addEventListener('resize', function(){
        // console.log( jQuery('html').height() );
-		pprf_resize_fn() ;
-    });	
+		//pprf_resize_fn() ;
+    //});	
 	
 	<?php
 	// if successfully added a new one
