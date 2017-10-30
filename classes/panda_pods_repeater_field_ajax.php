@@ -119,20 +119,30 @@ class Panda_Pods_Repeater_Field_Ajax {
 					
 					//$query_str  	= $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE `id` = %d;' , array( $item_arr[0]['id'] ) );	
 				//echo $query_str;
-					//$deleted_bln   	= $wpdb->query( $query_str );	
-					$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], $_POST['itemid'] ); 
-					
-					$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
+					//$deleted_bln   	= $wpdb->query( $query_str );
+					$del_str	=	'delete';
+					if( isset( $_POST['trash'] ) && $_POST['trash'] == 1 )	{
+						$db_cla->update_columns_fn( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'] );
+						$query_str  	= $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;' , array( $_POST['itemid'] ) );
+						$deleted_bln 	=	$wpdb->query( $query_str );
+						$del_str		=	'trash';
+					}
+					if( !isset( $_POST['trash'] ) || $_POST['trash'] == 2 )	{
+						$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], $_POST['itemid'] ); 
+						
+						$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
+
+					}
 					if( $deleted_bln ){
 						echo json_encode( array( 
 												 'id'		 	=> $item_arr[0]['id'], 
 												 'pod_idx'	 	=> $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] , 
 												 'pod_idx_val' 	=> $item_arr[0][ $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] ],
 												 'ppod_fie_id'	=> $_POST['poditemid'],		
-												 'action'		=> 'delete',								
+												 'action'		=> $del_str,								
 												) 
 										 );	
-					}
+					}					
 				} else {
 					echo '';	
 				}

@@ -147,8 +147,8 @@ class Panda_Pods_Repeater_Field {
 			$prf_cla 	 = new Panda_Pods_Repeater_Field();
 
 			// add to pod editor
-			add_filter( 'pods_api_field_types', array( $prf_cla, 'filter_pods_api_field_types') );
-			add_filter( 'pods_form_field_include', array( $prf_cla, 'filter_pods_form_field_include'), 10, 2 );		
+			//add_filter( 'pods_api_field_types', array( $prf_cla, 'filter_pods_api_field_types') );
+			//add_filter( 'pods_form_field_include', array( $prf_cla, 'filter_pods_form_field_include'), 10, 2 );		
 			
 			//add_filter( 'pods_form_ui_field_' . PodsField_Pandarepeaterfield::$type, array( $prf_cla, 'filter_pods_form_ui_field_panda_repeater' ), 10, 6 );
 
@@ -368,17 +368,19 @@ class Panda_Pods_Repeater_Field {
 
 	}
 	/**
-	 * act_options 
+	 * not needed, now use pods_register_field_type
 	 */
 	function filter_pods_api_field_types( $field_types  ){
 	//	print_r( $field_types  );
 		if( !in_array( 'pandarepeaterfield', $field_types ) ){
-		//	array_push( $field_types, 'pandarepeaterfield' );
+			array_push( $field_types, 'pandarepeaterfield' );
 			
 		}
 		return $field_types ;
 	}
-
+	/**
+	 * not needed, now use pods_register_field_type
+	 */
 	function filter_pods_form_field_include( $pods_dir, $field_type ){
 		//echo $pods_dir . ' ' . $field_type . '<br/>';
 		if( 'pandarepeaterfield' == $field_type ){

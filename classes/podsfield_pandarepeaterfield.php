@@ -308,7 +308,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 				if( count( $search_arr ) > 0 ) {
 					
-					$query_str  	= $wpdb->prepare( 'SELECT main_tb.`id` AS id, `' . self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] . '` 
+					$query_str  	= $wpdb->prepare( 'SELECT 
+														main_tb.*, 
+														`' . self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] . '` 														
 													   FROM `' . $table_prefix . 'pods_' . $tb_str . '` AS main_tb
 													   ' . $join_str  . '
 													   WHERE ' . $where_str . ' 
@@ -316,12 +318,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
 													   ' . $limit_str . '; ' , 
 													   $search_arr );	
 				} else {
-					$query_str  	= 'SELECT main_tb.`id` AS id, `' . self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] . '` 
-									   FROM `' . $table_prefix . 'pods_' . $tb_str . '` 
-									   ' . $join_str  . ' 
-									   WHERE ' . $where_str . ' 
-									   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
-									   ' . $limit_str . '; '; 
+					$query_str  	= 'SELECT 
+										main_tb.*, 
+										`' . self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] . '`
+									   	FROM `' . $table_prefix . 'pods_' . $tb_str . '` 
+									   	' . $join_str  . ' 
+									   	WHERE ' . $where_str . ' 
+									   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
+									   	' . $limit_str . '; '; 
 				}
 				//echo $query_str;
 				$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
@@ -335,6 +339,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$query_str = '&podid=' . $options['pod_id'] . '&tb=' . $savedtb_int . '&poditemid=' . $options['id'];
 				$prfID_str = 'panda-repeater-fields-' . $savedtb_int . '-' . $options['id'];
 				
+				echo '<div  id="panda-repeater-fields-tabs-' . $savedtb_int . '-' . $options['id'] . '" class="alignleft w100">
+						<div class="pprf-tab active"><span class="dashicons dashicons-portfolio"></span></div>	
+						<div class="pprf-tab"><span class="dashicons dashicons-trash"></span></span></div>	
+					  </div>
+					 ';
 				echo '<div id="' . $prfID_str . '" class="pprf-redorder-list-wrap">';
 				
 				//echo 	'<div role="button" class="alignright button pprf-redorder-btn mgb8" data-id="' . $prfID_str . '">Re-order</div>';
@@ -366,18 +375,23 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				if ( is_array( $rows_arr ) ) {
 					foreach( $rows_arr as $i => $row_obj ) { 	
 						$bg_str 	 = $i % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
-						
+						$trashed_str = 'pprf-not-trashed';
+						$traBtn_str  = 'pprf-btn-not-trashed';
+						if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
+							$trashed_str =  'pprf-trashed' ;
+							$traBtn_str  = 'pprf-btn-trashed';
+						}
 						//print_r( self::$tbs_arr['pod_' . $savedtb_int ]  );
 						$ids_str     = $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'];
 						$fullUrl_str = $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'];	
 						
 						$title_str   = apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
 						$title_str	 = esc_attr( $title_str );
-						echo '<li data-id="' . $row_obj['id'] . '" class="" id="li-' . $ids_str . '">';						
+						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '">';						
 						echo 	'<div class="row pprf-row alignleft ">
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . $bg_str . '"><strong>' . get_the_title( $options['id'] ) . ' ID:</strong> ' . $row_obj['id'] . ' - ' . $title_str . '</div>
-										<div class="button pprf-right-col center pprf-trash-btn" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
+										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
 											<span class="dashicons dashicons-trash pdt5 pdl5 pdr5 mgb0 "></span>
 											<div id="panda-repeater-trash-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>

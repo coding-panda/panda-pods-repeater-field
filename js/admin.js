@@ -76,7 +76,7 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 											'<div class="row pprf-row  mgb8 w100 alignleft">' + 
 												'<div class="w100 alignleft" id="pprf-row-brief-' + ids_str + '">' +
 													'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' "><strong>' + parentName + ' ID:</strong> ' + response_str + ' - ' + title_str + '</div>' +
-													'<div class="button pprf-right-col center pprf-trash-btn" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
+													'<div class="button pprf-right-col center pprf-trash-btn pprf-btn-not-trashed" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
 														'<span class="dashicons dashicons-trash pdt5 pdl5 pdr5 mgb0 "></span>' +
 														'<div id="panda-repeater-trash-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
 															'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>' +
@@ -132,18 +132,26 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 /**
  * delete an item
  */
-function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid, poditemid ){
+function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid, poditemid, trashed ){
 	
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( itemid ) && jQuery.isNumeric( poditemid )  ) {
 		
-		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_delete_item_fn' };
-		
+		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_delete_item_fn', 'trash' : trashed };
+		var info_str	=	'';
+		if( trashed == 1 ){
+			info_str	=	' You can recover it from trash.';
+		}
+		if( trashed == 2 ){
+			info_str	=	' It will be deleted permanently.';
+		}
 		//panda-repeater-edit-13-506 236
 		var data_obj  = para_obj;
-		var passt_bln = confirm('Are you sure?');
+		var passt_bln = confirm('Are you sure?' + info_str);
 		//$('#overlord').removeClass('hidden');		
 		
-		if( passt_bln == true ){
+		if( passt_bln == true  ){
+
+			
 			jQuery( '#panda-repeater-trash-' + cpodid + '-' + itemid + '-' + poditemid + '-loader' ).removeClass('hidden');
 			//jQuery( '#pprf-row-brief-' + cpodid + '-' + itemid + '-' + poditemid + ' .pprf-trash-btn .dashicons-trash' ).remove( );
 			jQuery.post(
@@ -153,27 +161,33 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 					var rsp_arr = jQuery.parseJSON( response_str );
 					if( rsp_arr.length != 0 ){
 						//jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).remove( );
-
-						jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).parent().parent().remove( );
-						jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).remove( );
-						// if entries limit, toggle the add new 
-						var itemsLeft_int	= jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' > .pprf-redorder-list > li').length;
-						var limit_int	=	parseInt( jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-entry-limit' ).val() );
-						if( limit_int != 0 && itemsLeft_int < limit_int ){
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).removeClass('hidden');	
-							
-						}						
-						// integrate with simpods js
-						if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
-							call_simpods_fn( response_str );
+						if( trashed == 1 ){
+							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).removeClass('pprf-not-trashed');
+							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).addClass('pprf-trashed');
+							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).css('display', 'none');
 						}
-						
+						if( trashed == 2 ){	
+							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).parent().parent().remove( );
+							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).remove( );
+							// if entries limit, toggle the add new 
+							var itemsLeft_int	= jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' > .pprf-redorder-list > li').length;
+							var limit_int	=	parseInt( jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-entry-limit' ).val() );
+							if( limit_int != 0 && itemsLeft_int < limit_int ){
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).removeClass('hidden');	
+								
+							}						
+							// integrate with simpods js
+							if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
+								call_simpods_fn( response_str );
+							}
+						}
 						//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
 						
 					}
 					
 				}
 			);	
+			
 		}
 	}
 }
@@ -315,8 +329,15 @@ jQuery(document).ready( function($) {
 		if( $( this ).hasClass('pprf-add-expand') ){
 			iframe_str 	= 'panda-repeater-add-new-' + ids_str;			
 		}	
+		var trash_int	= 0;
+		if( $( this ).hasClass('pprf-btn-not-trashed') ){
+			trash_int	= 1;
+		}
+		if( $( this ).hasClass('pprf-btn-trashed') ){
+			trash_int	= 2;
+		}		
 		//document.getElementById( iframe_str ).contentWindow.pprf_delete_item_fn();
-		pprf_delete_item_fn( $( this ).data('podid'), $( this ).data('postid'), $( this ).data('tb'), $( this ).data('itemid'), $( this ).data('userid'), $( this ).data('iframe_id'), $( this ).data('poditemid') );
+		pprf_delete_item_fn( $( this ).data('podid'), $( this ).data('postid'), $( this ).data('tb'), $( this ).data('itemid'), $( this ).data('userid'), $( this ).data('iframe_id'), $( this ).data('poditemid'), trash_int );
 	 })
 	 
 	 $('.pprf-save-btn').live( 'click', function(){
