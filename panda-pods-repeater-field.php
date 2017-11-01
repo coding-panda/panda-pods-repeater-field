@@ -915,7 +915,7 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 												0
 											  );	
 				// check if it is a repeater field, if yes, return data							  			
-				$data_arr = pandarf_data_fn( $data_arr, $items_arr[0]['post_name'] );
+				$data_arr 	= pandarf_data_fn( $data_arr, $items_arr[0]['post_name'] );
 				
 				return 	$data_arr;								  			
 			}

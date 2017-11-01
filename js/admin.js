@@ -318,7 +318,9 @@ jQuery(document).ready( function($) {
 			iframe_str 	= 'panda-repeater-add-new-' + ids_str;			
 		}	
 		
-		document.getElementById( iframe_str ).contentWindow.pprf_resize_fn();
+		if( typeof document.getElementById( iframe_str ).contentWindow.pprf_resize_fn() != 'undefined'){
+			document.getElementById( iframe_str ).contentWindow.pprf_resize_fn();
+		}
 	});
 	/**
 	 * click to delete
@@ -381,6 +383,23 @@ jQuery(document).ready( function($) {
 		  }
 	 });
 
+	 /**
+	  * toggle trashed and current
+	  */
+	 $('.pprf-tab .dashicons-trash').parent().click( function(){
+	 	
+	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-trashed').css('display', 'block');
+	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-not-trashed').css('display', 'none');
+	 	$( this ).parent().children('.active').removeClass('active');
+	 	$( this ).addClass('active');
+
+	 })
+	 $('.pprf-tab .dashicons-portfolio').parent().click( function(){
+	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-trashed').css('display', 'none');
+	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-not-trashed').css('display', 'block');
+	 	$( this ).parent().children('.active').removeClass('active');
+	 	$( this ).addClass('active');	 	
+	 })	 
 });
 
 var pprfChanged_bln	=	false;	

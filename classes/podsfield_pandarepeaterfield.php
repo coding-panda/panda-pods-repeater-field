@@ -340,8 +340,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$prfID_str = 'panda-repeater-fields-' . $savedtb_int . '-' . $options['id'];
 				
 				echo '<div  id="panda-repeater-fields-tabs-' . $savedtb_int . '-' . $options['id'] . '" class="alignleft w100">
-						<div class="pprf-tab active"><span class="dashicons dashicons-portfolio"></span></div>	
-						<div class="pprf-tab"><span class="dashicons dashicons-trash"></span></span></div>	
+						<div class="pprf-tab active" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-portfolio"></span></div>	
+						<div class="pprf-tab" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-trash"></span></span></div>	
 					  </div>
 					 ';
 				echo '<div id="' . $prfID_str . '" class="pprf-redorder-list-wrap">';
@@ -374,12 +374,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				echo 		'<ul class="pprf-redorder-list">';
 				if ( is_array( $rows_arr ) ) {
 					foreach( $rows_arr as $i => $row_obj ) { 	
-						$bg_str 	 = $i % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
-						$trashed_str = 'pprf-not-trashed';
-						$traBtn_str  = 'pprf-btn-not-trashed';
+						$bg_str 	 	= $i % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
+						$trashed_str 	= 'pprf-not-trashed';
+						$traBtn_str  	= 'pprf-btn-not-trashed';
+						$css_str		=	'';
 						if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
-							$trashed_str =  'pprf-trashed' ;
-							$traBtn_str  = 'pprf-btn-trashed';
+							$trashed_str 	=  	'pprf-trashed' ;
+							$traBtn_str  	= 	'pprf-btn-trashed';
+							$css_str		=	'display:none';
 						}
 						//print_r( self::$tbs_arr['pod_' . $savedtb_int ]  );
 						$ids_str     = $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'];
@@ -387,7 +389,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						
 						$title_str   = apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
 						$title_str	 = esc_attr( $title_str );
-						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '">';						
+						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '" style="' . $css_str . '">';						
 						echo 	'<div class="row pprf-row alignleft ">
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . $bg_str . '"><strong>' . get_the_title( $options['id'] ) . ' ID:</strong> ' . $row_obj['id'] . ' - ' . $title_str . '</div>
