@@ -740,18 +740,48 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 		$table_str 	 	= $table_prefix . 'pods_' . $table_str;		
 	} 
 
+	$pPost_obj	=	get_post( $filter_arr['parent_pod_id'] );
+	if( $pPost_obj ){
+		$parent_pod =	pods( $pPost_obj->post_name );
+		foreach( $parent_pod->fields as $k_str => $v_arr ){
+			if( is_array( $v_arr ) ){
+				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' ) ) {
+					//echo '<pre>';
+					if( isset( $v_arr['options']['pandarepeaterfield_enable_trash'] ) && $v_arr['options']['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
+						$where_str .= ' AND `pandarf_trash` != 1';
+					//	echo $where_str;
+					}
+					//echo '</pre>';					
+				}
+
+			}
+		}		
+// echo '<pre>';
+// 	//print_r( $parent_pod );
+// 	echo $filter_arr['name'];
+
+// echo '</pre>';	
+	}
 	// find out the file type
 	$join_str	=	'';
 	$child_pod	= 	pods( $filter_arr['child_pod_name'] );
+/*echo '<pre>';
+	print_r( $child_pod );
+	//echo $child_pod;
+
+echo '</pre>';	*/
 	if( is_object( $child_pod ) && $atts_arr['count_only'] == false ){
 		$i 	= 	0;
 		foreach( $child_pod->fields as $k_str => $v_arr ){
 			if( is_array( $v_arr ) ){
-				//if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pick' ) ) {
-				//	echo '<pre>';
-				//	print_r( $v_arr );
-				//	echo '</pre>';					
-				//}
+/*				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' ) ) {
+					//echo '<pre>';
+					if( $v_arr['options']['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
+						$where_str .= ' AND `pandarf_trash` != 1';
+					//	echo $where_str;
+					}
+					//echo '</pre>';					
+				}*/
 				$relatePick_arr	 = array('user', 'post_type', 'pod', 'media');
 				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'file' ) || ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pick' && in_array( $v_arr['pick_object'], $relatePick_arr ) ) ){
 					$fields_str .= ',(
@@ -773,7 +803,7 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 	} else {
 		$query_str = 'SELECT ' . $fields_str . ' FROM `' . $table_str . '` AS pod_tb ' . $join_str . '  WHERE 1=1 ' . $where_str . ' ' . $groupby_str . ' ' . $order_str . ' ' . $limit_str;
 	}
-		
+	//echo $query_str;
 	if( $showQuery_bln ){
 		echo $query_str;
 	}

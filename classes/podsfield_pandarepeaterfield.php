@@ -114,7 +114,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							'50'  => '50%',							
 							'25'  => '25%',													
 							); 
-		
+		$bln_arr   	= array(
+							'0' 	=> 'No',	
+							'1'  	=> 'Yes',																							
+							); 		
 		$options = array( 
            
             self::$type . '_table' => array(
@@ -137,7 +140,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'number',
                 'data' 		 => '',
 				'dependency' => true
-            ),							 
+            ),	
+            self::$type . '_enable_trash' => array(
+                'label' 	 => __( 'Enable Trash', self::$input_str ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,
+				'dependency' => true
+            ),	            						 
 		);
 
 		return $options;
@@ -338,12 +348,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 				$query_str = '&podid=' . $options['pod_id'] . '&tb=' . $savedtb_int . '&poditemid=' . $options['id'];
 				$prfID_str = 'panda-repeater-fields-' . $savedtb_int . '-' . $options['id'];
-				
-				echo '<div  id="panda-repeater-fields-tabs-' . $savedtb_int . '-' . $options['id'] . '" class="alignleft w100">
-						<div class="pprf-tab active" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-portfolio"></span></div>	
-						<div class="pprf-tab" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-trash"></span></span></div>	
-					  </div>
-					 ';
+				// if trash is enabled
+				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
+					echo '<div  id="panda-repeater-fields-tabs-' . $savedtb_int . '-' . $options['id'] . '" class="alignleft w100">
+							<div class="pprf-tab active" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-portfolio"></span></div>	
+							<div class="pprf-tab" data-target="' . $savedtb_int . '-' . $options['id'] . '"><span class="dashicons dashicons-trash"></span></span></div>	
+						  </div>
+						 ';
+				}
 				echo '<div id="' . $prfID_str . '" class="pprf-redorder-list-wrap">';
 				
 				//echo 	'<div role="button" class="alignright button pprf-redorder-btn mgb8" data-id="' . $prfID_str . '">Re-order</div>';
@@ -365,11 +377,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				//echo		'</ul>';
 				//echo	'</div>';
 				// remove anything after /wp-admin/, otherwise, it will load a missing page				
-				$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+				$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 				
-				$src_str 	  = $adminUrl_str . '?page=panda-pods-repeater-field&';
+				$src_str 	  	= $adminUrl_str . '?page=panda-pods-repeater-field&';
 				//$src_str   = PANDA_PODS_REPEATER_URL . 'fields/pandarepeaterfield.php?';
-				$bg_str		  = 'pprf-purple-bg';
+				$bg_str		  	= 'pprf-purple-bg';
+
+				$trash_int  	= 0;
+				$notTrash_int  	= 0;
 				//echo 	'<div class="pprf-redorder-list-wrap">';
 				echo 		'<ul class="pprf-redorder-list">';
 				if ( is_array( $rows_arr ) ) {
@@ -378,11 +393,26 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$trashed_str 	= 'pprf-not-trashed';
 						$traBtn_str  	= 'pprf-btn-not-trashed';
 						$css_str		=	'';
-						if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
-							$trashed_str 	=  	'pprf-trashed' ;
-							$traBtn_str  	= 	'pprf-btn-trashed';
-							$css_str		=	'display:none';
+						$edit_str		=	'dashicons-edit';
+						if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
+							if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
+								$trashed_str 	=  	'pprf-trashed' ;
+								$traBtn_str  	= 	'pprf-btn-trashed';
+								$css_str		=	'display:none';
+								$edit_str		=	'dashicons-update';
+								$bg_str 	 	= 	$trash_int % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
+								
+							} else{
+								$notTrash_int ++;
+								$bg_str 	 	= 	$notTrash_int % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
+							}
 						}
+						if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 0 ){
+							$trashed_str 	= 	'';
+							$traBtn_str  	= 	'pprf-btn-delete';
+							$css_str		=	'display:block';
+						}
+
 						//print_r( self::$tbs_arr['pod_' . $savedtb_int ]  );
 						$ids_str     = $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'];
 						$fullUrl_str = $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'];	
@@ -406,7 +436,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 											</div>
 										</div>																	
 										<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' . $ids_str . '" data-url="' . $fullUrl_str . '">
-											<span class="dashicons dashicons-edit pdt8 pdl8 pdr8 mgb0 pprf-edit-span"></span>
+											<span class="dashicons ' . $edit_str . ' pdt8 pdl8 pdr8 mgb0 pprf-edit-span"></span>
 											<div id="panda-repeater-edit-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft"/>
 											</div>	
@@ -633,9 +663,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0
 	 */
 	public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-		echo $id . ' ' . $name;
-		print_r( $options );
-		print_r( $pod );
+		//echo $id . ' ' . $name;
+		//print_r( $options );
+		//print_r( $pod );
 		exit();
 	}
 

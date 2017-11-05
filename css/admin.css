@@ -139,6 +139,7 @@
 	cursor: pointer;
 	color: #0073aa;
 	font-size: 11px;	
+	width: calc( 100% - 6px ) !important;
 }
 
 .pprf-save-icon{
@@ -166,7 +167,13 @@
     border-top-right-radius: 5px;
     margin: 0 3px 5px 0;
     cursor: pointer;
+    opacity: 0.3;
+}
+.pprf-tab:hover{
+	 opacity: 0.8;
 }
 .pprf-tab.active{
-	background-color: #F0F5FF;
+	background-color: #0073AA;
+	color: #fff;
+	opacity: 1;
 }
