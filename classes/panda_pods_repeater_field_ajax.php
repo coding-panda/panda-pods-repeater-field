@@ -127,8 +127,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 						$deleted_bln 	=	$wpdb->query( $query_str );
 						$del_str		=	'restore';
 					}					
-					if( isset( $_POST['trash'] ) && $_POST['trash'] == 1 )	{
-						$db_cla->update_columns_fn( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'] );
+					if( isset( $_POST['trash'] ) && $_POST['trash'] == 1 )	{ // if $_POST['trash'] == 1, the table should be already updated
+						//$db_cla->update_columns_fn( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'] );
 						$query_str  	= $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;' , array( $_POST['itemid'] ) );
 						$deleted_bln 	=	$wpdb->query( $query_str );
 						$del_str		=	'trash';
