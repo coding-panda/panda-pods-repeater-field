@@ -119,7 +119,7 @@ echo '</div>';
 <div class="click-to-expand" ></div>
 <div class="click-to-close" ></div>
 <div class="click-to-expand-arrow" title="Click this bar to expand"></div>-->
-<div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to contrast</div>
+<div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
 <!--
 <div class="click-to-expand-arrow bottom" title="Click this bar to expand"></div>
 <div class="click-to-close-arrow bottom" title="Click this bar to close" ></div>-->
