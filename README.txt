@@ -102,7 +102,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 7. Under the Admin UI tab, untick Show Admin Menu in Dashboard, because if you add an item to it, it is not linked to any parent posts.
 8. Now we create a new post type in Pod. We name it "Comic" and we use Table Based storage, because we want to reduce the burden of the WordPress Posts table.
 9. Once it has been created, we add a new field to Comic. We name it "Comic Box 1" here. At the bottom of the Field Type, you will find Pods Table As Repeater Field. Select it and then click the tab "Additional Field Options".
-10. Now you can see a Pods Table "comiccontent" we just created in the combo box. Select it, add or update the field and save Pod. You can also set field width, defaulted to 100%. You can also limit the number of entries of the repeater field.
+10. Now you can see a Pods Table "comic_content" we just created in the combo box. Select it, add or update the field and save Pod. You can set field width, defaulted to 100%. You can also limit the number of entries of the repeater field. Enable Trash will allow you to move items to Trash and Restore them if you still want them. Trashed items won't be pulled out by pods_field() and pandarf_items_fn(), but if you diable Trash later on, the trashed items will still be pulled out.
 11. If you are doing nested repeater fields, I recommend you set it to 100%. A sample of nested repeater fields.
 12. OK, the set up is done. Now if you are adding a new Comic, 
 13. you will see "Comic Box 1" in the More Fields area.
@@ -189,7 +189,8 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * add: Now give alerts if changes not saved
 
 = 1.1.9 - 22nd October 2017 =
-* debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times.
+* debug: Fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometime the iframe was not ready.
+* add: Now items can be moved to trash and restored from trash
 
 == Upgrade Notice ==
 
@@ -251,4 +252,5 @@ Debug: Fixed the pods relationship fields ordering problem
 Add: Now give alerts if changes not saved
 
 = 1.1.9 =
-Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times.
+Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometime the iframe was not ready.
+Add: Now items can be moved to trash and restored from trash.
