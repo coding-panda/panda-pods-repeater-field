@@ -139,7 +139,7 @@
 	cursor: pointer;
 	color: #0073aa;
 	font-size: 11px;	
-	width: calc( 100% - 6px ) !important;
+	width: 100%;
 }
 
 .pprf-save-icon{

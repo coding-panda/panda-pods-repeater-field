@@ -40,13 +40,19 @@ html.wp-toolbar{
 .pods-form-front .pods-field-input textarea{
     padding: 5px 10px;
     border-radius: 5px;
+    
+}
+.pods-field-input .pods-slider-field {
+    max-width: calc( 100% - 16px );
+    margin: 0 8px;
 }
 .pods-form-front .pods-field-input select {
     padding: 4px 10px;
     border-radius: 5px;
 	height: 31px;
-	width: 95%;
+	
 	margin-top: 2px !important;
+
 }
 .pods-form-front .pods-field-label{
 	width: 100% !important;
@@ -149,10 +155,16 @@ body #wpwrap{
 .pods-form-ui-row-type-pick .pods-form-ui-field select,
 .pods-form-front .pods-field .pods-field-input select,
 .pods-form-front .pods-field .pods-file-add,
-.pods-form-front .pods-field .pods-form-ui-field-type-wysiwyg{
-	width:95%;
+.pods-form-front .pods-field .pods-form-ui-field-type-wysiwyg,
+.pods-form-front .pods-field .pods-field-input input,
+.pods-form-front .pods-field .pods-field-input textarea{
+	/*width:95%;*/
+	width: calc( 100% - 2px );
 }
-.pods-form-front .pods-validate-error-message{
+.pods-form-front .pods-field .pods-file-add{
+	margin: 0 1px;
+}
+.pods-form-front .pods-field .pods-validate-error-message{
 	position:absolute;
 }
 .panda-repeater-field-delete-bn{
@@ -163,6 +175,9 @@ body #wpwrap{
 	font-weight: bold;
 	box-shadow: 2px 2px 2px 2px #ccc;	
 	cursor: pointer;
+}
+.pods-submit{
+	clear: both;
 }
 .pods-submit-button{
 	padding: 5px 15px;
