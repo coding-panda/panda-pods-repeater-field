@@ -192,6 +192,9 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * debug: Fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
 * add: Now items can be moved to trash and restored from trash
 
+= 1.2.0 - 17nd December 2017 =
+* change: Now saving table post_name instead of ID to solve the problem of migration
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -254,3 +257,6 @@ Add: Now give alerts if changes not saved
 = 1.1.9 =
 Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
 Add: Now items can be moved to trash and restored from trash.
+
+= 1.2.0 =
+Change: Now saving table post_name instead of ID to solve the problem of migration
