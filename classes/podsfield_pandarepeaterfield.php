@@ -104,11 +104,24 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @use pods_tables_fn() has to call the function rather than using the static one. The static one doesn't include all tables after saving
 	 */
 	public function options () {
-		$tables_arr = $this->pods_tables_fn();
-		if( isset( $_GET['id'] ) && is_numeric( $_GET['id'] ) && isset( $tables_arr['pod_' . $_GET['id'] ] ) ){
-			unset( $tables_arr['pod_' . $_GET['id'] ] )	;
+
+		global $wpdb, $table_prefix;
+		$tables_arr = $this->pods_tables_fn( 2 );
+
+		
+		if( isset( $_GET['id'] ) && is_numeric( $_GET['id'] ) ){
+			if( isset( $tables_arr['pod_' . $_GET['id'] ] ) ){
+				unset( $tables_arr['pod_' . $_GET['id'] ] )	;
+			}
+
+			$query_str = $wpdb->prepare( 'SELECT `post_name` FROM `' . $table_prefix . 'posts` WHERE `ID` = %d LIMIT 0, 1', array( $_GET['id'] ) ) ;
+			
+			$items_arr = $wpdb->get_results( $query_str, ARRAY_A );			
+			if( count( $items_arr ) && isset( $tables_arr[ $items_arr[0]['post_name'] ] ) ){
+				unset( $tables_arr[ $items_arr[0]['post_name'] ] )	;	
+			}
 		}
-				
+	
 		$wids_arr   = array(
 							'100' => '100%',	
 							'50'  => '50%',							
@@ -268,20 +281,40 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 			$savedtb_str = trim( $options[ self::$typeTb_str ] );
 			
-			$savedtb_int = substr( $savedtb_str, 4 );
+			$cPod_arr	=	explode( '_', $savedtb_str );
 			
-			$tb_str 	 = '';
-			if( is_numeric( $savedtb_int ) ){			
-				$post_arr	 = get_post( $savedtb_int, ARRAY_A );
+			if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){
+				// table saved as before 1.2.0
+				$savedtb_int = substr( $savedtb_str, 4 );
 				
-				if( is_array( $post_arr ) && $post_arr['post_type'] == '_pods_pod' ){
-					$tb_str 	 = $post_arr['post_name'];
+				$tb_str 	 = '';
+				if( is_numeric( $savedtb_int ) ){			
+					$post_arr	 = get_post( $savedtb_int, ARRAY_A );
+					
+					if( is_array( $post_arr ) && $post_arr['post_type'] == '_pods_pod' ){
+						$tb_str 	 = $post_arr['post_name'];
 
-				}
+					} else {
+						return;
+					}
+				} else {
+					return;
+				} 
+
 			} else {
-				return;	
-			}		
-			
+				// table saved as since 1.2.0
+				$query_str = $wpdb->prepare( 'SELECT `ID` FROM `' . $table_prefix . 'posts` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+							
+				$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
+
+				if( count( $items_arr ) ){
+					$tb_str 		= $savedtb_str;
+					$savedtb_int	= $items_arr[0]['ID'];	
+				} else {
+					return;
+				}
+			}
+
 			if( !is_numeric( $id ) ){
 				echo apply_filters( 'pprf_load_panda_repeater_allow_msg', __('Please save the parent first to add ' . strtolower( $post_arr['post_title'] ) . '. ', 'panda-pods-repeater' ) ) ;
 				return;
@@ -807,8 +840,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$items_bln  	= $wpdb->query( $query_str, ARRAY_A );
 					}
 				} 
-
-
 				
 			} else {
 
@@ -901,53 +932,42 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 		}
 		
-		//echo '---------------------';
-		//print_r( $obj  );
-		// check if the post type is panda repeater field
-		/*$type_str = get_post_meta( $postID_int, 'type', true );
-		print_r( $type_str );
 
-		
-		if( $type_str == self::$type ){
-			// find out the value of the field
-			$field_str   = get_post_meta( $postID_int, self::$typeTb_str, true );
-			$field_arr   = explode( '_', $field_str );
-			// get the table name						
-			$post_arr 	 = get_post( $field_arr[ 1 ], ARRAY_A );
-			$tb_str		 = $post_arr['post_name'];
-
-			$db_cla      = new panda_pods_repeater_field_db();
-			$tables_arr  = $db_cla->update_columns_fn( $tb_str );			
-
-		} else {
-			// if the field is no longer a Pods Table As Repeater Field, delete its panda repeater field postmeta
-			//delete_post_meta( $postID_int, self::$typeTb_str );			
-		}*/
 	}
 
 	/**
 	 * save tables
+	 * @param integer $type_int 0: table_num 1 : pod_table 2 : table
 	 */
-	 function pods_tables_fn(){
+	 function pods_tables_fn( $type_int = 0 ){
 		 
 		global $wpdb, $table_prefix, $current_user;
 		
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
-		
+			
 		$podsTbs_arr = array();
 		if( is_array( $tables_arr ) ){
 			foreach( $tables_arr as $tb_str => $tbv_arr ){
 
 				if( $tbv_arr['type'] != 'wp' ){
 					//$tb_str 				= substr( $tb_str, 5 );
-					$podsTbs_arr[ $tb_str ] = $tbv_arr['pod'];						
+					if( $type_int == 0 ){
+						$podsTbs_arr[ $tb_str ] = $tbv_arr['pod'];						
+					} 
+					if( $type_int == 1 ){
+						$podsTbs_arr[ 'pod_' . $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					}
+					if( $type_int == 2 ){
+						$podsTbs_arr[ $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					}					
 				}				
 			}
 		}
 		
 		self::$tbs_arr = $tables_arr;
-				
+			
+
 		return $podsTbs_arr;			 
 	 }
 
@@ -970,8 +990,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		//if( $update_bln && isset( $_POST[ self::$input_str ] ) ){
 			foreach( $_POST as $k_str => $v_str ){
 				if( strpos( $k_str, 'pods_meta_' ) === 0 ){
-					$target_arr 	= explode( '_', $v_str );
-					
+					$target_arr 	= explode( '_', $v_str );					
 					
 					if( $target_arr[ count( $target_arr ) - 1 ] == 'pandarf' ){
 						

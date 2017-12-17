@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Description: If you are using Pods Framework for your post types and data storage, you may want a repeater field. Panda Pods Repeater Field offers you an solution. It takes the advantage of Pods table storage, so you don't need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.1.9
+Version: 1.2.0
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda
@@ -16,12 +16,12 @@ if ( !defined( 'ABSPATH' ) ) exit;
 /**
  * Define constants
  *
- * @since 1.0.1
+ * @since 1.0.0
  */
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.1.9' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.2.0' );
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -32,8 +32,7 @@ define( 'PANDA_PODS_REPEATER_VERSION', '1.1.9' );
 class Panda_Pods_Repeater_Field {
 
 	var $menuTitle_str 		= 'Panda Pods Repeater Field';
-		
-	
+			
 	const type_str	   		= 'pandarepeaterfield';
 	/**
 	 * Constructor for the Panda_Pods_Repeater_Field class
@@ -566,6 +565,54 @@ function panda_repeater_admin_notice_pods_min_version_fail() {
 
 
 }
+
+//add_filter('pods_packages_export', 'pprf_pods_migrate_export_fn');
+/**
+ * update the pprf values for export
+ */
+/*function pprf_pods_migrate_export_fn( $export_arr, $params_arr ){
+	global $wpdb;
+	if ( !class_exists( 'Pods_Migrate_Packages' ) ){
+    	return;
+	}
+	if( isset( $export_arr['pods'] ) ){
+		foreach( $export_arr['pods'] as $k_str => $pod_arr ){
+			if( isset( $pod_arr['fields'] ) ){
+				foreach( $pod_arr['fields'] as $kk_str => $field_arr ){
+					if( $field_arr['type'] == 'pandarepeaterfield' && isset(  $field_arr['pandarepeaterfield_table'] ) ){
+						$podID_arr 	= explode( '_', $field_arr['pandarepeaterfield_table'] ); 
+						if( isset( $podID_arr[1] ) && is_numeric( $podID_arr[1] ) ){
+							// get the pod name
+							$post_obj = get_post( $podID_arr[1] );
+							if( $post_obj ){
+								$export_arr['pods'][ $k_str ]['fields'][ $kk_str ]['pandarepeaterfield_table']	= $podID_arr[0] . '_' . $podID_arr[1] . '_' . $post_obj->post_name;
+							}						
+						}
+					}
+				}
+			}
+		}
+	}
+	return $export_arr;
+}*/
+
+//add_filter('pods_packages_import', 'pprf_pods_migrate_import_fn');
+/**
+ * update the pprf values for import
+ */
+/*function pprf_pods_migrate_import_fn( $found_arr, $data_arr, $replace_bln ){
+	global $wpdb;
+	if ( !class_exists( 'Pods_Migrate_Packages' ) ){
+    	return;
+	}
+	echo '<pre>';
+	print_r( $found_arr );
+	print_r( $data_arr );
+	print_r( $replace_bln );
+	echo '</pre>';
+	exit();
+	return  $found_bln;
+}*/
 /**
  * pandarf_pods_fn extension of pods( $table, $params )
  *
@@ -922,35 +969,41 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 	global $wpdb, $table_prefix;
 	$repeater_arr = is_pandarf_fn( $params_arr->name );	
 	if( !is_admin() && $repeater_arr ){
-	
-		$cPod_arr	=	explode( '_',  $pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'] );
-		if( count( $cPod_arr ) == 2 ){
+		$savedtb_str	=	$pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'];
+		$items_arr		=	array();
+		$cPod_arr		=	explode( '_',  $savedtb_str );
+		if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){
 			// find the repeater table pod name
 			$query_str = $wpdb->prepare( 'SELECT `post_name` FROM `' . $table_prefix . 'posts` WHERE `ID` = %d LIMIT 0, 1', array( $cPod_arr[ 1 ] ) ) ;
 			
 			$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
-				
-			if( count( $items_arr ) == 1 ){
-				
-				$attrs_arr	= apply_filters( 'pandarf_pods_field_attrs', array(), $value_ukn, $row_arr, $params_arr, $pods_obj  );
-				$fields_arr = array( 
-									'child_pod_name' 		=> $items_arr[0]['post_name'] , 
-									'parent_pod_id' 		=> $repeater_arr['post_parent'], 
-									'parent_pod_post_id' 	=> $pods_obj->id, 
-									'parent_pod_field_id' 	=> $repeater_arr['ID']
-									);
-				$data_arr	= pandarf_items_fn( 
-												$fields_arr ,
-												$attrs_arr,
-												0
-											  );	
-				// check if it is a repeater field, if yes, return data							  			
-				$data_arr 	= pandarf_data_fn( $data_arr, $items_arr[0]['post_name'] );
-				
-				return 	$data_arr;								  			
-			}
+		} else {
+			$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $table_prefix . 'posts` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+							
+			$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
 
+		}		
+		if( count( $items_arr ) == 1 ){
+			
+			$attrs_arr	= apply_filters( 'pandarf_pods_field_attrs', array(), $value_ukn, $row_arr, $params_arr, $pods_obj  );
+			$fields_arr = array( 
+								'child_pod_name' 		=> $items_arr[0]['post_name'] , 
+								'parent_pod_id' 		=> $repeater_arr['post_parent'], 
+								'parent_pod_post_id' 	=> $pods_obj->id, 
+								'parent_pod_field_id' 	=> $repeater_arr['ID']
+								);
+			$data_arr	= pandarf_items_fn( 
+											$fields_arr ,
+											$attrs_arr,
+											0
+										  );	
+			// check if it is a repeater field, if yes, return data							  			
+			$data_arr 	= pandarf_data_fn( $data_arr, $items_arr[0]['post_name'] );
+			
+			return 	$data_arr;								  			
 		}
+
+		
 	}
 	return $value_ukn;								  
 }
@@ -984,38 +1037,47 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 		$pods_obj = pods( $parentPod_str ) ;
 		// go through each repeater field and attach data
 		foreach( $pandarf_arr as $k_str => $v_ukn ){
-			if( $pods_obj && isset( $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] )	){
-				$cPod_arr	=	explode( '_',  $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] );
-				if( count( $cPod_arr ) == 2 ){
+			if( $pods_obj && isset( $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] )){
+				$savedtb_str	=	$pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'];
+				$items_arr		=	array();
+				$cPod_arr		=	explode( '_',  $savedtb_str );
+				// if saved as pod_num, version < 1.2.0
+				if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){
 					// find the repeater table pod name
 					$query_str = $wpdb->prepare( 'SELECT `post_name` FROM `' . $table_prefix . 'posts` WHERE `ID` = %d LIMIT 0, 1', array( $cPod_arr[ 1 ] ) ) ;
 					
 					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
+				} else {
+					$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $table_prefix . 'posts` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+									
+					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
+
+				}		
+				if( count( $items_arr ) == 1 ){
+					for( $i = 0; $i < count( $data_arr ); $i ++ ){
+						$attrs_arr	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parentPod_str  );
+						$fields_arr	= array( 
+											'child_pod_name' 		=> $items_arr[0]['post_name'] , 
+											'parent_pod_id' 		=> $pandarf_arr[ $k_str ]['post_parent'], 
+											'parent_pod_post_id' 	=> $data_arr[ $i ]['id'], 
+											'parent_pod_field_id' 	=> $pandarf_arr[ $k_str ]['ID']
+											) ;
+						$cData_arr	= pandarf_items_fn( 
+														$fields_arr,
+														$attrs_arr,
+														0
+													  );	
+										  
+						// check if it is a repeater field, if yes, return data							  			
+						$cData_arr 	= pandarf_data_fn( $cData_arr, $items_arr[0]['post_name'] );
 						
-					if( count( $items_arr ) == 1 ){
-						for( $i = 0; $i < count( $data_arr ); $i ++ ){
-							$attrs_arr	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parentPod_str  );
-							$fields_arr	= array( 
-												'child_pod_name' 		=> $items_arr[0]['post_name'] , 
-												'parent_pod_id' 		=> $pandarf_arr[ $k_str ]['post_parent'], 
-												'parent_pod_post_id' 	=> $data_arr[ $i ]['id'], 
-												'parent_pod_field_id' 	=> $pandarf_arr[ $k_str ]['ID']
-												) ;
-							$cData_arr	= pandarf_items_fn( 
-															$fields_arr,
-															$attrs_arr,
-															0
-														  );	
-											  
-							// check if it is a repeater field, if yes, return data							  			
-							$cData_arr 	= pandarf_data_fn( $cData_arr, $items_arr[0]['post_name'] );
-							
-							$data_arr[ $i ][ $k_str ]	=	$cData_arr;			
-															  
-						}
+						$data_arr[ $i ][ $k_str ]	=	$cData_arr;			
+														  
 					}
+				}
 		
-				}				
+				
+				
 			}
 		}
 	}
