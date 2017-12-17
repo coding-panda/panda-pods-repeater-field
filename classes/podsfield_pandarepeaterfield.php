@@ -919,14 +919,27 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	public function field_table_fields_fn( $pod_arr, $obj ) {
 		
 		foreach( $pod_arr['fields'] as $field_arr ){
-			if( $field_arr['type'] == self::$type ){ 				
-				
-				$podTbs_arr = $this->pods_tables_fn() ;
-				
-				// example $podTbs_arr[ $field_arr['pandarepeaterfield_table'] ] ->  $podTbs_arr['pod_16']
-				if( isset( $field_arr['pandarepeaterfield_table'] ) && isset( $podTbs_arr[ $field_arr['pandarepeaterfield_table'] ] ) ){
-					$db_cla      = new panda_pods_repeater_field_db();
-					$tables_arr  = $db_cla->update_columns_fn( $podTbs_arr[ $field_arr['pandarepeaterfield_table'] ] );	
+			if( $field_arr['type'] == self::$type && isset( $field_arr['pandarepeaterfield_table'] ) ){ 				
+				$db_cla      	= 	new panda_pods_repeater_field_db();
+				$savedtb_str	=	$field_arr['pandarepeaterfield_table'];
+				$cPod_arr		=	explode( '_', $savedtb_str );
+				// if saved as pod_num, version < 1.2.0
+				if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){				
+					$podTbs_arr = $this->pods_tables_fn() ;
+
+					// example $podTbs_arr[ $field_arr['pandarepeaterfield_table'] ] ->  $podTbs_arr['pod_16']
+					if( isset( $podTbs_arr[ $savedtb_str ] ) ){					
+						
+						$tables_arr  = $db_cla->update_columns_fn( $podTbs_arr[ $savedtb_str ] );	
+						
+					}
+				} else {
+					$podTbs_arr = $this->pods_tables_fn( 2 ) ;
+
+					if( in_array( $savedtb_str, $podTbs_arr ) ){						
+
+						$tables_arr  = $db_cla->update_columns_fn( $savedtb_str );	
+					}					
 				}
 			}
 			
