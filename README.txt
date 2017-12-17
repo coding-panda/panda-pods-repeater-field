@@ -193,7 +193,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * add: Now items can be moved to trash and restored from trash
 
 = 1.2.0 - 17nd December 2017 =
-* change: Now saving table post_name instead of ID to solve the problem of migration
+* change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
 
 == Upgrade Notice ==
 
@@ -259,4 +259,4 @@ Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn(
 Add: Now items can be moved to trash and restored from trash.
 
 = 1.2.0 =
-Change: Now saving table post_name instead of ID to solve the problem of migration
+Change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
