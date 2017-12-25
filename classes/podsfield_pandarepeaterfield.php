@@ -303,11 +303,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 			} else {
 				// table saved as since 1.2.0
-				$query_str = $wpdb->prepare( 'SELECT `ID` FROM `' . $table_prefix . 'posts` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+				$query_str = $wpdb->prepare( 'SELECT * FROM `' . $table_prefix . 'posts` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
 							
 				$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
 
 				if( count( $items_arr ) ){
+					$post_arr 		= $items_arr[0];
 					$tb_str 		= $savedtb_str;
 					$savedtb_int	= $items_arr[0]['ID'];	
 				} else {

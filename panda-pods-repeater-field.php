@@ -967,7 +967,10 @@ add_filter( 'pods_pods_field', 'pandarf_pods_field_fn', 10, 4 );
 
 function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 	global $wpdb, $table_prefix;
-	$repeater_arr = is_pandarf_fn( $params_arr->name );	
+/*	echo '<pre>';
+	print_r( $pods_obj->pod_id );
+	echo '</pre>';*/
+	$repeater_arr = is_pandarf_fn( $params_arr->name, $pods_obj->pod_id );	
 	if( !is_admin() && $repeater_arr ){
 		$savedtb_str	=	$pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'];
 		$items_arr		=	array();
@@ -1023,10 +1026,14 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 function pandarf_data_fn( $data_arr, $parentPod_str ){
 	global $wpdb, $table_prefix;
 	
+	$pods_obj = pods( $parentPod_str ) ;
+/*	echo '<pre>';
+	print_r( $pods_obj->pod_id );
+	echo '</pre>';	*/
 	$pandarf_arr = array();
 	if( count( $data_arr ) > 0 ){
 		foreach( $data_arr[0] as $k_str => $v_ukn ){
-			$repeater_arr = is_pandarf_fn( $k_str );
+			$repeater_arr = is_pandarf_fn( $k_str,  $pods_obj->pod_id );
 			if( $repeater_arr ) {
 				$pandarf_arr[ $k_str ] = $repeater_arr;
 			}
@@ -1034,7 +1041,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 	}	
 	
 	if( count( $pandarf_arr ) > 0 ){
-		$pods_obj = pods( $parentPod_str ) ;
+		
 		// go through each repeater field and attach data
 		foreach( $pandarf_arr as $k_str => $v_ukn ){
 			if( $pods_obj && isset( $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] )){
@@ -1086,16 +1093,23 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 /**
  * store all repeater fields
  * @param string $fieldName_str pods field name	 
+ * @param integer $parentID_int parent post id	 
  */
-function is_pandarf_fn( $fieldName_str ){
+function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	global $wpdb, $table_prefix;
-	
+	$where_str	=	'';
+	if( is_numeric( $parentID_int ) && $parentID_int != 0 ){
+		$where_str	=	' AND ps_tb.`post_parent` = ' . intval( $parentID_int );
+	}
 	$query_str = $wpdb->prepare( 'SELECT ps_tb.ID, ps_tb.post_name, ps_tb.post_title, ps_tb.post_author, ps_tb.post_parent 
 
 									 FROM `' . $table_prefix . 'posts` AS ps_tb
 
 									 INNER JOIN `' . $table_prefix . 'postmeta` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type" AND pm_tb.`meta_value` = "pandarepeaterfield"				  
-									 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" LIMIT 0, 1' , array( $fieldName_str ) );		
+									 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" ' . $where_str . ' LIMIT 0, 1' , array( $fieldName_str ) );		
+	//if( 'simpods_normal_contents' == $fieldName_str ){
+	//	echo $query_str;
+	//}
 	
 	$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
 	if( count( $items_arr ) ){
