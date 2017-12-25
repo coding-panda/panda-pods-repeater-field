@@ -194,6 +194,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 
 = 1.2.0 - 17nd December 2017 =
 * change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
+* debug: fixed the problem that when using the same field name in two tables, it didn't bring back the right data.
 
 == Upgrade Notice ==
 
@@ -260,3 +261,4 @@ Add: Now items can be moved to trash and restored from trash.
 
 = 1.2.0 =
 Change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
+Debug: fixed the problem that when using the same field name in two tables, it didn't bring back the right data.
