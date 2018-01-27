@@ -409,7 +409,7 @@ jQuery(document).ready( function($) {
 			iframe_str 	= 'panda-repeater-add-new-' + ids_str;			
 		}	
 		if( typeof document.getElementById( iframe_str ) != 'undefined' ){
-			if( typeof document.getElementById( iframe_str ).contentWindow.pprf_resize_fn() != 'undefined' ){
+			if( typeof document.getElementById( iframe_str ).contentWindow.pprf_resize_fn != 'undefined' ){
 				document.getElementById( iframe_str ).contentWindow.pprf_resize_fn();
 			}
 		}
