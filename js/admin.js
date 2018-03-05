@@ -52,7 +52,7 @@ var parentHei_int = jQuery('html').height();
 function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, parentName ){
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( poditemid ) ) {
 		
-		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_load_newly_added_fn' };
+		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_load_newly_added_fn', 'security' : ajax_script.nonce };
 	
 		var data_obj  = para_obj;
 		
@@ -139,7 +139,7 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 	
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( itemid ) && jQuery.isNumeric( poditemid )  ) {
 		
-		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_delete_item_fn', 'trash' : trashed };
+		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_delete_item_fn', 'trash' : trashed, 'security' : ajax_script.nonce };
 		var info_str	=	'';
 		if( trashed == 0 ){
 			info_str	=	' It will be restored.';
@@ -311,7 +311,8 @@ jQuery(document).ready( function($) {
 		//console.log(theOrder_arr);
 		var data = {
 			action:   'admin_pprf_update_order_fn',
-			order: 	  theOrder_arr
+			order: 	  theOrder_arr, 
+			security : ajax_script.nonce
 		};
 
 		$.post(

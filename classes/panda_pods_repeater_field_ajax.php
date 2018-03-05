@@ -39,6 +39,11 @@ class Panda_Pods_Repeater_Field_Ajax {
 		if( $_POST['action'] != 'admin_load_newly_added_fn' ){
 			die();
 		}		
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+
+		     die(); 
+
+		} 		
 		global $wpdb, $table_prefix, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
@@ -95,7 +100,12 @@ class Panda_Pods_Repeater_Field_Ajax {
 	public function admin_delete_item_fn(){
 		if( $_POST['action'] != 'admin_delete_item_fn' ){
 			die();
-		}			
+		}	
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+
+		     die(); 
+
+		} 				
 		global $wpdb, $table_prefix, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
@@ -164,6 +174,11 @@ class Panda_Pods_Repeater_Field_Ajax {
 		if( $_POST['action'] != 'admin_pprf_update_order_fn' ){
 			die();
 		}			
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+
+		     die(); 
+
+		} 		
 		global $wpdb, $table_prefix, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
