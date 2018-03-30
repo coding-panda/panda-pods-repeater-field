@@ -69,7 +69,7 @@ class Panda_Pods_Repeater_Field {
 			// ajax
 			$pprfAjax_cla 			= new Panda_Pods_Repeater_Field_Ajax();
 			//add_action('admin_menu',  array( $ssefProfile_cla, 'add_admin_menu_fn' ), 15);	
-									
+							
 			foreach( PodsField_Pandarepeaterfield::$actTbs_arr as $tb_str => $tbn_str ){
 				// after pod saved
 				add_action('pods_api_post_save_pod_item_' . $tbn_str , array( $tableAsRepeater_cla, 'pods_post_save_fn' ), 10, 3);
@@ -94,7 +94,7 @@ class Panda_Pods_Repeater_Field {
 		 * Scripts/ Styles
 		 */
 		// Loads frontend scripts and styles
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		//
 
 		// Loads admin scripts and styles
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -187,35 +187,7 @@ class Panda_Pods_Repeater_Field {
 		
 	}
 
-	/**
-	 * Enqueue front-end scripts
-	 *
-	 * Allows plugin assets to be loaded.
-	 *
-	 * @since 1.0.0
-	 */
-	public function enqueue_scripts() {
 
-		/**
-		 * All styles goes here
-		 */
-		wp_enqueue_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ) );
-
-		/**
-		 * All scripts goes here
-		 */
-		wp_enqueue_script( 'panda-pods-repeater-scripts', plugins_url( 'js/front-end.js', __FILE__ ), array( ), false, true );
-
-
-		/**
-		 * Example for setting up text strings from Javascript files for localization
-		 *
-		 * Uncomment line below and replace with proper localization variables.
-		 */
-		// $translation_array = array( 'some_string' => __( 'Some string to translate', 'panda-pods-repeater' ), 'a_value' => '10' );
-		// wp_localize_script( 'panda-pods-repeater-scripts', 'podsExtend', $translation_array ) );
-		
-	}
 
 	/**
 	 * Enqueue admin scripts
@@ -1117,4 +1089,56 @@ function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	}
 	return false;
 	
-}					
+}				
+
+add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
+/**
+ * Enqueue front-end scripts
+ *
+ * Allows plugin assets to be loaded.
+ *
+ * @since 1.0.0
+ */
+function pprf_enqueue_scripts_fn() {
+
+	/**
+	 * All styles goes here
+	 */
+	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ), array(), 1.1 );
+	wp_enqueue_style( 'panda-pods-repeater-styles');
+
+	/**
+	 * All scripts goes here
+	 */
+	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/front-end.js', __FILE__ ), array( ), false, true );
+	wp_enqueue_script( 'panda-pods-repeater-scripts' );
+
+	// prepare ajax
+	wp_localize_script( 
+		'panda-pods-repeater-scripts', 
+		'ajax_script', 
+		array(
+			'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+		 	'nonce' 	=> wp_create_nonce( 'panda-pods-repeater-field-nonce' ),
+		)
+	);	
+	$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+	wp_localize_script( 
+		'panda-pods-repeater-scripts', 
+		'PANDA_PODS_REPEATER_PAGE_URL', 
+		$adminUrl_str . '?page=panda-pods-repeater-field&'
+	);		
+	wp_localize_script( 
+		'panda-pods-repeater-scripts', 
+		'PANDA_PODS_REPEATER_URL', 
+		 PANDA_PODS_REPEATER_URL
+	);	
+	/**
+	 * Example for setting up text strings from Javascript files for localization
+	 *
+	 * Uncomment line below and replace with proper localization variables.
+	 */
+	// $translation_array = array( 'some_string' => __( 'Some string to translate', 'panda-pods-repeater' ), 'a_value' => '10' );
+	// wp_localize_script( 'panda-pods-repeater-scripts', 'podsExtend', $translation_array ) );
+	
+}

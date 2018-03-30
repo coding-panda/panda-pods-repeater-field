@@ -3,7 +3,7 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 4.9.2
+Tested up to: 4.9.4
 Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -198,6 +198,8 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 
 = 1.2.1 - 5th March 2018 =
 * change: Enhanced ajax security
+* add: added support for frontend pods form
+* fixed: newly added item could only be deleted, not trashed
 
 == Upgrade Notice ==
 
@@ -268,3 +270,5 @@ Debug: fixed the problem that when using the same field name in two tables, it d
 
 = 1.2.1 =
 Change: Enhanced ajax security
+Add: added support for frontend pods form
+Fixed: newly added item could only be deleted, not trashed

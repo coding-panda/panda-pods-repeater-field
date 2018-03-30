@@ -1,11 +1,11 @@
 
 
-function resizeIframe(obj) {
+function pprf_resizeIframe_fn(obj) {
 	obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
 
 }
 
-function updateIframeSize( x, y ){
+function pprf_updateIframeSize_fn( x, y ){
 	
 	if ( x != '') {
 		// 4px is the small gap at the bottom
@@ -28,7 +28,7 @@ function pprf_updateSize_fn( x ){
 
 	}
 }
-function updateParentIframe_fn( x ){
+function pprf_updateParentIframe_fn( x ){
 	
 	if ( x != '') {
 		//console.log( x );
@@ -45,14 +45,14 @@ function updateParentIframe_fn( x ){
 		//}
 	}
 }
-var parentHei_int = jQuery('html').height();
+var pprfParentHei_int = jQuery('html').height();
 /**
  * insert a new row to the page after adding a new item
  */
 function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, parentName ){
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( poditemid ) ) {
 		
-		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_load_newly_added_fn', 'security' : ajax_script.nonce };
+		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_load_newly_added_fn', 'security' : ajax_script.nonce };
 	
 		var data_obj  = para_obj;
 		
@@ -63,7 +63,7 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 			function( return_str ){	
 				jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + '-' + 'loader' ).addClass('hidden');	
 				//jQuery('#panda-repeater-save-' + cpodid + '-' + return_arr['id'] + '-' + poditemid + '-' + 'loader' ).parent().children('.pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + '/images/save-icon.png');
-				
+				var delAct_str = jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + '-' + 'add-new .pprf-trash-btn' ).data('target');	
 				
 				var return_arr = jQuery.parseJSON( return_str );
 				//console.log( return_arr );
@@ -77,7 +77,7 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 											'<div class="row pprf-row  w100 alignleft">' + 
 												'<div class="w100 alignleft" id="pprf-row-brief-' + ids_str + '">' +
 													'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' "><strong>' + parentName + ' ID:</strong> ' + response_str + ' - ' + title_str + '</div>' +
-													'<div class="button pprf-right-col center pprf-trash-btn pprf-btn-not-trashed" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
+													'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
 														'<span class="dashicons dashicons-trash pdt5 pdl5 pdr5 mgb0 "></span>' +
 														'<div id="panda-repeater-trash-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
 															'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>' +
@@ -125,7 +125,7 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 				}
 				// if add a new one, activeate the live items tab
 				jQuery( '#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab .dashicons-portfolio').click();
-				odd_even_color_fn( cpodid + '-' + poditemid );
+				pprf_odd_even_color_fn( cpodid + '-' + poditemid );
 			}
 		);	
 	}
@@ -139,7 +139,7 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 	
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( itemid ) && jQuery.isNumeric( poditemid )  ) {
 		
-		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_delete_item_fn', 'trash' : trashed, 'security' : ajax_script.nonce };
+		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_delete_item_fn', 'trash' : trashed, 'security' : ajax_script.nonce };
 		var info_str	=	'';
 		if( trashed == 0 ){
 			info_str	=	' It will be restored.';
@@ -232,7 +232,7 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 							}
 						}
 						//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
-						 odd_even_color_fn( cpodid + '-' + poditemid )
+						 pprf_odd_even_color_fn( cpodid + '-' + poditemid )
 					}
 					
 				}
@@ -262,7 +262,7 @@ jQuery('.pprf-save-redorder-btn').click( function(){
  * reset colours for each row
  */
 
-function odd_even_color_fn( ids_str ){
+function pprf_odd_even_color_fn( ids_str ){
 
 	jQuery( '#panda-repeater-fields-' + ids_str + ' .pprf-left-col').removeClass('pprf-purple-bg');
 	jQuery( '#panda-repeater-fields-' + ids_str + ' .pprf-left-col').removeClass('pprf-white-bg');
@@ -488,7 +488,7 @@ jQuery(document).ready( function($) {
 	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-not-trashed').css('display', 'none');
 	 	$( this ).parent().children('.active').removeClass('active');
 	 	$( this ).addClass('active');
-	 	odd_even_color_fn( $( this).data('target') );
+	 	pprf_odd_even_color_fn( $( this).data('target') );
 
 	 })
 	 $('.pprf-tab .dashicons-portfolio').parent().click( function(){
@@ -496,7 +496,7 @@ jQuery(document).ready( function($) {
 	 	$( '#panda-repeater-fields-' + $( this).data('target') + ' .pprf-not-trashed').css('display', 'block');
 	 	$( this ).parent().children('.active').removeClass('active');
 	 	$( this ).addClass('active');	 	
-	 	odd_even_color_fn( $( this).data('target') );
+	 	pprf_odd_even_color_fn( $( this).data('target') );
 	 })	 
 });
 
