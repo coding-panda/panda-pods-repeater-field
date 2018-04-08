@@ -1110,7 +1110,9 @@ function pprf_enqueue_scripts_fn() {
 	/**
 	 * All scripts goes here
 	 */
+
 	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( ), false, true );
+
 	wp_enqueue_script( 'panda-pods-repeater-scripts' );
 
 	// prepare ajax

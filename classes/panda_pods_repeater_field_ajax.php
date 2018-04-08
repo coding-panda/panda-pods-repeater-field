@@ -23,6 +23,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 			add_action( 'wp_ajax_admin_pprf_delete_item_fn', 			array( $this, 'admin_pprf_delete_item_fn') );	
 			add_action( 'wp_ajax_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
 			// frontend
+
 			//add_action( 'wp_ajax_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
 			//add_action( 'wp_ajax_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
 			//add_action( 'wp_ajax_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );					
@@ -30,6 +31,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 /*		add_action( 'wp_ajax_nopriv_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );		*/		
+
 	}
 	
     protected function filters_fn(){

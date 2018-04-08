@@ -1,7 +1,6 @@
 /**
  * not in use
  **/
-
 function pprf_resizeIframe_fn(obj) {
 	obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
 
