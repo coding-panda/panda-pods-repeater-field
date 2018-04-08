@@ -94,6 +94,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		
 	}
 
+
 	/**
 	 * Add options and set defaults for field type, shows in admin area
 	 *
@@ -276,8 +277,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			$form_field_type = PodsForm::$field_type;
 			//echo $name . ' ' . $id ;
 			
-			if ( is_array( $value ) )
+			/*if ( is_array( $value ) ){					
 				$value = implode( ' ', $value );
+			}*/
 			
 			$savedtb_str = trim( $options[ self::$typeTb_str ] );
 			
@@ -419,6 +421,15 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 				$trash_int  	= 0;
 				$notTrash_int  	= 0;
+				$traBtn_str  	= 'pprf-btn-not-trashed';	
+				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
+					if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
+						$traBtn_str  	= 	'pprf-btn-trashed';
+					} 
+				}
+				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 0 ){
+					$traBtn_str  	= 	'pprf-btn-delete';
+				}				
 				//echo 	'<div class="pprf-redorder-list-wrap">';
 				echo 		'<ul class="pprf-redorder-list">';
 				if ( is_array( $rows_arr ) ) {
@@ -454,7 +465,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$title_str   = apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
 						$title_str	 = esc_attr( $title_str );
 						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '" style="' . $css_str . '">';						
-						echo 	'<div class="row pprf-row alignleft ">
+						echo 	'<div class="pprf-row alignleft ">
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . $bg_str . '"><strong>' . get_the_title( $options['id'] ) . ' ID:</strong> ' . $row_obj['id'] . ' - ' . $title_str . '</div>
 										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
@@ -490,7 +501,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$bg_str 	 = $bg_str == 'pprf-white-bg' ? 'pprf-purple-bg' : 'pprf-white-bg';
 				echo '</div>';
 				echo '<div id="next-bg" data-bg="' . $bg_str . '"></div>';	
-				echo '<div id="panda-repeater-fields-' . $savedtb_int . '-' . $options['id'] . '-loader" class="center hidden w100 mgb10">';
+				echo '<div id="panda-repeater-fields-' . $savedtb_int . '-' . $options['id'] . '-loader" class="center hidden w100 mgb10 alignleft">';
 				echo 	'<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class=""/>';
 				echo '</div>';
 				// depreciated, don't show if the parent post is not created
@@ -507,10 +518,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$hidden_str	=	'hidden';	
 				}				
 				$addNew_str		= 
-				'<div class="row pprf-row alignleft mgb8 ' . $hidden_str . '" id="' . $prfID_str . '-add-new">
+				'<div class="pprf-row alignleft mgb8 ' . $hidden_str . '" id="' . $prfID_str . '-add-new">
 					<div class="w100 alignleft">
 						<div class="alignleft pd8 pprf-left-col pprf-grey-bg "><strong>Add New ' . get_the_title( $options['id'] ) . '</strong></div>
-						<div class="button pprf-right-col center pprf-trash-btn" >
+						<div class="button pprf-right-col center pprf-trash-btn" data-target="' . $traBtn_str . '" >
 						</div>									
 
 						<div class="button pprf-right-col center pprf-save-btn pprf-save-new-btn alignright " data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >

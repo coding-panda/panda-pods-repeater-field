@@ -12,16 +12,24 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 	function __construct() {
 		$this->actions_fn();
-		$this->filters_fn();	
-		$this->enqueue_fn();			
+		//$this->filters_fn();	
+		//$this->enqueue_fn();			
+		
 	}
     protected function actions_fn(){			
 		// login user only, for everyone, use wp_ajax_nopriv_ example: add_action( 'wp_ajax_function-name', 			array( $this, 'function-name') );				
 		if( is_user_logged_in() ){
-			add_action( 'wp_ajax_admin_load_newly_added_fn', 			array( $this, 'admin_load_newly_added_fn') );	
-			add_action( 'wp_ajax_admin_delete_item_fn', 				array( $this, 'admin_delete_item_fn') );	
+			add_action( 'wp_ajax_admin_pprf_load_newly_added_fn', 		array( $this, 'admin_pprf_load_newly_added_fn') );	
+			add_action( 'wp_ajax_admin_pprf_delete_item_fn', 			array( $this, 'admin_pprf_delete_item_fn') );	
 			add_action( 'wp_ajax_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
-		}			
+			// frontend
+			//add_action( 'wp_ajax_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
+			//add_action( 'wp_ajax_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
+			//add_action( 'wp_ajax_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );					
+		}	
+/*		add_action( 'wp_ajax_nopriv_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
+		add_action( 'wp_ajax_nopriv_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
+		add_action( 'wp_ajax_nopriv_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );		*/		
 	}
 	
     protected function filters_fn(){
@@ -34,11 +42,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 	/**
 	 * find out the last inserted id
 	 */
-	public function admin_load_newly_added_fn(){
-		
-		if( $_POST['action'] != 'admin_load_newly_added_fn' ){
-			die();
-		}		
+	public function pprf_load_newly_added_fn(){
+	
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 
 		     die(); 
@@ -94,17 +99,27 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		die();
 	}
+	public function admin_pprf_load_newly_added_fn(){
+		
+		if( $_POST['action'] != 'admin_pprf_load_newly_added_fn' ){
+			die();
+		}
+		$this->pprf_load_newly_added_fn();
+	}	
+	public function front_pprf_load_newly_added_fn(){
+		
+		if( $_POST['action'] != 'front_pprf_load_newly_added_fn' ){
+			die();
+		}
+		$this->pprf_load_newly_added_fn();
+	}		
 	/**
 	 * delete item
 	 */
-	public function admin_delete_item_fn(){
-		if( $_POST['action'] != 'admin_delete_item_fn' ){
-			die();
-		}	
+	public function pprf_delete_item_fn(){	
+
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
-
 		     die(); 
-
 		} 				
 		global $wpdb, $table_prefix, $current_user;
 
@@ -167,13 +182,25 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		die();
 	}
+	public function admin_pprf_delete_item_fn(){
+		if( $_POST['action'] != 'admin_pprf_delete_item_fn' ){
+			die();
+		}			
+		$this->pprf_delete_item_fn();
+		
+	}
+	public function front_pprf_delete_item_fn(){
+		if( $_POST['action'] != 'front_pprf_delete_item_fn' ){
+			die();
+		}			
+		$this->pprf_delete_item_fn();
+		
+	}	
 	/**
 	 * update order
 	 */
-	public function admin_pprf_update_order_fn(){
-		if( $_POST['action'] != 'admin_pprf_update_order_fn' ){
-			die();
-		}			
+	public function pprf_update_order_fn(){
+	
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 
 		     die(); 
@@ -208,4 +235,16 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		die();
 	}
+	public function admin_pprf_update_order_fn(){
+		if( $_POST['action'] != 'admin_pprf_update_order_fn' ){
+			die();
+		}	
+		$this->pprf_update_order_fn();
+	}	
+	public function front_pprf_update_order_fn(){
+		if( $_POST['action'] != 'front_pprf_update_order_fn' ){
+			die();
+		}	
+		$this->pprf_update_order_fn();
+	}		
 }

@@ -132,7 +132,7 @@ var pprf_loadedResized_bln = false;
 // height before each click, 60 is for the padding top and bottom
 var pprf_orgHei_int = jQuery('html #wpbody-content').height() + 60;
 // height on load, 60 is for the padding top and bottom
-var orgHei_int      = jQuery('html #wpbody-content').height() + 60;
+var pprf_test_orgHei_int      = jQuery('html #wpbody-content').height() + 60;
 function pprf_resize_fn( hei_int ) { 
 	
 	if( typeof hei_int == 'undefined' ){
@@ -141,7 +141,7 @@ function pprf_resize_fn( hei_int ) {
 		pprf_orgHei_int = hei_int;
 	}
 	pprf_update_parent_fn();
-	//parent.parentHei_int;
+	//parent.pprfParentHei_int;
 }
 
 function pprf_update_parent_fn() { 
@@ -159,8 +159,8 @@ function pprf_update_parent_fn() {
 		}		
 	}
 	
-	if( typeof parent.updateIframeSize == 'function' ){
-		parent.updateIframeSize('<?=$iframeID_int ?>', hei_int);	
+	if( typeof parent.pprf_updateIframeSize_fn == 'function' ){
+		parent.pprf_updateIframeSize_fn('<?=$iframeID_int ?>', hei_int);	
 	}
 	<?php
 	if( $piframeID_int != '' ){
