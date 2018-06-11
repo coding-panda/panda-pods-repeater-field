@@ -41,9 +41,7 @@
 	
 }
 .center{	
-
 	text-align:center;
-
 }
 
 #toplevel_page_panda-pods-repeater-field{
@@ -88,6 +86,7 @@
 	display:none;	
 
 }
+
 .pprf-row .button{
 	background: none !important;
 	border: none !important;
@@ -95,6 +94,10 @@
 	float:left;
 	height: 30px;	
 }
+.pprf-text-right{
+	text-align: right;
+}
+
 .button.pprf-save-new-btn{
 	margin-right:5px;
 }
@@ -176,4 +179,26 @@
 	background-color: #0073AA;
 	color: #fff;
 	opacity: 1;
+}
+.pprf-load-more-wrap{
+	line-height: 28px;
+}
+.pprf-input{
+	width: 40px;
+}
+.pprf-input,
+.pprf-select{	
+	border: 1px solid #e8e8e8;
+	border-radius: 5px;
+} 
+.pprf-load-more-btn{
+	padding-left:5px;
+	padding-right:5px;
+	border: 1px solid #e8e8e8;
+	border-radius: 5px;	
+	cursor: pointer;
+	background: #F0F5FF;
+}
+.pprf-load-more-btn:hover{
+	background: #F1F1F1;
 }

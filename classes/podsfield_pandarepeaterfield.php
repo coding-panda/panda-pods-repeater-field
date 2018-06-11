@@ -150,18 +150,33 @@ class PodsField_Pandarepeaterfield extends PodsField {
             ),		
             self::$type . '_entry_limit' => array(
                 'label' 	 => __( 'Entry Limit', self::$input_str ),
-                'default' 	 => '0',
+                'default' 	 => 0,
                 'type' 		 => 'number',
                 'data' 		 => '',
 				'dependency' => true
             ),	
+            self::$type . '_enable_load_more' => array(
+                'label' 	 => __( 'Enable Load More', self::$input_str ),
+                'depends-on' => array( self::$type . '_entry_limit' => '0' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,
+				'dependency' => true				
+            ),            
+            self::$type . '_initial_amount' => array(
+                'label' 	 => __( 'Intial Amount', self::$input_str ),
+                'depends-on' => array( self::$type . '_enable_load_more' => 1 ),
+                'default' 	 => '10',
+                'data' 		 => '',							
+            ),            
             self::$type . '_enable_trash' => array(
                 'label' 	 => __( 'Enable Trash', self::$input_str ),
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,
 				'dependency' => true
-            ),	            						 
+            ),	       
+
 		);
 
 		return $options;
@@ -343,9 +358,16 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 				$rows_obj  = $pod_cla->data();*/
 				$limit_str	=	'';
+				$limit_bln	=	false;
 				if( isset( $options['pandarepeaterfield_entry_limit'] ) && is_numeric( $options['pandarepeaterfield_entry_limit'] ) &&  $options['pandarepeaterfield_entry_limit'] != 0 ){
 					$limit_str	=	'LIMIT 0, ' . intval( $options['pandarepeaterfield_entry_limit'] );	
+					$limit_bln	=	true;
+				} else {
+					if( isset( $options['pandarepeaterfield_initial_amount'] ) && is_numeric( $options['pandarepeaterfield_initial_amount'] ) ){
+						$limit_str	=	'LIMIT 0, ' . intval( $options['pandarepeaterfield_initial_amount'] );	
+					}
 				}
+				
 				// if it is a wordpress post type, join wp_posts table
 				$join_str  = '';
 				//print_r (self::$tbs_arr['pod_' . $savedtb_int ]);
@@ -363,6 +385,16 @@ class PodsField_Pandarepeaterfield extends PodsField {
 													   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
 													   ' . $limit_str . '; ' , 
 													   $search_arr );	
+					if( !$limit_bln ){
+						$countQ_str		= $wpdb->prepare( 'SELECT 
+														   COUNT( main_tb.`id` ) AS "count"														
+														   FROM `' . $table_prefix . 'pods_' . $tb_str . '` AS main_tb
+														   ' . $join_str  . '
+														   WHERE ' . $where_str . ' 
+														   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
+														   ' . $limit_str . '; ' , 
+														   $search_arr );		
+					}
 				} else {
 					$query_str  	= 'SELECT 
 										main_tb.*, 
@@ -372,10 +404,26 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									   	WHERE ' . $where_str . ' 
 									   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
 									   	' . $limit_str . '; '; 
+					if( !$limit_bln ){									   	
+						$countQ_str  	= 'SELECT 
+											COUNT( main_tb.`id` ) AS "count"	
+										   	FROM `' . $table_prefix . 'pods_' . $tb_str . '` 
+										   	' . $join_str  . ' 
+										   	WHERE ' . $where_str . ' 
+										   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
+										   	' . $limit_str . '; '; 									   	
+					}
 				}
 				//echo $query_str;
 				$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
+				$count_int		= 0;	
+				if( !$limit_bln ){	
+					$rowsCount_arr 	= $wpdb->get_results( $countQ_str, ARRAY_A );	
 				
+					if( $rowsCount_arr && !empty( $rowsCount_arr ) ){
+						$count_int	=  $rowsCount_arr[0]['count'];	
+					}
+				}
 				//parent iframe $options['id'] pods field id
 				
 				$pIframeID_str = '';
@@ -546,12 +594,28 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				echo '<input type="hidden" name="' . $prfID_str . '-entry-limit" id="' . $prfID_str . '-entry-limit" value="' . esc_attr( $options['pandarepeaterfield_entry_limit'] ) . '">';
 				echo '<input type="hidden" name="' . $name . '" value="' . $token_str . '">';
 				if( is_numeric( $options['pandarepeaterfield_entry_limit'] ) && $options['pandarepeaterfield_entry_limit'] > 0 ){
-					echo '<div class=""><small>Max ' . get_the_title( $options['id'] ) . ' - ' . esc_attr( $options['pandarepeaterfield_entry_limit'] ) . '</small></div>';	
+					echo '<div class="alignleft w100"><small>Max ' . get_the_title( $options['id'] ) . ' - ' . esc_attr( $options['pandarepeaterfield_entry_limit'] ) . '</small></div>';	
 				}
+				if( isset( $options['pandarepeaterfield_enable_load_more'] ) && $options['pandarepeaterfield_enable_load_more'] && !$limit_bln ){
+					echo '<div class="pprf-load-more-wrap"  id="' . $prfID_str . '-update-items-list">
+							<select class="alignleft pprf-select mgr5" name="panda-repeater-to-load" > 
+								<option value="append_to">' . __('Append to', 'panda-pods-repeater') . '</option>
+								<option value="replace">' . __('Replace', 'panda-pods-repeater') . '</option>								
+							</select> 							
+							<label class="alignleft pdt2 mgr5" for="panda-repeater-amount"> ' . __('the list with', 'panda-pods-repeater') . '</label> 
+							<input name="panda-repeater-amount" id="panda-repeater-amount-' . $ids_str . '" value="' . intval( $options['pandarepeaterfield_initial_amount'] ) . '" class="alignleft pprf-input mgr5" /> 
+							<label class="alignleft pdt2 mgr5" for="panda-repeater-start-from">' . __('items from item', 'panda-pods-repeater') . '</label>
+							<input name="panda-repeater-start-from" id="panda-repeater-start-from-' . $ids_str . '" value="' . ( intval( $options['pandarepeaterfield_initial_amount'] ) + 1 ) . '" class="alignleft pprf-input mgr5" />  
+							<div id="panda-repeater-load-more-button-' . $ids_str . '" value="" class="alignleft pprf-load-more-btn mgr5" />' . __('Load', 'panda-pods-repeater') . '</div>
+							<label class="alignleft pdt2 mgr5">' . __(' | Total items:', 'panda-pods-repeater') . ' ' . $count_int . '</label>
+							<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft pprf-ajax-img mgt13"/>
+							<div class="pprf-load-more-report"></div>
+						  </div>';	
+				}				
 			} else {
 				echo __( 'No Advanced Content Type Table Selected', self::$input_str );
 			}
-		}
+		} 
 		//pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
