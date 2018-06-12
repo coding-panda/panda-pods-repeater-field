@@ -98,31 +98,20 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 
 	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) ){		
 		$pod_cla = pods( $tb_str, $_GET['itemid'] );
-		//echo '<span class="alignleft"><strong>' . get_the_title( $_GET['poditemid'] ) . ' ID:</strong> ' . $_GET['itemid'] . '</span>';
 	} else {
 		$pod_cla = pods( $tb_str );
 	}
-	//echo '<span class="alignright">Click left <img src="../../wp-content/plugins/panda-pods-repeater-field/fields/images/arrow-down.png" alt="expand"/> bar to expand. Click right <img src="../../wp-content/plugins/panda-pods-repeater-field/fields/images/arrow-up.png" alt="close"/> bar to close</span>';
 	// Output a form with all fields
-	
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( $_GET['poditemid'] ) ); 
-	//if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) ){		
-		//echo '<button class="panda-repeater-field-delete-bn" data-cpodid="' . $_GET['tb'] . '" data-itemid="' . $_GET['itemid'] . '" >Delete</button>';
-	//}
 } else {
 	exit();	
 }
 echo '</div>';
 ?>
 <div id="pprf-on-page-data" data-saved="0"></div>
-<!--
-<div class="click-to-expand" ></div>
-<div class="click-to-close" ></div>
-<div class="click-to-expand-arrow" title="Click this bar to expand"></div>-->
+
 <div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
-<!--
-<div class="click-to-expand-arrow bottom" title="Click this bar to expand"></div>
-<div class="click-to-close-arrow bottom" title="Click this bar to close" ></div>-->
+
 <?php
 include_once( ABSPATH . 'wp-admin/admin-footer.php' );
 ?>

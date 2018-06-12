@@ -183,8 +183,9 @@
 .pprf-load-more-wrap{
 	line-height: 28px;
 }
-.pprf-input{
-	width: 40px;
+.pprf-input,
+input[type="number"].pprf-input{
+	width: 50px;
 }
 .pprf-input,
 .pprf-select{	
