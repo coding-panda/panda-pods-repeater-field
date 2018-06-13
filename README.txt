@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 4.9.6
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -202,7 +202,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * add: added support for frontend pods form
 * fixed: newly added item could only be deleted, not trashed
 
-= 1.3.1 - 12nd June 2018 =
+= 1.3.0 - 12nd June 2018 =
 * add: added load more functionality
 
 
@@ -278,5 +278,5 @@ Change: Enhanced ajax security
 Add: added support for frontend pods form
 Fixed: newly added item could only be deleted, not trashed
 
-= 1.3.1 =
+= 1.3.0 =
 Add: added load more functionality
