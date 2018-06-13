@@ -364,7 +364,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$limit_bln	=	true;
 				} else {
 					if( isset( $options['pandarepeaterfield_initial_amount'] ) && is_numeric( $options['pandarepeaterfield_initial_amount'] ) ){
-						$limit_str	=	'LIMIT 0, ' . intval( $options['pandarepeaterfield_initial_amount'] );	
+						$options['pandarepeaterfield_initial_amount']	=	abs( intval( $options['pandarepeaterfield_initial_amount'] ) );
+						$limit_str	=	'LIMIT 0, ' . $options['pandarepeaterfield_initial_amount'];	
 					}
 				}
 				
@@ -392,7 +393,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 														   ' . $join_str  . '
 														   WHERE ' . $where_str . ' 
 														   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
-														   ' . $limit_str . '; ' , 
+														   ; ' , 
 														   $search_arr );		
 					}
 				} else {
@@ -411,7 +412,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 										   	' . $join_str  . ' 
 										   	WHERE ' . $where_str . ' 
 										   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
-										   	' . $limit_str . '; '; 									   	
+										   	; '; 									   	
 					}
 				}
 				//echo $query_str;

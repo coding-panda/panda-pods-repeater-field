@@ -1104,7 +1104,7 @@ function pprf_enqueue_scripts_fn() {
 	/**
 	 * All styles goes here
 	 */
-	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ), array(), 1.1 );
+	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ), array(), 1.2 );
 	wp_enqueue_style( 'panda-pods-repeater-styles');
 
 	/**

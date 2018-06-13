@@ -183,16 +183,16 @@
 .pprf-load-more-wrap{
 	line-height: 28px;
 }
-.pprf-input,
-input[type="number"].pprf-input{
+.pprf-load-more-wrap .pprf-input,
+.pprf-load-more-wrap input[type="number"].pprf-input{
 	width: 50px;
 }
-.pprf-input,
-.pprf-select{	
+.pprf-load-more-wrap .pprf-input,
+.pprf-load-more-wrap .pprf-select{	
 	border: 1px solid #e8e8e8;
 	border-radius: 5px;
 } 
-.pprf-load-more-btn{
+.pprf-load-more-wrap .pprf-load-more-btn{
 	padding-left:5px;
 	padding-right:5px;
 	border: 1px solid #e8e8e8;
@@ -200,6 +200,6 @@ input[type="number"].pprf-input{
 	cursor: pointer;
 	background: #F0F5FF;
 }
-.pprf-load-more-btn:hover{
+.pprf-load-more-wrap .pprf-load-more-btn:hover{
 	background: #F1F1F1;
 }

@@ -395,11 +395,14 @@ function pprf_load_more_fn( target_str, ele_obj ){
 				var trashed_int	=	0;
 				for( var i = 0; i < response_obj.data.length; i ++ ){	
 					var repeated_bln	=	false;
-					for( var j = 0; j < loaded_arr.length; j ++ ){	//inArry doesn't work
-						if( parseInt( response_obj.data[ i ]['id'] ) == loaded_arr[ j ] ){
-							repeated_bln	=	true;
-							break;
-						}				
+
+					if( jQuery( '#pprf-load-more-wrap-' + target_str + ' .panda-repeater-to-load' ).val() == 'append_to' ){ // only need to check repeatition if it is on Append To.
+						for( var j = 0; j < loaded_arr.length; j ++ ){	//inArry doesn't work
+							if( parseInt( response_obj.data[ i ]['id'] ) == loaded_arr[ j ] ){
+								repeated_bln	=	true;
+								break;
+							}				
+						}
 					}
 					html_str += item_html_fn( response_obj.data[ i ], data_obj.pod_id, data_obj.post_id, data_obj.saved_tb, data_obj.authorid , data_obj.iframe_id, data_obj.pod_item_id, data_obj.cp_title, repeated_bln )
 					if( response_obj.data[ i ]['trashed'] == 1 ){
