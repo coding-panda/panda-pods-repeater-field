@@ -566,7 +566,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$ids_str     	= $savedtb_int . '-' . $options['id']; // one less id compared to the added ones
 				$fullUrl_str 	= $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-add-new-' . $ids_str . '' . $query_str . '&postid=' . $token_str;
 				$hidden_str		= '';
-				if( $limit_str != '' && count( $rows_arr ) == $options['pandarepeaterfield_entry_limit'] ){
+				if( $limit_bln && count( $rows_arr ) == $options['pandarepeaterfield_entry_limit'] ){
 					$hidden_str	=	'hidden';	
 				}				
 				$addNew_str		= 
