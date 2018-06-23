@@ -202,5 +202,27 @@ class panda_pods_repeater_field_db {
 		// option _transient_pods_field_catitem_testsss
 		return $result_bln;		
 	}	
+	/**
+	 * getFields_fn function: get field names of a table
+	 *
+	 * @var string  $table_str targeted table	 
+	 */
+	public function get_fields_fn( $table_str, $prefixMe_bln = true , $show_bln = false ){
+		global $wpdb, $table_prefix;
+		
+		$table_str  = esc_sql( stripslashes( $table_str ) );
+
+		if( $prefixMe_bln && stripos( $table_str, $table_prefix ) !== 0 ){
+			$table_str = $table_prefix . $table_str;
+		}				
+		//$query_str  = $wpdb->prepare( 'SHOW FIELDS FROM `' . $table_str . '`' , array(  ) );
+		$query_str  = 'SHOW FIELDS FROM `' . $table_str . '`';
+		if( $show_bln ){
+			echo $query_str ;
+		}		
+		$items_arr  = $wpdb->get_results( $query_str , ARRAY_A );
+		
+		return $items_arr;
+	}	
 }
 ?>

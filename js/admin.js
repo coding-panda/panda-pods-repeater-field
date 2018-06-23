@@ -497,12 +497,11 @@ jQuery(document).ready( function($) {
 			function(response){
 				
 			}
-		)
-		
-		
+		)				
 	};	
-	if( $('.pprf-redorder-list').length != 0 ){
-		$('.pprf-redorder-list').sortable({
+
+	if( $('.pprf-redorder-list.pandarf_order').length != 0 ){
+		$('.pprf-redorder-list.pandarf_order').sortable({
 			helper: fixHelperModified_fn,
 			cursor:         'move',
 			opacity:        0.7,

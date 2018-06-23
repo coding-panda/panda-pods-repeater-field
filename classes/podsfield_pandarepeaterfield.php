@@ -166,8 +166,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
             self::$type . '_initial_amount' => array(
                 'label' 	 => __( 'Intial Amount', self::$input_str ),
                 'depends-on' => array( self::$type . '_enable_load_more' => 1 ),
+                'type' 		 => 'number',
                 'default' 	 => '10',
-                'data' 		 => '',							
+                'data' 		 => '',	
             ),            
             self::$type . '_enable_trash' => array(
                 'label' 	 => __( 'Enable Trash', self::$input_str ),
@@ -176,7 +177,26 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'data' 		 => $bln_arr,
 				'dependency' => true
             ),	       
-
+            self::$type . '_order_by' => array(
+                'label' 	 => __( 'Order By', self::$input_str ),
+                'default' 	 => 'pandarf_order',
+                'type' 		 => 'text',
+                'data' 		 => '',
+				'description'=> __( 'Enter a field of the table. Default to pandarf_order. If not pandarf_order, re-order will be disabled. Min PHP version 5.5', self::$input_str ),
+            ),	  
+            self::$type . '_order' => array(
+                'label' 	 => __( 'Order', self::$input_str ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => array('ASC' => 'Ascending', 'DESC' => 'Descending' ),
+				'description'=> __( 'Default to Ascending', self::$input_str ),
+            ),	
+            self::$type . '_display_order_info' => array(
+                'label' 	 => __( 'Display Order Info', self::$input_str ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,				
+            ),                   
 		);
 
 		return $options;
@@ -375,6 +395,34 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				if( self::$tbs_arr['pod_' . $savedtb_int ]['type'] == 'post_type' ){
 					$join_str = 'INNER JOIN  `' . $table_prefix . 'posts` AS post_tb ON post_tb.ID = main_tb.id';
 				}
+
+				// order
+				$order_str		=	'CAST( `pandarf_order` AS UNSIGNED ) ';
+				$orderInfo_str	=	'Ordered by ';
+				if( isset( $options['pandarepeaterfield_order_by'] ) && !empty( $options['pandarepeaterfield_order_by'] ) && version_compare( phpversion(), '5.5', '>=' ) && $options['pandarepeaterfield_order_by'] != 'pandarf_order' ){
+					
+					$tbFields_arr 	=	$db_cla->get_fields_fn( 'pods_' . $tb_str );
+
+					$fields_arr 	=	array_column( $tbFields_arr, 'Field');
+					$options['pandarepeaterfield_order_by']	=	esc_sql( $options['pandarepeaterfield_order_by'] );
+					if( in_array( $options['pandarepeaterfield_order_by'], $fields_arr )  ){
+						$order_str		=	$options['pandarepeaterfield_order_by'] . ' ' ;
+						$orderInfo_str	.=	$options['pandarepeaterfield_order_by'] . ' ' ;
+					}
+					//$options['pandarepeaterfield_order']	=	abs( intval( $options['pandarepeaterfield_initial_amount'] ) );						
+				} else {
+					$orderInfo_str	.=	'pandarf_order ';
+				}	
+
+				if( isset( $options['pandarepeaterfield_order'] ) && $options['pandarepeaterfield_order'] == 'DESC' ){
+					$order_str		.=	$options['pandarepeaterfield_order'];
+					$orderInfo_str	.=	'descending';
+				} else {
+					$order_str		.=	'ASC';
+					$orderInfo_str	.=	'- ascending';
+				}
+
+
 				if( count( $search_arr ) > 0 ) {
 					
 					$query_str  	= $wpdb->prepare( 'SELECT 
@@ -383,7 +431,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 													   FROM `' . $table_prefix . 'pods_' . $tb_str . '` AS main_tb
 													   ' . $join_str  . '
 													   WHERE ' . $where_str . ' 
-													   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
+													   ORDER BY ' . $order_str . ' 
 													   ' . $limit_str . '; ' , 
 													   $search_arr );	
 					if( !$limit_bln ){
@@ -392,7 +440,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 														   FROM `' . $table_prefix . 'pods_' . $tb_str . '` AS main_tb
 														   ' . $join_str  . '
 														   WHERE ' . $where_str . ' 
-														   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
+														   ORDER BY ' . $order_str . '
 														   ; ' , 
 														   $search_arr );		
 					}
@@ -403,7 +451,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									   	FROM `' . $table_prefix . 'pods_' . $tb_str . '` 
 									   	' . $join_str  . ' 
 									   	WHERE ' . $where_str . ' 
-									   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
+									   	ORDER BY ' . $order_str . '
 									   	' . $limit_str . '; '; 
 					if( !$limit_bln ){									   	
 						$countQ_str  	= 'SELECT 
@@ -411,10 +459,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 										   	FROM `' . $table_prefix . 'pods_' . $tb_str . '` 
 										   	' . $join_str  . ' 
 										   	WHERE ' . $where_str . ' 
-										   	ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC
+										   	ORDER BY ' . $order_str . '
 										   	; '; 									   	
 					}
 				}
+			
+				
 				//echo $query_str;
 				$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 				$count_int		= 0;	
@@ -480,7 +530,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$traBtn_str  	= 	'pprf-btn-delete';
 				}				
 				//echo 	'<div class="pprf-redorder-list-wrap">';
-				echo 		'<ul class="pprf-redorder-list">';
+				echo 		'<ul class="pprf-redorder-list ' . esc_attr( $options['pandarepeaterfield_order_by'] ) . '">';
 				//$loaded_str	=	'';
 				if ( is_array( $rows_arr ) ) {
 					foreach( $rows_arr as $i => $row_obj ) { 	
@@ -601,7 +651,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					echo '<div class="alignleft w100"><small>Max ' . get_the_title( $options['id'] ) . ' - ' . esc_attr( $options['pandarepeaterfield_entry_limit'] ) . '</small></div>';	
 				}
 				if( isset( $options['pandarepeaterfield_enable_load_more'] ) && $options['pandarepeaterfield_enable_load_more'] && !$limit_bln ){
-					echo '<div class="pprf-load-more-wrap"  id="pprf-load-more-wrap-' . $ids_str . '">
+					echo '<div class="pprf-load-more-wrap w100 alignleft"  id="pprf-load-more-wrap-' . $ids_str . '">
 							<select class="alignleft pprf-select mgr5 panda-repeater-to-load" name="panda-repeater-to-load" > 
 								<option value="append_to">' . __('Append to', 'panda-pods-repeater') . '</option>
 								<option value="replace">' . __('Replace', 'panda-pods-repeater') . '</option>								
@@ -612,11 +662,16 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							<input name="panda-repeater-start-from" id="panda-repeater-start-from-' . $ids_str . '" value="' . ( intval( $options['pandarepeaterfield_initial_amount'] ) ) . '" class="alignleft pprf-input mgr5"  type="number" step="1" min="0" autocomplete="off" title="' . __('Start from 0', 'panda-pods-repeater') . '"/>  
 							<div id="panda-repeater-load-more-button-' . $ids_str . '" class="alignleft pprf-load-more-btn mgr5" data-target="' . $ids_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-cptitle="' . esc_attr( get_the_title( $options['id'] ) ) . '" data-enable-trash="' . esc_attr( $options['pandarepeaterfield_enable_trash'] ) . '"/>' . __('Load', 'panda-pods-repeater') . '</div>
 							<label class="alignleft pdt2 mgr5">' . __(' | Total items:', 'panda-pods-repeater') . ' ' . $count_int . '</label>
-							<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft pprf-ajax-img mgt13" style="display:none;"/>
+							<img src = "' . PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft pprf-ajax-img mgt13 mgr5" style="display:none;"/>
 							<div class="pprf-load-more-report"></div>
 							
-						  </div>';	
-				}				
+						  </div> ';	
+				}	
+				if( isset( $options['pandarepeaterfield_order_by'] ) && !empty( $options['pandarepeaterfield_order_by'] )  && isset( $options['pandarepeaterfield_display_order_info'] ) && $options['pandarepeaterfield_display_order_info'] ){
+					echo '<div class="pprf-order-info pdt5 w100 alignleft" id="pprf-order-info-' . $ids_str . '">
+						  ' . $orderInfo_str . '	
+						  </div>';
+				}			
 			} else {
 				echo __( 'No Advanced Content Type Table Selected', self::$input_str );
 			}

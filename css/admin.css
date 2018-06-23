@@ -57,9 +57,11 @@
 	border-left: 5px solid #46b450;*/
 	float: left;
 	width: 100%;
+
+}
+.pprf-redorder-list.pandarf_order li{
 	cursor:move;
 }
-
 
 .pprf-row{
 	border: 1px solid #f1f1f1;

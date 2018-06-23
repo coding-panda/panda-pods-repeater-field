@@ -1054,9 +1054,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 														  
 					}
 				}
-		
-				
-				
+
 			}
 		}
 	}
