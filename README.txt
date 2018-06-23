@@ -204,6 +204,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 
 = 1.3.0 - 12nd June 2018 =
 * add: added load more functionality
+* add: added order options
 
 
 == Upgrade Notice ==
@@ -280,3 +281,4 @@ Fixed: newly added item could only be deleted, not trashed
 
 = 1.3.0 =
 Add: added load more functionality
+Add: added order options
