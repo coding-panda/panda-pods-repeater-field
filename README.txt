@@ -113,6 +113,8 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 18. To find the parent_pod_post_id, open the main post and look at the URL. If you are using a Pods Adavnce Custom Type or a Custom Post Type as the main table, it is the "id" variable in the URL. If you add a repeater field to Settings, the parent post id is the same as parent_pod_id. If you add a repeater field to Users, the parent post id is the same as the user ID. 
 19. The Load More functionality settings.
 20. Instructions for the Load More functionality.
+19. The Order option settings.
+20. Display Order Info.
 
 == Changelog ==
 
