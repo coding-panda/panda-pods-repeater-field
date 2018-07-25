@@ -60,76 +60,24 @@ function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, par
 		jQuery.post(
 			ajax_script.ajaxurl, 
 			data_obj, 
-			function( return_str ){	
-				jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + '-' + 'loader' ).addClass('hidden');	
-				//jQuery('#panda-repeater-save-' + cpodid + '-' + return_arr['id'] + '-' + poditemid + '-' + 'loader' ).parent().children('.pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + '/images/save-icon.png');
-
-
-				//var delAct_str = jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + '-' + 'add-new .pprf-trash-btn' ).data('target');	
+			function( re_arr ){	
+				jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + '-' + 'loader' ).addClass('hidden');					
 				
-				var return_arr = jQuery.parseJSON( return_str );
-
-				
+				var return_arr = re_arr['data'];								
 
 				//console.log( return_arr );
-				if( typeof return_arr['id'] != 'undefined' && jQuery.isNumeric( return_arr['id'] ) ){
+				if( re_arr['success'] === true &&  typeof return_arr['id'] !== 'undefined' && jQuery.isNumeric( return_arr['id'] ) ){
 
 					var	iframe_str		= item_html_fn( return_arr, podid, postid, cpodid, authorid , iframeid, poditemid, parentName, false );
-					/*var ids_str	 		= cpodid + '-' + return_arr['id'] + '-' + poditemid;
-					var response_str 	= return_arr['id'];
-					var title_str	 	= return_arr['title'];
-					var nextBg_str	 	= jQuery('#next-bg').data('bg');
-					var fullUrl_str	 	= PANDA_PODS_REPEATER_PAGE_URL + 'iframe_id=panda-repeater-edit-' + ids_str + '&podid=' + podid + '&tb=' + cpodid + '&postid=' + postid + '&itemid=' + response_str + '&poditemid=' + poditemid;
-					var iframe_str   	= '<li data-id="' + response_str + '" class="pprf-not-trashed" id="li-' + ids_str + '">' +
-											'<div class="pprf-row  w100 alignleft">' + 
-												'<div class="w100 alignleft" id="pprf-row-brief-' + ids_str + '">' +
-													'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' "><strong>' + parentName + ' ID:</strong> ' + response_str + ' - ' + title_str + '</div>' +
-													'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
-														'<span class="dashicons dashicons-trash pdt8 pdl5 pdr5 mgb0 "></span>' +
-														'<div id="panda-repeater-trash-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-															'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>' +
-														'</div>' +															
-													'</div>' +	
-													'<div class="button pprf-right-col center pprf-save-btn" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '" data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' +
-														'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>' + 	
-														'<div id="panda-repeater-save-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-															'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft"/>' +										
-														'</div>' +
-													'</div>' +													
-													'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
-														'<span class="dashicons dashicons-edit pdt8 pdl8 pdr8 mgb0 "></span>' +
-														'<div id="panda-repeater-edit-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-															'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 alignleft"/>' +
-														'</div>	' +
-													'</div>' +
-												'</div>' +										   
-												'<div>' + 
-													'<iframe id="panda-repeater-edit-' + ids_str + '" frameborder="0" scrolling="no" src="" style="display:none; " class="panda-repeater-iframe w100"></iframe>' + 
-													'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 alignleft center pd3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
-												'</div>' +
-										   	  '</div>' +
-											'</li>'
-										   ;
-					if( nextBg_str == 'pprf-purple-bg' ){
-						jQuery('#next-bg').data('bg', 'pprf-white-bg');
-					} else {
-						jQuery('#next-bg').data('bg', 'pprf-purple-bg');						
-					}
-*/
+					
 					jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list' ).append( iframe_str ); 
 					// if entries limit, toggle the add new 
 					var itemsLeft_int	= jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' > .pprf-redorder-list > li').length;
 					var limit_int	=	parseInt( jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-entry-limit' ).val() );
 					if( limit_int != 0 && itemsLeft_int >= limit_int ){
-						jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).addClass('hidden');	
-						
+						jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).addClass('hidden');							
 					}						
-					//var li_str	   = '<li id="li-' + ids_str + '" class="ui-sortable-handle" data-id="' + response_str + '">' + title_str + '</li>'
-					//jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list' ).append( li_str ); 
-					//pprf_updateSize_fn( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid );
-					//prepare bg colour for the next row
 
-					
 				}
 				// if add a new one, activeate the live items tab
 				jQuery( '#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab .dashicons-portfolio').click();
@@ -148,7 +96,8 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	var btnTrashed_str	= '';
 	var display_str		= '';
 	var editIcon_str	= 'dashicons-edit';
-	if( jQuery('#panda-repeater-load-more-button-' + cpodid + '-' + poditemid ).data('enable-trash') == 1 ){
+
+	if( jQuery('#panda-repeater-trash-info-' + cpodid + '-' + poditemid ).data('enable-trash') == 1 ){		
 		if( typeof $item_arr['trashed'] != 'undefined' && $item_arr['trashed'] == 1 ){
 			
 			trashed_str 	= 'pprf-trashed';
@@ -158,13 +107,13 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 			if( jQuery('#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab.active .dashicons').hasClass('dashicons-portfolio') ) {
 				display_str		= 'display:none;';
 			}		
-			
+				
 		} else {
 			trashed_str		= 'pprf-not-trashed';
 			btnTrashed_str	= 'pprf-btn-not-trashed';
 			if( jQuery('#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab.active .dashicons').hasClass('dashicons-trash') ) {
 				display_str		= 'display:none;';
-			}			
+			}				
 		}
 	}	
 	var repeated_str	=	'';
@@ -260,75 +209,76 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 			jQuery.post(
 				ajax_script.ajaxurl, 
 				data_obj, 
-				function( response_str ){	
-					var rsp_arr = jQuery.parseJSON( response_str );
-					if( rsp_arr.length != 0 ){
-						var ids_str	=	cpodid + '-' + itemid + '-' + poditemid;
-						var exp_str		= 'panda-repeater-edit-expand-' + ids_str;
-						var iframe_str 	= 'panda-repeater-edit-' + ids_str;		
+				function( response_arr ){	
+					if( response_arr['success'] === true  ){
+						var rsp_arr = response_arr['data'];
+						if( rsp_arr.length != 0 ){
+							var ids_str	=	cpodid + '-' + itemid + '-' + poditemid;
+							var exp_str		= 'panda-repeater-edit-expand-' + ids_str;
+							var iframe_str 	= 'panda-repeater-edit-' + ids_str;		
 
-						if( trashed == 0 ){
-							jQuery( '#panda-repeater-edit-' + cpodid + '-' + itemid + '-' + poditemid + '-loader' ).addClass('hidden');
-						} else {
-							jQuery( '#panda-repeater-trash-' + cpodid + '-' + itemid + '-' + poditemid + '-loader' ).addClass('hidden');
-						}
-						//jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).remove( );
-						if( trashed == 0 ){
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span').removeClass('dashicons-update');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span').addClass('dashicons-edit')
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).removeClass('pprf-trashed');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).addClass('pprf-not-trashed');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).css('display', 'none');	
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').addClass('pprf-btn-not-trashed');	
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').removeClass('pprf-btn-trashed');
-							
-							if( jQuery.trim( jQuery('#' + iframe_str  ).contents().find("body").html() ) != '' ) {
-								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-save-btn .pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + 'images/save-icon.png');
+							if( trashed == 0 ){
+								jQuery( '#panda-repeater-edit-' + cpodid + '-' + itemid + '-' + poditemid + '-loader' ).addClass('hidden');
+							} else {
+								jQuery( '#panda-repeater-trash-' + cpodid + '-' + itemid + '-' + poditemid + '-loader' ).addClass('hidden');
 							}
-						}
-						if( trashed == 1 ){
-
-
-							if( jQuery('#' + iframe_str  ) != 'undefined' ){
-								jQuery('#' + iframe_str ).hide();	
-							}
-							if( jQuery('#' + exp_str  ) != 'undefined' ){
-								jQuery('#' + exp_str ).hide();	
-							}							
-													
-							jQuery('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
-							jQuery('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-edit');							
-
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).removeClass('pprf-not-trashed');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).addClass('pprf-trashed');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).css('display', 'none');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span' ).addClass('dashicons-update');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span' ).removeClass('dashicons-edit');
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').addClass('pprf-btn-trashed');	
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').removeClass('pprf-btn-not-trashed');	
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-save-btn .pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png');
-							
-
-						}
-						if( trashed == 2 ){	
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).parent().parent().remove( );
-							jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).remove( );
-							// if entries limit, toggle the add new 
-							var itemsLeft_int	= jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' > .pprf-redorder-list > li').length;
-							var limit_int	=	parseInt( jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-entry-limit' ).val() );
-							if( limit_int != 0 && itemsLeft_int < limit_int ){
-								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).removeClass('hidden');	
+							//jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).remove( );
+							if( trashed == 0 ){
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span').removeClass('dashicons-update');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span').addClass('dashicons-edit')
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).removeClass('pprf-trashed');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).addClass('pprf-not-trashed');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).css('display', 'none');	
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').addClass('pprf-btn-not-trashed');	
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').removeClass('pprf-btn-trashed');
 								
-							}						
-							// integrate with simpods js
-							if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
-								call_simpods_fn( response_str );
+								if( jQuery.trim( jQuery('#' + iframe_str  ).contents().find("body").html() ) != '' ) {
+									jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-save-btn .pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + 'images/save-icon.png');
+								}
 							}
+							if( trashed == 1 ){
+
+
+								if( jQuery('#' + iframe_str  ) != 'undefined' ){
+									jQuery('#' + iframe_str ).hide();	
+								}
+								if( jQuery('#' + exp_str  ) != 'undefined' ){
+									jQuery('#' + exp_str ).hide();	
+								}							
+														
+								jQuery('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
+								jQuery('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-edit');							
+
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).removeClass('pprf-not-trashed');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).addClass('pprf-trashed');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).css('display', 'none');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span' ).addClass('dashicons-update');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-row-load-iframe .pprf-edit-span' ).removeClass('dashicons-edit');
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').addClass('pprf-btn-trashed');	
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-trash-btn').removeClass('pprf-btn-not-trashed');	
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"] .pprf-save-btn .pprf-save-icon').attr('src', PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png');
+								
+
+							}
+							if( trashed == 2 ){	
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' #' + iframeid ).parent().parent().remove( );
+								jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).remove( );
+								// if entries limit, toggle the add new 
+								var itemsLeft_int	= jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' > .pprf-redorder-list > li').length;
+								var limit_int	=	parseInt( jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-entry-limit' ).val() );
+								if( limit_int != 0 && itemsLeft_int < limit_int ){
+									jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + '-add-new' ).removeClass('hidden');	
+									
+								}						
+								// integrate with simpods js
+								if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
+									call_simpods_fn( response_str );
+								}
+							}
+							//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
+							 pprf_odd_even_color_fn( cpodid + '-' + poditemid );
 						}
-						//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
-						 pprf_odd_even_color_fn( cpodid + '-' + poditemid )
 					}
-					
 				}
 			);	
 			
@@ -382,6 +332,8 @@ function pprf_load_more_fn( target_str, ele_obj ){
 		authorid	: 	ele_obj.data('userid'),
 		cp_title	: 	ele_obj.data('cptitle'),
 		trashable	: 	ele_obj.data('enable-trash'),
+		order		: 	ele_obj.data('order'),
+		order_by	: 	ele_obj.data('order-by'),
 		amount		: 	jQuery('#panda-repeater-amount-' + target_str ).val(),
 		start		: 	jQuery('#panda-repeater-start-from-' + target_str ).val()
 	};

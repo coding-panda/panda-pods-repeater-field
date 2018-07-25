@@ -24,7 +24,7 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 }
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
-	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', __('You do not have permission to edit this item.', 'panda-pods-repeater' ) ) );
+	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', __('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) );
 }
 //admin_enqueue_scripts
 //add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
@@ -52,7 +52,7 @@ $piframeID_int = isset( $_GET['piframe_id'] ) ?  esc_attr( $_GET['piframe_id'] )
 $wid_int	   = 25;
 $wid_str		= 'quater';
 if( isset( $_GET['poditemid'] ) && is_numeric( $_GET['poditemid'] ) ){
-	$wid_int  = get_post_meta( $_GET['poditemid'], 'pandarepeaterfield_field_width' , true);
+	$wid_int  = get_post_meta( absint( $_GET['poditemid'] ), 'pandarepeaterfield_field_width' , true);
 	
 }
 if( !is_numeric( $wid_int ) || $wid_int == 0 ){
@@ -73,22 +73,22 @@ if( $wid_int == 50 ){
 
 @media  (min-width: 992px) {
 .pods-form-fields .pods-field {
-	width: <?php echo $wid_int;?>%;
-	margin-right: <?php echo $mgr_int; ?>%;
+	width: <?php echo esc_html( $wid_int );?>%;
+	margin-right: <?php echo esc_html( $mgr_int ); ?>%;
 }
 
 }
 @media (max-width: 991px) and (min-width: 769px) { 
 .pods-form-fields .pods-field {
-	width: <?php echo $wid_int;?>%;
-	margin-right: <?php echo $mgr_int; ?>%;	
+	width: <?php echo esc_html( $wid_int );?>%;
+	margin-right: <?php echo esc_html( $mgr_int ); ?>%;	
 }
 
 }
 </style>
 
 <?php
-echo '<div class="pprf-wid-' . $wid_str . '">';
+echo '<div class="pprf-wid-' . esc_attr( $wid_str ) . '">';
 $get_arr = isset( $_GET )? $_GET : array();
 do_action('pandarf_item_top', $get_arr );
 
@@ -97,14 +97,14 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 	$tb_str  = PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['tb'] ];
 
 	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) ){		
-		$pod_cla = pods( $tb_str, $_GET['itemid'] );
+		$pod_cla = pods( $tb_str, absint( $_GET['itemid'] ) );
 	} else {
 		$pod_cla = pods( $tb_str );
 	}
 	// Output a form with all fields
-	echo $pod_cla->form( array(), 'Save ' . get_the_title( $_GET['poditemid'] ) ); 
+	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 } else {
-	exit();	
+	_e('Invalid table', 'panda-pods-repeater-field' );
 }
 echo '</div>';
 ?>
@@ -149,7 +149,7 @@ function pprf_update_parent_fn() {
 	}
 	
 	if( typeof parent.pprf_updateIframeSize_fn == 'function' ){
-		parent.pprf_updateIframeSize_fn('<?=$iframeID_int ?>', hei_int);	
+		parent.pprf_updateIframeSize_fn('<?php echo esc_attr( $iframeID_int ); ?>', hei_int);	
 	}
 	<?php
 	if( $piframeID_int != '' ){
@@ -197,24 +197,14 @@ jQuery(document).ready( function($) {
 			pprf_loadedResized_bln = false;
 		//}
 	})
-/*	.children().click(function(e) {
-		console.log( e );
-	  //return false;
-	});*/
-	/*$('.wp-toolbar').on( 'click', function(){	
-		 return false;
-	}).children().click(function(e) {
-	  return false;
-	});*/
-	//pprf_resize_fn();
-	//var iframeWin = window.parent.document.getElementById('<?= $iframeID_int ?>-<?= $_GET['poditemid']; ?>').contentWindow;
-	//console.log( iframeWin );
-    //parent.window.addEventListener('resize', function(){
-       // console.log( jQuery('html').height() );
-		//pprf_resize_fn() ;
-    //});	
+
 	
 	<?php
+	if( isset( $_GET ) && count( $_GET ) > 0 ){
+		foreach( $_GET as $k_str => $v_ukn ){
+			$_GET[ $k_str ]	= esc_attr( $v_ukn );
+		}
+	}
 	// if successfully added a new one
 	if( isset( $_GET['success'] ) && $_GET['success'] == 1 && isset( $_GET['iframe_id'] ) && strpos( $_GET['iframe_id'], 'panda-repeater-add-new' ) === 0 ){
 		global $wpdb;

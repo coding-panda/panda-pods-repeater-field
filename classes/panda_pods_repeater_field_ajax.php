@@ -49,10 +49,11 @@ class Panda_Pods_Repeater_Field_Ajax {
 	
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 
-		     die(); 
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );
 
 		} 		
-		global $wpdb, $table_prefix, $current_user;
+		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
@@ -62,7 +63,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 			if( array_key_exists( 'pod_' . $_POST['cpodid'], $tables_arr ) ){
 				
 				//$now_str		= date('Y-m-d H:i:s');
-				$table_str 	 	= $table_prefix . $tables_arr['pod_' . $_POST['cpodid'] ]['name'] ;	
+				$table_str 	 	= $wpdb->prefix . $tables_arr['pod_' . $_POST['cpodid'] ]['name'] ;	
 				$title_str		= '';
 				if( $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] != '' ){
 					$title_str		= '' . $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] ;		
@@ -72,30 +73,34 @@ class Panda_Pods_Repeater_Field_Ajax {
 				$join_str  = '';
 				
 				if( $tables_arr['pod_' . $_POST['cpodid'] ]['type'] == 'post_type' ){
-					$join_str = 'INNER JOIN  `' . $table_prefix . 'posts` AS post_tb ON post_tb.ID = t.id';
+					$join_str = 'INNER JOIN  `' . $wpdb->prefix . 'posts` AS post_tb ON post_tb.ID = t.id';
 				}
 
 				// fetch the child item data
-				$where_str   	= '   `t`.`pandarf_parent_pod_id`  = ' . intval(  $_POST['podid'] ) . '
-							   	  AND `t`.`pandarf_parent_post_id` = "' . esc_sql( $_POST['postid'] ) . '"
-							   	  AND `t`.`pandarf_pod_field_id`   = ' . intval(  $_POST['poditemid'] ) . ' '; 				
+				$where_str   	= '   `t`.`pandarf_parent_pod_id`  = %d
+							   	  AND `t`.`pandarf_parent_post_id` = %d
+							   	  AND `t`.`pandarf_pod_field_id`   = %d '; 				
 				//$query_str  	= $wpdb->prepare( 'SELECT id FROM `' . $table_str . '` AS t WHERE `t`.`pandarf_categories` REGEXP "(:\"' . $_POST['podid'] . '.' . $_POST['postid'] . '.' . $_POST['poditemid'] . '\";{1,})" AND `t`.`pandarf_author` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , array( $_POST['authorid'] ) );	
+				$where_arr		= array( $_POST['podid'], $_POST['postid'],  $_POST['poditemid'], $_POST['authorid'] );
 				$qtitle_str		= $title_str != ''? ', `' . $title_str . '`' : '';
 				$query_str  	= $wpdb->prepare( 'SELECT t.`id` ' . $qtitle_str . ' 
 													FROM `' . $table_str . '` AS t 
 													' . $join_str . '
 													WHERE ' . $where_str . ' AND `t`.`pandarf_author` = %d 
 													ORDER BY `t`.`id` DESC LIMIT 0, 1;' , 
-													array( $_POST['authorid'] ) );	
+													$where_arr );	
 				//echo $query_str;
 				$item_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 				if( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) ){
 					if( !isset( $item_arr[0][ $title_str ] ) ){
 						$item_arr[0][ $title_str ] = '';
 					}
-					echo json_encode( array( 'id' => $item_arr[0]['id'], 'title' => $item_arr[0][ $title_str ] ) );
+					//echo json_encode( array( 'id' => $item_arr[0]['id'], 'title' => $item_arr[0][ $title_str ] ) );
+					$data_arr	=	array( 'id' => $item_arr[0]['id'], 'title' => $item_arr[0][ $title_str ] );
+					wp_send_json_success( $data_arr ); 	
 				} else {
-					echo '';	
+					$data_arr	=	array( 'id' => '', 'title' => '' );
+					wp_send_json_error( $data_arr );	
 				}
 				
 			}
@@ -122,9 +127,10 @@ class Panda_Pods_Repeater_Field_Ajax {
 	public function pprf_delete_item_fn(){	
 
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
-		     die(); 
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );
 		} 				
-		global $wpdb, $table_prefix, $current_user;
+		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
@@ -134,51 +140,59 @@ class Panda_Pods_Repeater_Field_Ajax {
 			if( array_key_exists( 'pod_' . $_POST['cpodid'], $tables_arr ) ){
 				
 				//$now_str		= date('Y-m-d H:i:s');
-				$table_str 	 	= $table_prefix . $tables_arr['pod_' . $_POST['cpodid'] ]['name'] ;			  
+				$table_str 	 	= $wpdb->prefix . $tables_arr['pod_' . $_POST['cpodid'] ]['name'] ;			  
 				// fetch the child item data and see if the item belong to the current post
-				$where_str   	= '   `t`.`pandarf_parent_pod_id`  = ' . intval(  $_POST['podid'] ) . '
-							   	  AND `t`.`pandarf_parent_post_id` = "' . esc_sql( $_POST['postid'] ) . '"
-							   	  AND `t`.`pandarf_pod_field_id`   = ' . intval(  $_POST['poditemid'] ) . ' '; 						
+				$where_str   	= '   `t`.`pandarf_parent_pod_id`  = %d
+							   	  AND `t`.`pandarf_parent_post_id` = %d
+							   	  AND `t`.`pandarf_pod_field_id`   = %d '; 						
 				//$query_str  	= $wpdb->prepare( 'SELECT id FROM `' . $table_str . '` AS t WHERE `t`.`pandarf_categories` REGEXP "(:\"' . $_POST['podid'] . '.' . $_POST['postid'] . '.' . $_POST['poditemid'] . '\";{1,})" AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , array( $_POST['itemid'] ) );	
-				$query_str  	= $wpdb->prepare( 'SELECT * FROM `' . $table_str . '` AS t WHERE ' . $where_str . ' AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , array( $_POST['itemid'] ) );	
+				$where_arr		= $where_arr		= array( $_POST['podid'], $_POST['postid'],  $_POST['poditemid'], $_POST['itemid'] );				   	  
+				$query_str  	= $wpdb->prepare( 'SELECT * FROM `' . $table_str . '` AS t WHERE ' . $where_str . ' AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , $where_arr );	
 				
 				$item_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
-				if( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) && $_POST['itemid'] == $item_arr[0]['id'] ){
+				if( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) && $_POST['itemid'] === $item_arr[0]['id'] ){
 					
 					//$query_str  	= $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE `id` = %d;' , array( $item_arr[0]['id'] ) );	
 				//echo $query_str;
 					//$deleted_bln   	= $wpdb->query( $query_str );
 					$del_str	=	'delete';
-					if( isset( $_POST['trash'] ) && $_POST['trash'] == 0 )	{
+					if( isset( $_POST['trash'] ) && $_POST['trash'] === '0' )	{
 						//$db_cla->update_columns_fn( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'] );
 						$query_str  	= $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 0 WHERE `id` = %d;' , array( $_POST['itemid'] ) );
 						$deleted_bln 	=	$wpdb->query( $query_str );
 						$del_str		=	'restore';
 					}					
-					if( isset( $_POST['trash'] ) && $_POST['trash'] == 1 )	{ // if $_POST['trash'] == 1, the table should be already updated
+					if( isset( $_POST['trash'] ) && $_POST['trash'] === '1' )	{ // if $_POST['trash'] == 1, the table should be already updated
 						//$db_cla->update_columns_fn( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'] );
 						$query_str  	= $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;' , array( $_POST['itemid'] ) );
 						$deleted_bln 	=	$wpdb->query( $query_str );
 						$del_str		=	'trash';
 					}
-					if( !isset( $_POST['trash'] ) || $_POST['trash'] == 2 )	{
-						$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], $_POST['itemid'] ); 
-						
-						$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
-
+					if( !isset( $_POST['trash'] ) || $_POST['trash'] === '2' )	{
+						$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], absint( $_POST['itemid'] ) ); 
+						if ( $pod_obj->exists() ) { 
+							$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
+						}
 					}
 					if( $deleted_bln ){
-						echo json_encode( array( 
-												 'id'		 	=> $item_arr[0]['id'], 
-												 'pod_idx'	 	=> $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] , 
-												 'pod_idx_val' 	=> $item_arr[0][ $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] ],
-												 'ppod_fie_id'	=> $_POST['poditemid'],		
-												 'action'		=> $del_str,								
-												) 
-										 );	
+						$data_arr	= 	array( 
+											'id'		 	=> $item_arr[0]['id'], 
+											'pod_idx'	 	=> $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] , 
+											'pod_idx_val' 	=> $item_arr[0][ $tables_arr['pod_' . $_POST['cpodid'] ]['name_field'] ],
+											'ppod_fie_id'	=> $_POST['poditemid'],		
+											'action'		=> $del_str,								
+										) ;	
+						wp_send_json_success( $data_arr ); 
 					}					
 				} else {
-					echo '';	
+					$data_arr	=	array( 
+										'id'		 	=> '', 
+										'pod_idx'	 	=> '' , 
+										'pod_idx_val' 	=> '',
+										'ppod_fie_id'	=> '',		
+										'action'		=> '',								
+									) ;
+					wp_send_json_error( $data_arr );	
 				}
 				
 			}
@@ -186,14 +200,14 @@ class Panda_Pods_Repeater_Field_Ajax {
 		die();
 	}
 	public function admin_pprf_delete_item_fn(){
-		if( $_POST['action'] != 'admin_pprf_delete_item_fn' ){
+		if( $_POST['action'] !== 'admin_pprf_delete_item_fn' ){
 			die();
 		}			
 		$this->pprf_delete_item_fn();
 		
 	}
 	public function front_pprf_delete_item_fn(){
-		if( $_POST['action'] != 'front_pprf_delete_item_fn' ){
+		if( $_POST['action'] !== 'front_pprf_delete_item_fn' ){
 			die();
 		}			
 		$this->pprf_delete_item_fn();
@@ -206,10 +220,11 @@ class Panda_Pods_Repeater_Field_Ajax {
 	
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 
-		     die(); 
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );
 
 		} 		
-		global $wpdb, $table_prefix, $current_user;
+		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
@@ -224,10 +239,10 @@ class Panda_Pods_Repeater_Field_Ajax {
 						
 						// remove li and table id from ids_arr
 						//$ids_arr = array_values( array_slice( $ids_arr, 2 ) );
-						$query_str = $wpdb->prepare( 'UPDATE `' . $table_prefix . $tables_arr[ 'pod_' . $ids_arr[1] ]['name'] . '`
-														SET  `pandarf_order` =  "' . $i . '" 
+						$query_str = $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . $tables_arr[ 'pod_' . $ids_arr[1] ]['name'] . '`
+														SET  `pandarf_order` =  "%d" 
 													  WHERE  `id` = "%d";', 
-													  array( $ids_arr[2] )
+													  array( $i, $ids_arr[2] )
 													);	
 						$wpdb->query( $query_str );							
 						//echo $query_str;
@@ -235,44 +250,50 @@ class Panda_Pods_Repeater_Field_Ajax {
 					
 				}
 			}
+
+			wp_send_json_success( ); 
+		} else {
+			wp_send_json_error( );
 		}
-		die();
 	}
 	public function admin_pprf_update_order_fn(){
-		if( $_POST['action'] != 'admin_pprf_update_order_fn' ){
-			die();
+		if( $_POST['action'] !== 'admin_pprf_update_order_fn' ){
+			$data_arr	=	array( 'action' => false );
+		    wp_send_json_error( $data_arr );
 		}	
 		$this->pprf_update_order_fn();
 	}	
-	public function front_pprf_update_order_fn(){
-		if( $_POST['action'] != 'front_pprf_update_order_fn' ){
-			die();
+/*	public function front_pprf_update_order_fn(){
+		if( $_POST['action'] !== 'front_pprf_update_order_fn' ){
+			$data_arr	=	array( 'action' => false );
+		    wp_send_json_error( $data_arr );
 		}	
 		$this->pprf_update_order_fn();
-	}	
+	}*/	
 	/**
 	 * load more
 	 */
 	function pprf_load_more_fn(){
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
-		     die(); 
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );
 		} 		
-		global $wpdb, $table_prefix, $current_user;
+		global $wpdb, $current_user;
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
 
 		$tb_str 	 = '';
 		if( is_numeric( $_POST['saved_tb'] ) ){			
-			$post_arr	 = get_post( $_POST['saved_tb'], ARRAY_A );
+			$post_arr	 = get_post( absint( $_POST['saved_tb'] ), ARRAY_A );
 			
 			if( is_array( $post_arr ) && $post_arr['post_type'] == '_pods_pod' ){
 				$tb_str 	 = $post_arr['post_name'];
 
 			} else {
-				wp_send_json_error( array( 'success' => false ) );
+				wp_send_json_error(  );
 			}
 		} else {
-			wp_send_json_error( array( 'success' => false ) );
+			wp_send_json_error( );
 		} 
 
 
@@ -281,16 +302,29 @@ class Panda_Pods_Repeater_Field_Ajax {
 					   	  AND `pandarf_pod_field_id`   = %d '; 		
 		$search_arr = 	array( $_POST['pod_id'], $_POST['post_id'], $_POST['pod_item_id'] );				
 
+		// order
+		$orderBy_str=	'CAST( `pandarf_order` AS UNSIGNED )';
+		if( $_POST['order_by'] !== 'pandarf_order' ){
+			$orderBy_str	=	'`' . esc_sql( $_POST['order_by'] ) . '`';			
+		}
+
+		$order_str	=	'ASC';
+		if( $_POST['order'] === 'DESC' ){
+			$order_str	=	'DESC';
+		}		
+
+		// limit
 		$limit_str	=	'';
 		$limit_bln	=	false;
 			
-		$limit_str	=	'LIMIT ' . ( intval( $_POST['start'] ) ) . ', ' . intval( $_POST['amount'] );			
-				
+		$limit_str	=	'LIMIT %d, %d';			
+		array_push( $search_arr, $_POST['start'], $_POST['amount'] );	
+
 		// if it is a wordpress post type, join wp_posts table
 		$join_str  	= '';
 		//print_r (self::$tbs_arr['pod_' . $savedtb_int ]);
 		if( $tables_arr['pod_' . intval( $_POST['saved_tb'] ) ]['type'] == 'post_type' ){
-			$join_str = 'INNER JOIN  `' . $table_prefix . 'posts` AS post_tb ON post_tb.ID = main_tb.id';
+			$join_str = 'INNER JOIN  `' . $wpdb->prefix . 'posts` AS post_tb ON post_tb.ID = main_tb.id';
 		}		
 
 /*		$loaded_str	=	'';
@@ -303,29 +337,30 @@ class Panda_Pods_Repeater_Field_Ajax {
 										   main_tb.`id`, 
 											`' . $tables_arr['pod_' . intval( $_POST['saved_tb'] ) ]['name_field'] . '` AS title,
 										   main_tb.`pandarf_trash` AS trashed														
-										   FROM `' . $table_prefix . 'pods_' . $tb_str . '` AS main_tb
+										   FROM `' . $wpdb->prefix . 'pods_' . $tb_str . '` AS main_tb
 										   ' . $join_str  . '
 										   WHERE ' . $where_str . ' 
-										   ORDER BY CAST( `pandarf_order` AS UNSIGNED ) ASC 
+										   ORDER BY ' . $orderBy_str . ' ' . $order_str . '
 										   ' . $limit_str . '; ' , 
 										   $search_arr 
 										);	
-	//	echo $query_str;
+		//echo $query_str;
 		$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 
-		wp_send_json( array( 'success' => true, 'data' => $rows_arr ) );
-		die();
+		wp_send_json_success( $rows_arr );
+		//die();
 	}
 	public function admin_pprf_load_more_fn(){
 		if( $_POST['action'] != 'admin_pprf_load_more_fn' ){
-			die();
+			$data_arr	=	array( 'action' => false );
+		    wp_send_json_error( $data_arr );
 		}	
 		$this->pprf_load_more_fn();
 	}	
-	public function front_pprf_load_more_fn(){
+/*	public function front_pprf_load_more_fn(){
 		if( $_POST['action'] != 'front_pprf_load_more_fn' ){
 			die();
 		}	
 		$this->pprf_load_more_fn();
-	}			
+	}	*/		
 }

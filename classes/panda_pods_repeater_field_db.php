@@ -83,7 +83,7 @@ class panda_pods_repeater_field_db {
 	 * @param: $allTables_bln Boolean return all tables or not
 	 */
 	public function get_tables_fn( $allTables_bln = false )	{
-		global $wpdb, $table_prefix;
+		global $wpdb;
 		$podsTb_arr    = array();
 		$sql_str       = 'SHOW TABLES LIKE "%"';
 		$tables_arr    = $wpdb->get_results( $sql_str );				
@@ -91,14 +91,14 @@ class panda_pods_repeater_field_db {
 		
 		foreach( $tables_arr as $idx_int => $table_obj ) {
 			foreach( $table_obj as $tableName_str ) {
-				$table_str = str_replace( $table_prefix, '', $tableName_str );
+				$table_str = str_replace( $wpdb->prefix, '', $tableName_str );
 				
 				// return all tables
 				if( $allTables_bln ){
 					array_push( $podsTb_arr, $table_str );
 				} else {
 					// only return pods tables
-					if(  strpos( $tableName_str, $table_prefix . 'pods_' ) === 0 ){
+					if(  strpos( $tableName_str, $wpdb->prefix . 'pods_' ) === 0 ){
 						//array_push( $podsTb_arr, $table_str );	
 						$tbInfo_arr				 	 = $this->get_pods_tb_info_fn( $table_str );
 						$nameField_str				 = get_post_meta( $tbInfo_arr['id'], 'pod_index', true );
@@ -131,11 +131,11 @@ class panda_pods_repeater_field_db {
 	 * get_pods_tb_info_fn: get pods table info 
 	 */
 	public function get_pods_tb_info_fn( $tb_str ){
-		global $wpdb, $table_prefix;
-		$tbPrefix_str  = $table_prefix;
+		global $wpdb;
+		$tbPrefix_str  = $wpdb->prefix;
 		// if prefix not found, add it to the target tb
-		if( strpos( $tb_str, $table_prefix ) === 0 ){
-			$tb_str = substr( $tb_str, strlen( $table_prefix ) );	
+		if( strpos( $tb_str, $wpdb->prefix ) === 0 ){
+			$tb_str = substr( $tb_str, strlen( $wpdb->prefix ) );	
 		}	else {
 			//$tbPrefix_str   = $wpdb->base_prefix;
 			//$tb_str 		= substr( $tb_str, strlen( $wpdb->base_prefix ) );	
@@ -145,8 +145,8 @@ class panda_pods_repeater_field_db {
 			$tb_str = substr( $tb_str, 5 );	
 		}		
 		$query_str 		= $wpdb->prepare('SELECT ps_tb.*, pm_tb.`meta_value` AS type
-										 FROM `' . $tbPrefix_str . 'posts` AS ps_tb
-										 LEFT JOIN `' . $tbPrefix_str . 'postmeta` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"					  
+										 FROM `' . $wpdb->posts . '` AS ps_tb
+										 LEFT JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"					  
 										 WHERE ps_tb.`post_name` = "%s" AND ps_tb.`post_type` = "_pods_pod" LIMIT 0, 1', array( $tb_str ) );
 		$items_arr 		= $wpdb->get_results( $query_str , ARRAY_A ); 		
 		
@@ -166,7 +166,7 @@ class panda_pods_repeater_field_db {
 	 * @use $this->column_exist_fn() to check if a column exists
 	 */
 	public function update_columns_fn( $tb_str ){
-		global $wpdb, $table_prefix;
+		global $wpdb;
 		$tb_str = esc_sql( $tb_str );
 		foreach( self::$keys_arr as $k_str => $v_arr ){
 			
@@ -174,13 +174,13 @@ class panda_pods_repeater_field_db {
 			
 			if( !$exist_bln ){
 			//print_r( $tb_str . $k_str);
-				 $query_str = 'ALTER TABLE  `' . $table_prefix . 'pods_' . $tb_str . '` ADD `' . $k_str . '` ' . implode( ' ', $v_arr );
+				 $query_str = 'ALTER TABLE  `' . $wpdb->prefix . 'pods_' . $tb_str . '` ADD `' . $k_str . '` ' . implode( ' ', $v_arr );
 				 $wpdb->query( $query_str ) ;
 								
 			} else {
 				// fix the order as string problem
 				/*if( $k_str == 'pandarf_order' ){
-					$query_str = 'ALTER TABLE  `' . $table_prefix . 'pods_' . $tb_str . '` CHANGE  `' . $k_str . '`  `' . $k_str . '` INT( 11 ) NOT NULL;';	
+					$query_str = 'ALTER TABLE  `' . $wpdb->prefix . 'pods_' . $tb_str . '` CHANGE  `' . $k_str . '`  `' . $k_str . '` INT( 11 ) NOT NULL;';	
 					$wpdb->query( $query_str ) ;
 				}*/				
 			}
@@ -195,9 +195,9 @@ class panda_pods_repeater_field_db {
 	 * @param string $column_str table name	 
 	 */
 	public function column_exist_fn( $tb_str, $column_str ){
-		global $wpdb, $table_prefix;
+		global $wpdb;
 		
-		$result_bln = $wpdb->query( 'SHOW COLUMNS FROM `' . $table_prefix . esc_sql( $tb_str ). '` LIKE "' . esc_sql( $column_str ). '"' );	
+		$result_bln = $wpdb->query( 'SHOW COLUMNS FROM `' . $wpdb->prefix . esc_sql( $tb_str ). '` LIKE "' . esc_sql( $column_str ). '"' );	
 		
 		// option _transient_pods_field_catitem_testsss
 		return $result_bln;		
@@ -208,12 +208,12 @@ class panda_pods_repeater_field_db {
 	 * @var string  $table_str targeted table	 
 	 */
 	public function get_fields_fn( $table_str, $prefixMe_bln = true , $show_bln = false ){
-		global $wpdb, $table_prefix;
+		global $wpdb;
 		
 		$table_str  = esc_sql( stripslashes( $table_str ) );
 
-		if( $prefixMe_bln && stripos( $table_str, $table_prefix ) !== 0 ){
-			$table_str = $table_prefix . $table_str;
+		if( $prefixMe_bln && stripos( $table_str, $wpdb->prefix ) !== 0 ){
+			$table_str = $wpdb->prefix . $table_str;
 		}				
 		//$query_str  = $wpdb->prepare( 'SHOW FIELDS FROM `' . $table_str . '`' , array(  ) );
 		$query_str  = 'SHOW FIELDS FROM `' . $table_str . '`';
