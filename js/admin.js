@@ -93,7 +93,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	}
 
 	var trashed_str		= '';
-	var btnTrashed_str	= '';
+	var btnTrashed_str	= 'pprf-btn-delete';
 	var display_str		= '';
 	var editIcon_str	= 'dashicons-edit';
 
@@ -344,7 +344,8 @@ function pprf_load_more_fn( target_str, ele_obj ){
 		function( response_obj ){
 			var html_str	=	'';
 			if( response_obj.success == true ){
-				var trashed_int	=	0;
+				var trashed_int		=	0;
+				var $notTrash_int	=	0;
 				for( var i = 0; i < response_obj.data.length; i ++ ){	
 					var repeated_bln	=	false;
 
@@ -356,6 +357,7 @@ function pprf_load_more_fn( target_str, ele_obj ){
 							}				
 						}
 					}
+		
 					html_str += item_html_fn( response_obj.data[ i ], data_obj.pod_id, data_obj.post_id, data_obj.saved_tb, data_obj.authorid , data_obj.iframe_id, data_obj.pod_item_id, data_obj.cp_title, repeated_bln )
 					if( response_obj.data[ i ]['trashed'] == 1 ){
 						trashed_int ++;

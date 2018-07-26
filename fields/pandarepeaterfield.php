@@ -104,7 +104,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 	// Output a form with all fields
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 } else {
-	_e('Invalid table', 'panda-pods-repeater-field' );
+	echo esc_html__('Invalid table', 'panda-pods-repeater-field' );
 }
 echo '</div>';
 ?>
