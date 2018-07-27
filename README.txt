@@ -204,9 +204,11 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * add: added support for frontend pods form
 * fixed: newly added item could only be deleted, not trashed
 
-= 1.3.0 - 12nd June 2018 =
+= 1.3.0 - 27nd July 2018 =
 * add: added load more functionality
 * add: added order options
+* add: re-order will update colours
+* change: changed some code according to Pods official reviews
 
 
 == Upgrade Notice ==
@@ -284,3 +286,5 @@ Fixed: newly added item could only be deleted, not trashed
 = 1.3.0 =
 Add: added load more functionality
 Add: added order options
+Add: re-order will update colours
+Change: changed the code according to Pods official reviews
