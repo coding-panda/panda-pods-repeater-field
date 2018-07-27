@@ -272,7 +272,7 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 								}						
 								// integrate with simpods js
 								if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
-									call_simpods_fn( response_str );
+									call_simpods_fn( response_arr );
 								}
 							}
 							//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
@@ -439,6 +439,7 @@ jQuery(document).ready( function($) {
 	updateIndex_fn = function(e, ui) {
 		var theOrder_arr = $(this).sortable('toArray');
 		//console.log(theOrder_arr);
+
 		var data_obj = {
 			action:   'admin_pprf_update_order_fn',
 			order: 	  theOrder_arr, 
@@ -448,8 +449,9 @@ jQuery(document).ready( function($) {
 		$.post(
 			ajax_script.ajaxurl, 
 			data_obj, 
-			function(response){
-				
+			function( resp_arr ){
+				//console.log( response_arr );
+				pprf_odd_even_color_fn( resp_arr.data.pprf_id );
 			}
 		)				
 	};	
