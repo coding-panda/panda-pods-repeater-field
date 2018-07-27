@@ -226,17 +226,19 @@ class Panda_Pods_Repeater_Field_Ajax {
 		} 		
 		global $wpdb, $current_user;
 
-		$db_cla      = new panda_pods_repeater_field_db();
-		$tables_arr  = $db_cla->get_tables_fn();
-		
+		$db_cla     = new panda_pods_repeater_field_db();
+		$tables_arr = $db_cla->get_tables_fn();
+		$pprfID_str	= '';
+		$return_arr	= array( 'pprf_id'	=> '' );
 		if( isset( $_POST['order'] ) ){
 			for( $i = 0; $i < count( $_POST['order'] ); $i ++ ){
 				$ids_arr = explode( '-', $_POST['order'][ $i ] );
 				if( count( $ids_arr ) >= 3 ){
-					
 					// if the pods table is listed
-					if( isset( $tables_arr[ 'pod_' . $ids_arr[1] ] ) ){
-						
+					if( isset( $tables_arr[ 'pod_' . $ids_arr[1] ] ) ){						
+						if( $pprfID_str === '' ){
+							$pprfID_str	=	$ids_arr[1] . '-' . $ids_arr[3];
+						}						
 						// remove li and table id from ids_arr
 						//$ids_arr = array_values( array_slice( $ids_arr, 2 ) );
 						$query_str = $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . $tables_arr[ 'pod_' . $ids_arr[1] ]['name'] . '`
@@ -246,14 +248,18 @@ class Panda_Pods_Repeater_Field_Ajax {
 													);	
 						$wpdb->query( $query_str );							
 						//echo $query_str;
+						$return_arr['pprf_id']	=	$pprfID_str;
 					}
 					
 				}
 			}
-
-			wp_send_json_success( ); 
+			if( $pprfID_str !== '' ){
+				wp_send_json_success( $return_arr ); 
+			} else {
+				wp_send_json_error( $return_arr );
+			}
 		} else {
-			wp_send_json_error( );
+			wp_send_json_error( $return_arr );
 		}
 	}
 	public function admin_pprf_update_order_fn(){
