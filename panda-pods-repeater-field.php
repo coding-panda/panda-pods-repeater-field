@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Description: If you are using Pods Framework for your post types and data storage, you may want a repeater field. Panda Pods Repeater Field offers you an solution. It takes the advantage of Pods table storage, so you don't need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.3.0
+Version: 1.3.1
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda

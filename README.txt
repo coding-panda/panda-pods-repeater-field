@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 4.9.8
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -210,6 +210,9 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * add: re-order will update colours
 * change: changed some code according to Pods official reviews
 
+= 1.3.1 - 19th August 2018 =
+* change: changed drag and drop tolerance from "pointer" to "intersect"
+* debug: fixed a problem when Enable Load More was set to No, only ten items were loaded
 
 == Upgrade Notice ==
 
@@ -288,3 +291,7 @@ Add: added load more functionality
 Add: added order options
 Add: re-order will update colours
 Change: changed the code according to Pods official reviews
+
+= 1.3.1 =
+Change: changed drag and drop tolerance from "pointer" to "intersect"
+Fixed: fixed a problem when Enable Load More was set to No, only ten items were loaded

@@ -461,7 +461,7 @@ jQuery(document).ready( function($) {
 			helper: fixHelperModified_fn,
 			cursor:         'move',
 			opacity:        0.7,
-			tolerance:      'pointer',		
+			tolerance:      'intersect',		
 			update: updateIndex_fn		
 		});		
 	}

@@ -383,9 +383,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$limit_str	=	'LIMIT 0, ' . intval( $options['pandarepeaterfield_entry_limit'] );	
 					$limit_bln	=	true;
 				} else {
-					if( isset( $options['pandarepeaterfield_initial_amount'] ) && is_numeric( $options['pandarepeaterfield_initial_amount'] ) ){
-						$options['pandarepeaterfield_initial_amount']	=	abs( intval( $options['pandarepeaterfield_initial_amount'] ) );
-						$limit_str	=	'LIMIT 0, ' . $options['pandarepeaterfield_initial_amount'];	
+					if( isset( $options['pandarepeaterfield_enable_load_more'] ) && $options['pandarepeaterfield_enable_load_more'] == 1 ){
+						if( isset( $options['pandarepeaterfield_initial_amount'] ) && is_numeric( $options['pandarepeaterfield_initial_amount'] ) ){
+							$options['pandarepeaterfield_initial_amount']	=	abs( intval( $options['pandarepeaterfield_initial_amount'] ) );
+							$limit_str	=	'LIMIT 0, ' . $options['pandarepeaterfield_initial_amount'];	
+						}
 					}
 				}
 				
