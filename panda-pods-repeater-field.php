@@ -1062,7 +1062,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 	return $data_arr;
 }
 /**
- * store all repeater fields
+ * Is a panda pods repeater field?
  * @param string $fieldName_str pods field name	 
  * @param integer $parentID_int parent post id	 
  */
