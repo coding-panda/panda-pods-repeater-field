@@ -106,8 +106,21 @@
 .button.pprf-save-btn,
 .button.pprf-trash-btn{
 	border-right: 1px solid #e8e8e8 !important;	
-	margin-top:3px;
 }
+
+.pprf-row>div {
+	display: flex;
+	align-items: center;
+}
+
+.button.pprf-save-btn,
+.button.pprf-trash-btn,
+.button.pprf-edit-btn {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	display: inline-block;
+}
+
 .pprf-grey-bg{
 	background-color: #f1f1f1;
 }
