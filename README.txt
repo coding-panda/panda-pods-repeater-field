@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 4.8.1
-Stable tag: 1.1.7
+Tested up to: 4.9.8
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Repeater fields for Pods Framework. Adding a repeatable field on pages.
 
 == Description ==
 
-If you are using Pods Framework for your post types and data storage, you may want a repeater field. Panda Pods Repeater Field offers you a solution. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
+Panda Pods Repeater Field is a plugin for Pods Framework. As the name states, it is a repeater field. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
 
 == Installation ==
 
@@ -102,7 +102,7 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 7. Under the Admin UI tab, untick Show Admin Menu in Dashboard, because if you add an item to it, it is not linked to any parent posts.
 8. Now we create a new post type in Pod. We name it "Comic" and we use Table Based storage, because we want to reduce the burden of the WordPress Posts table.
 9. Once it has been created, we add a new field to Comic. We name it "Comic Box 1" here. At the bottom of the Field Type, you will find Pods Table As Repeater Field. Select it and then click the tab "Additional Field Options".
-10. Now you can see a Pods Table "comiccontent" we just created in the combo box. Select it, add or update the field and save Pod. You can also set field width, defaulted to 100%. You can also limit the number of entries of the repeater field.
+10. Now you can see a Pods Table "comic_content" we just created in the combo box. Select it, add or update the field and save Pod. You can set field width, defaulted to 100%. You can also limit the number of entries of the repeater field. Enable Trash will allow you to move items to Trash and Restore them if you still want them. Trashed items won't be pulled out by pods_field() and pandarf_items_fn(), but if you diable Trash later on, the trashed items will still be pulled out.
 11. If you are doing nested repeater fields, I recommend you set it to 100%. A sample of nested repeater fields.
 12. OK, the set up is done. Now if you are adding a new Comic, 
 13. you will see "Comic Box 1" in the More Fields area.
@@ -111,7 +111,10 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 16. To find the parent_pod_id and parent_pod_field_id, go to Pods and click the main Pod (Comics in this tutorial).
 17. Here, 2215 is parent_pod_id and 2222 is parent_pod_field_id
 18. To find the parent_pod_post_id, open the main post and look at the URL. If you are using a Pods Adavnce Custom Type or a Custom Post Type as the main table, it is the "id" variable in the URL. If you add a repeater field to Settings, the parent post id is the same as parent_pod_id. If you add a repeater field to Users, the parent post id is the same as the user ID. 
-
+19. The Load More functionality settings.
+20. Instructions for the Load More functionality.
+21. The Order option settings.
+22. Display Order Info.
 
 == Changelog ==
 
@@ -182,6 +185,35 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 = 1.1.7 - 19th August 2017 =
 * debug: fixed the problem if the number of entries was set to 0, the "Add New" would disappear.
 
+= 1.1.8 - 15th October 2017 =
+* debug: Now use pods_register_field_type() to register Panda Pods Repeater Field.
+* debug: Fixed some styling problems
+* debug: Fixed the pods relationship fields ordering problem
+* add: Now give alerts if changes not saved
+
+= 1.1.9 - 22nd October 2017 =
+* debug: Fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
+* add: Now items can be moved to trash and restored from trash
+
+= 1.2.0 - 17nd December 2017 =
+* change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
+* debug: fixed the problem that when using the same field name in two tables, it didn't bring back the right data.
+
+= 1.2.1 - 5th March 2018 =
+* change: Enhanced ajax security
+* add: added support for frontend pods form
+* fixed: newly added item could only be deleted, not trashed
+
+= 1.3.0 - 27nd July 2018 =
+* add: added load more functionality
+* add: added order options
+* add: re-order will update colours
+* change: changed some code according to Pods official reviews
+
+= 1.3.1 - 19th August 2018 =
+* change: changed drag and drop tolerance from "pointer" to "intersect"
+* debug: fixed a problem when Enable Load More was set to No, only ten items were loaded
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -234,3 +266,32 @@ Add: Now you can limit the number of entries
 
 = 1.1.7 =
 Debug: fixed the problem if the number of entries was set to 0, the "Add New" would disappear.
+
+= 1.1.8 =
+Debug: now use pods_register_field_type() to register Panda Pods Repeater Field.
+Debug: Fixed some styling problems
+Debug: Fixed the pods relationship fields ordering problem
+Add: Now give alerts if changes not saved
+
+= 1.1.9 =
+Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
+Add: Now items can be moved to trash and restored from trash.
+
+= 1.2.0 =
+Change: Now saving table post_name instead of ID to solve the problem of migration. It won't affect the saved data, but you will have to update the field in Pods - pick the right one again in order to migrate properly.
+Debug: fixed the problem that when using the same field name in two tables, it didn't bring back the right data.
+
+= 1.2.1 =
+Change: Enhanced ajax security
+Add: added support for frontend pods form
+Fixed: newly added item could only be deleted, not trashed
+
+= 1.3.0 =
+Add: added load more functionality
+Add: added order options
+Add: re-order will update colours
+Change: changed the code according to Pods official reviews
+
+= 1.3.1 =
+Change: changed drag and drop tolerance from "pointer" to "intersect"
+Fixed: fixed a problem when Enable Load More was set to No, only ten items were loaded
