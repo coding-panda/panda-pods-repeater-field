@@ -71,11 +71,10 @@ body {
 	background:#ffffff;	
 }
 body > div, body > form, body > span, body > p body > table{
-	display:none;	
+	/*display:none;	*/
 }
 body #wpwrap{
-	display:block !important;	
-	
+	display:block !important;		
 }
 .pods-form-fields .pods-field:nth-child(2n+1){
    /* background:#9CF;*/

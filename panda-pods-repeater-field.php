@@ -2,8 +2,8 @@
 /*
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
-Description: If you are using Pods Framework for your post types and data storage, you may want a repeater field. Panda Pods Repeater Field offers you an solution. It takes the advantage of Pods table storage, so you don't need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.3.1
+Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
+Version: 1.3.2
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.2.1' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.3.2' );
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -1062,7 +1062,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 	return $data_arr;
 }
 /**
- * store all repeater fields
+ * Is a panda pods repeater field?
  * @param string $fieldName_str pods field name	 
  * @param integer $parentID_int parent post id	 
  */
@@ -1146,3 +1146,16 @@ function pprf_enqueue_scripts_fn() {
 	// wp_localize_script( 'panda-pods-repeater-scripts', 'podsExtend', $translation_array ) );
 	
 }
+
+/*function pprf_family_tree_fn( $atts_arr ){
+
+	global $wpdb;		
+
+	$_atts_arr 	= array(		
+		'parent_pod_id'               => '',		
+		'parent_pod_post_id'          => '',		
+		'parent_pod_field_id'         => '',		
+	);		
+
+	$atts_arr  		= wp_parse_args( $atts_arr, $_atts_arr );	
+}*/

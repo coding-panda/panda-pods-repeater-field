@@ -3,7 +3,6 @@ if ( preg_match('#'.basename(__FILE__).'#', $_SERVER['PHP_SELF']) ) { die('You a
 /**
 * AJax class, collection for AJax functions
 *
-* @version: 1.0.0
 * @package panda-pods-repeater-field
 * @author Dongjie Xu
 * @since 09/02/2016 

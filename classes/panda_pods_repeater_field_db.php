@@ -2,7 +2,6 @@
 /**
 * collection of functions can be used pods panda repeater field database
 *
-* @version: 1.0.0
 * @package panda_pods_repeater_field
 * @author: Dongjie Xu
 * @since 20/05/2014 
