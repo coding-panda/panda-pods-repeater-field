@@ -182,7 +182,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => 'pandarf_order',
                 'type' 		 => 'text',
                 'data' 		 => '',
-				'description'=> __( 'Enter a field of the table. Default to pandarf_order. If not pandarf_order, re-order will be disabled. Min PHP version 5.5', 'panda-pods-repeater-field' ),
+				'description'=> __( 'Enter a field of the table. Default to pandarf_order. If not pandarf_order, re-order will be disabled. Min PHP version 5.5.', 'panda-pods-repeater-field' ),
             ),	  
             self::$type . '_order' => array(
                 'label' 	 => __( 'Order', 'panda-pods-repeater-field' ),
@@ -196,7 +196,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,				
-            ),                   
+            ),     
+/*            self::$type . '_delete_family_tree' => array(
+                'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,				
+                'description'=> __( 'When a parent item is deleted, delete all its decendents.', 'panda-pods-repeater-field' ),
+            ), */                            
 		);
 
 		return $options;
@@ -811,7 +818,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
 		global $wpdb;
 		
-		if( $options['type'] == 'pandarepeaterfield' ){ // just to ensure
+		if( $options['type'] == 'pandarepeaterfield' && $options['pandarepeaterfield_delete_family_tree'] == 1 ){ // just to ensure
 			
 			$table_str 	= $wpdb->prefix . 'pods_' . $options['pandarepeaterfield_table'] ;			  
 			// fetch the child item data and see if the item belong to the current post
@@ -819,7 +826,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						  	AND `pandarf_parent_post_id` = %d
 						   	AND `pandarf_pod_field_id`   = %d '; 						
 			
-			$where_arr	= $where_arr		= array( $options['pod_id'], $id,  $options['id'] );				   	  
+			$where_arr	= array( $options['pod_id'], $id,  $options['id'] );				   	  
 			$query_str  = $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE ' . $where_str . '' , $where_arr );				
 			$del_bln   	= $wpdb->query( $query_str );				
 
@@ -828,8 +835,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 		//$repeater_arr = is_pandarf_fn( $params_arr->name, $pods_obj->pod_id );	
 
-		//print_r( $repeater_arr );
-		//exit();		
+		
+		exit();		
 	}
 
 	/**
