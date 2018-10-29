@@ -168,10 +168,13 @@ class Panda_Pods_Repeater_Field_Ajax {
 						$del_str		=	'trash';
 					}
 					if( !isset( $_POST['trash'] ) || $_POST['trash'] === '2' )	{
-						$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], absint( $_POST['itemid'] ) ); 
+						/*$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], absint( $_POST['itemid'] ) ); 
 						if ( $pod_obj->exists() ) { 
 							$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
-						}
+						}*/
+						$query_str  	= $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE `id` = %d;' , array( $item_arr[0]['id'] ) );	
+						//echo $query_str;
+						$deleted_bln   	= $wpdb->query( $query_str );						
 					}
 					if( $deleted_bln ){
 						$data_arr	= 	array( 
