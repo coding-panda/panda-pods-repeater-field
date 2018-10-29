@@ -2,7 +2,6 @@
 /**
 * Class to create a new Pods field type: PodsField_Pandarepeaterfield
 *
-* @version: 1.1.5
 * @package panda-pods-repeater-field
 * @author Dongjie Xu
 * @since 09/02/2016 
