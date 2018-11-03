@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 4.9.8
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,10 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 = 1.3.3 - 29th October 2018 =
 * debug: somehow pods->delete() didn't work, use $wpdb query for now
 
+= 1.3.4 - 03rd November 2018 =
+* debug: fixed the problem for pods->delete() 
+* add: now Admin Table Columns can be used for labels 
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -307,3 +311,7 @@ Debug: fixed the date field not displaying problem.
 
 = 1.3.3 =
 Debug: somehow pods->delete() didn't work, use $wpdb query for now
+
+= 1.3.4 =
+* Debug: fixed the problem for pods->delete() 
+* Add: now Admin Table Columns can be used for labels 
