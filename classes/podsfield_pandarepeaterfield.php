@@ -195,7 +195,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,				
-            ),     
+            ),    
+            self::$type . '_apply_admin_columns' => array(
+                'label' 	 => __( 'Apply Admin Table Columns', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,	
+                'description'=> __( 'Display labels based on the Admin Table Columns. Only strings and numbers will be displayed.', 'panda-pods-repeater-field' ),			
+            ),              
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
@@ -297,7 +304,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 */
 	public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		global $wpdb, $current_user;
-				
+	
 		$allow_bln = true;
 		
 		if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts') ){
@@ -472,7 +479,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					}
 				}
 			
-				
+				//$db_cla->get_admin_columns_fn( 'comic', 'comic_item', 261, 133 );
 				//echo $query_str;
 				$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 				$count_int		= 0;	
@@ -523,7 +530,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				echo 		'<ul class="pprf-redorder-list ' . esc_attr( $options['pandarepeaterfield_order_by'] ) . '">';
 				//$loaded_str	=	'';
 				$options['id']		=	esc_attr( $options['id'] );
-				$options['pod_id']	=	esc_attr( $options['pod_id'] );						
+				$options['pod_id']	=	esc_attr( $options['pod_id'] );			
+
+				$adminCols_arr		=	array(); // if apply admin columns is picked, use admin columns instead of name
+				if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){
+					$child_pod 		= new pods( $options['pandarepeaterfield_table'] );
+					$adminCols_arr 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );
+				}				
+									
 				if ( is_array( $rows_arr ) ) {
 					foreach( $rows_arr as $i => $row_obj ) { 	
 						$bg_str 	 	= $i % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
@@ -554,17 +568,39 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$savedtb_int	=	esc_attr( $savedtb_int );
 						$row_obj['id']	=	esc_attr( $row_obj['id'] );
 										
-						$ids_str     = esc_attr( $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'] );
-						$fullUrl_str = esc_attr( $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] );	
+						$ids_str     	= esc_attr( $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'] );
+						$fullUrl_str 	= esc_attr( $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] );	
 						
-						$title_str   = apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
-						$title_str	 	= 	esc_attr( $title_str );
+						$title_str   	= apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
+						$title_str	 	= esc_attr( $title_str );
 
+						$label_str		= ''; 
+						if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){
+							//echo '<pre>';
+							$id_bln	=	false;
+							foreach( $adminCols_arr as $adminCol_str ){
+								if( strtolower( $adminCol_str ) == 'id' ){
+									$id_bln	=	true;
+									continue;
+								}
+								$colVal_ukn	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $adminCol_str );
+								if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
+									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
+								}							
+							}
+							if( $id_bln ){
+								$label_str = '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . ' ' . $label_str;
+							}
+							//echo '<pre>';	
+						}
+						if( $label_str	== '' ){
+							$label_str		= '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . '<strong> ' . self::$tbs_arr['pod_' . $savedtb_int ]['name_label'] . ':</strong> ' . esc_html( $title_str );
+						}
 						
 						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '" style="' . $css_str . '">';						
 						echo 	'<div class="pprf-row alignleft ">
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
-										<div class="alignleft pd8 pprf-left-col ' . esc_attr( $bg_str ) . '"><strong>' . esc_html( get_the_title( $options['id'] ) ) . ' ID:</strong> ' . esc_html( $row_obj['id'] . ' - ' . $title_str ) . '</div>
+										<div class="alignleft pd8 pprf-left-col ' . esc_attr( $bg_str ) . '">' . $label_str . '</div>
 										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
 											<span class="dashicons dashicons-trash pdt8 pdl5 pdr5 mgb0 "></span>
 											<div id="panda-repeater-trash-' . $ids_str . '-loader" class="alignleft hidden mgl5">
@@ -815,7 +851,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0.0
 	 */
 	public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
-		global $wpdb;
+/*		global $wpdb;
 		
 		if( $options['type'] == 'pandarepeaterfield' && $options['pandarepeaterfield_delete_family_tree'] == 1 ){ // just to ensure
 			
@@ -835,7 +871,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		//$repeater_arr = is_pandarf_fn( $params_arr->name, $pods_obj->pod_id );	
 
 		
-		exit();		
+		exit();		*/
 	}
 
 	/**

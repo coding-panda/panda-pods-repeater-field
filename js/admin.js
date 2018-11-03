@@ -7,22 +7,14 @@ function pprf_resizeIframe_fn(obj) {
 
 function pprf_updateIframeSize_fn( x, y ){
 	
-	if ( x != '') {
-		// 4px is the small gap at the bottom
-		//if( jQuery('#' + x).parent().height() < y + 4 ){
-			jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: y}, 500);
-			//jQuery('#' + x).closest('iframe').height( jQuery('#' + x).closest('iframe').height() ).animate({height: y}, 500);
-		//} else {
-
-			//set it to the parent div size if the iframe is smaller
-		//	jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: jQuery('#' + x).parent().height() - 4 }, 500);;
-		//}
+	if ( x != '' ) {
+		jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: y}, 500);
 	}
 }
 function pprf_updateSize_fn( x ){
 	
 	if ( x != '' ) {
-		var pprf_orgHei_int = jQuery( x + ' html #wpbody-content').height() + 60;
+		var xpprf_orgHei_int = jQuery( x + ' html #wpbody-content').height() + 60;
 	
 		jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: pprf_orgHei_int }, 500);;
 
@@ -31,18 +23,11 @@ function pprf_updateSize_fn( x ){
 function pprf_updateParentIframe_fn( x ){
 	
 	if ( x != '') {
-		//console.log( x );
-		//console.log(  jQuery('#' + x + ' html #wpbody-content').height );
+		
 		var y = jQuery('#' + x + ' html #wpbody-content').height();
 		// 4px is the small gap at the bottom
-		//if( jQuery('#' + x).parent().height() < y + 4 ){
-			jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: y }, 500);
-			//jQuery('#' + x).closest('iframe').height( jQuery('#' + x).closest('iframe').height() ).animate({height: y}, 500);
-		//} else {
+		jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: y }, 500);
 
-			//set it to the parent div size if the iframe is smaller
-		//	jQuery('#' + x).height( jQuery('#' + x).height() ).animate({height: jQuery('#' + x).parent().height() - 4 }, 500);;
-		//}
 	}
 }
 var pprfParentHei_int = jQuery('html').height();
@@ -91,7 +76,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	if( typeof $item_arr['id'] == 'undefined' || !jQuery.isNumeric( $item_arr['id'] ) ){
 		return '';
 	}
-
+//console.log($item_arr);
 	var trashed_str		= '';
 	var btnTrashed_str	= 'pprf-btn-delete';
 	var display_str		= '';
@@ -124,13 +109,17 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	var ids_str	 		= cpodid + '-' + $item_arr['id'] + '-' + poditemid;
 	var response_str 	= $item_arr['id'];
 	var title_str	 	= $item_arr['title'];
+	var label_str		= '<strong>ID:</strong> ' + response_str + ' <strong>' + $item_arr['pprf_name_label'] + ': </strong> ' + title_str;
+	if( typeof $item_arr['label'] != 'undefined' && $item_arr['label'] != '' ){
+		label_str	=	$item_arr['label'];
+	}
 	var nextBg_str	 	= jQuery('#next-bg').data('bg');
 	var fullUrl_str	 	= PANDA_PODS_REPEATER_PAGE_URL + 'iframe_id=panda-repeater-edit-' + ids_str + '&podid=' + podid + '&tb=' + cpodid + '&postid=' + postid + '&itemid=' + response_str + '&poditemid=' + poditemid;	
 	var html_str   =	
 	 '<li data-id="' + response_str + '" class="' + trashed_str + '" id="li-' + ids_str + repeated_str + '" style="' + display_str + '">' +
 		'<div class="pprf-row  w100 alignleft">' + 
 			'<div class="w100 alignleft" id="pprf-row-brief-' + ids_str + repeated_str + '">' +
-				'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' "><strong>' + parentName + ' ID:</strong> ' + response_str + ' - ' + title_str + '</div>';
+				'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' ">' + label_str + '</div>';
 
 	if( repeated_bln == true ){
 			html_str   +=	

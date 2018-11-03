@@ -95,10 +95,17 @@ class Panda_Pods_Repeater_Field_Ajax {
 						$item_arr[0][ $title_str ] = '';
 					}
 					//echo json_encode( array( 'id' => $item_arr[0]['id'], 'title' => $item_arr[0][ $title_str ] ) );
-					$data_arr	=	array( 'id' => $item_arr[0]['id'], 'title' => $item_arr[0][ $title_str ] );
+					//$itemLabel_arr	=	$db_cla->get_admin_columns_fn( $tables_arr['pod_' . $_POST['podid'] ]['name'], $tables_arr['pod_' . $_POST['cpodid'] ]['name'], $_POST['poditemid'], $item_arr[0]['id'] );
+
+					$data_arr	=	array( 
+										'id' 				=> $item_arr[0]['id'], 
+										'title' 			=> $item_arr[0][ $title_str ], 
+										'pprf_name_label' 	=> $tables_arr['pod_' . $_POST['cpodid'] ]['name_label'], 										
+										'label' 			=> '' 
+									);
 					wp_send_json_success( $data_arr ); 	
 				} else {
-					$data_arr	=	array( 'id' => '', 'title' => '' );
+					$data_arr	=	array( 'id' => '', 'title' => '', 'name_label' => '', 'label' => '' );
 					wp_send_json_error( $data_arr );	
 				}
 				
@@ -168,13 +175,13 @@ class Panda_Pods_Repeater_Field_Ajax {
 						$del_str		=	'trash';
 					}
 					if( !isset( $_POST['trash'] ) || $_POST['trash'] === '2' )	{
-						/*$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], absint( $_POST['itemid'] ) ); 
+						$pod_obj	 = pods( $tables_arr['pod_' . $_POST['cpodid'] ]['pod'], absint( $_POST['itemid'] ) ); 
 						if ( $pod_obj->exists() ) { 
 							$deleted_bln = $pod_obj->delete( $_POST['itemid'] );
-						}*/
-						$query_str  	= $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE `id` = %d;' , array( $item_arr[0]['id'] ) );	
+						}
+						//$query_str  	= $wpdb->prepare( 'DELETE FROM `' . $table_str . '` WHERE `id` = %d;' , array( $item_arr[0]['id'] ) );	
 						//echo $query_str;
-						$deleted_bln   	= $wpdb->query( $query_str );						
+						//$deleted_bln   	= $wpdb->query( $query_str );						
 					}
 					if( $deleted_bln ){
 						$data_arr	= 	array( 
@@ -342,7 +349,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}*/
 
 		$query_str  	= $wpdb->prepare( 'SELECT 
-										   main_tb.`id`, 
+										   main_tb.`id`, CONCAT( "' . $tables_arr['pod_' . intval( $_POST['saved_tb'] ) ]['name_label'] . '" ) AS pprf_name_label, 
 											`' . $tables_arr['pod_' . intval( $_POST['saved_tb'] ) ]['name_field'] . '` AS title,
 										   main_tb.`pandarf_trash` AS trashed														
 										   FROM `' . $wpdb->prefix . 'pods_' . $tb_str . '` AS main_tb
@@ -352,7 +359,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 										   ' . $limit_str . '; ' , 
 										   $search_arr 
 										);	
-		//echo $query_str;
+		
 		$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 
 		wp_send_json_success( $rows_arr );
