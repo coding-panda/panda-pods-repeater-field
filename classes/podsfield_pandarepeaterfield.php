@@ -163,7 +163,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				'dependency' => true				
             ),            
             self::$type . '_initial_amount' => array(
-                'label' 	 => __( 'Intial Amount', 'panda-pods-repeater-field' ),
+                'label' 	 => __( 'Initial Amount', 'panda-pods-repeater-field' ),
                 'depends-on' => array( self::$type . '_enable_load_more' => 1 ),
                 'type' 		 => 'number',
                 'default' 	 => '10',
@@ -602,13 +602,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . esc_attr( $bg_str ) . '">' . $label_str . '</div>
 										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-											<span class="dashicons dashicons-trash pdt8 pdl5 pdr5 mgb0 "></span>
+											<span class="dashicons dashicons-trash pdt6 pdl5 pdr5 mgb0 "></span>
 											<div id="panda-repeater-trash-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 loading alignleft"/>
 											</div>
 										</div>		
 										<div class="button pprf-right-col center pprf-save-btn" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>	
+											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>	
 											<div id="panda-repeater-save-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 alignleft"/>										
 											</div>
@@ -660,7 +660,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>									
 
 						<div class="button pprf-right-col center pprf-save-btn pprf-save-new-btn alignright " data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>	
+							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>	
 							<div id="panda-repeater-save-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 								<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 alignleft"/>										
 							</div>

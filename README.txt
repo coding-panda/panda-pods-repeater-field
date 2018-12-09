@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 4.9.8
-Stable tag: 1.3.4
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,11 @@ Repeater fields for Pods Framework. Adding a repeatable field on pages.
 == Description ==
 
 Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
+
+= Introduction =
+[youtube https://www.youtube.com/watch?v=8oUeROi62o8]
+[youtube https://www.youtube.com/watch?v=H7YJLMPgG2U]
+
 
 == Installation ==
 
@@ -224,6 +229,14 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * debug: fixed the problem for pods->delete() 
 * add: now Admin Table Columns can be used for labels 
 
+= 1.3.5 - 18th November 2018 =
+* debug: fixed the problem when the order field was changed, the pandarf_items_fn function didn't respond to it 
+* debug: fixed a typo
+
+= 1.3.6 - 19th November 2018 =
+* debug: fixed the problem when the order field was empty, it loaded data descendingly 
+* change: adjusted some icons' padding and margin
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -315,3 +328,11 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.3.4 =
 * Debug: fixed the problem for pods->delete() 
 * Add: now Admin Table Columns can be used for labels 
+
+= 1.3.5 =
+* Debug: fixed the problem when the order field was changed, the pandarf_items_fn function didn't respond to it 
+* Debug: fixed a typo
+
+= 1.3.6 =
+* Debug: fixed the problem when the order field was empty, it loaded data descendingly
+* Change: adjusted some icons' padding and margin

@@ -124,19 +124,19 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	if( repeated_bln == true ){
 			html_str   +=	
 						'<div class="button pprf-right-col center pprf-dismiss-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
-							'<span class="dashicons dashicons-dismiss pdt8 pdl5 pdr5 mgb0 "></span>' +														
+							'<span class="dashicons dashicons-dismiss pdt6 pdl5 pdr5 mgb0 "></span>' +														
 						'</div>' +	
 						'<div class="alignleft pd8">Repeated</div>';			
 	} else {
 		html_str   +=				
 				'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
-					'<span class="dashicons dashicons-trash pdt8 pdl5 pdr5 mgb0 "></span>' +
+					'<span class="dashicons dashicons-trash pdt6 pdl5 pdr5 mgb0 "></span>' +
 					'<div id="panda-repeater-trash-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>' +
 					'</div>' +															
 				'</div>' +	
 				'<div class="button pprf-right-col center pprf-save-btn" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '" data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' +
-					'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>' + 	
+					'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>' + 	
 					'<div id="panda-repeater-save-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft"/>' +										
 					'</div>' +
