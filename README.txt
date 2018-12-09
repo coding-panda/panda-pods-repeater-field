@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 4.9.8
-Stable tag: 1.3.6
+Tested up to: 5.0.0
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -237,6 +237,9 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 * debug: fixed the problem when the order field was empty, it loaded data descendingly 
 * change: adjusted some icons' padding and margin
 
+= 1.3.7 - 9th December 2018 =
+* debug: fixed the problem pods_field() didn't fetch data in ajax
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -336,3 +339,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.3.6 =
 * Debug: fixed the problem when the order field was empty, it loaded data descendingly
 * Change: adjusted some icons' padding and margin
+
+= 1.3.7 =
+* Debug: fixed the problem pods_field() didn't fetch data in ajax
