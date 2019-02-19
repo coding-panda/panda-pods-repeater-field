@@ -89,7 +89,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		if( !class_exists( 'panda_pods_repeater_field_db' ) ){
 			include_once( PANDA_PODS_REPEATER_DIR . 'classes/panda_pods_repeater_field_db.php' );
 		}
-		self::$actTbs_arr = $this->pods_tables_fn();		
+
+		if( !defined( 'PPRF_PODS_TABLES' ) ){
+			self::$actTbs_arr = $this->pods_tables_fn();		
+		} else {
+			self::$actTbs_arr = unserialize( PPRF_PODS_TABLES );
+		}
 		
 	}
 
@@ -406,6 +411,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				
 				// if it is a wordpress post type, join wp_posts table
 				$join_str  = '';
+
 				//print_r (self::$tbs_arr['pod_' . $savedtb_int ]);
 				if( self::$tbs_arr['pod_' . $savedtb_int ]['type'] == 'post_type' ){
 					$join_str = 'INNER JOIN  `' . $wpdb->posts . '` AS post_tb ON post_tb.ID = main_tb.id';
@@ -1146,10 +1152,15 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 function pods_tables_fn( $type_int = 0 ){
 		 
 		global $wpdb, $current_user;
-		
-		$db_cla      = new panda_pods_repeater_field_db();
-		$tables_arr  = $db_cla->get_tables_fn();
+
+		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
+			$db_cla      = new panda_pods_repeater_field_db();
+			$tables_arr  = $db_cla->get_tables_fn();
+			define( 'PPRF_ALL_TABLES', serialize( $tables_arr ) );	
 			
+		} else {
+			$tables_arr  = unserialize( PPRF_ALL_TABLES );			
+		}
 		$podsTbs_arr = array();
 		if( is_array( $tables_arr ) ){
 			foreach( $tables_arr as $tb_str => $tbv_arr ){
@@ -1171,7 +1182,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		
 		self::$tbs_arr = $tables_arr;
 			
-
+		if( ! defined( 'PPRF_PODS_TABLES' )   ){				
+			define( 'PPRF_PODS_TABLES', serialize( $podsTbs_arr ) );	
+		} 	
+	//	print_fn( $podsTbs_arr);
 		return $podsTbs_arr;			 
 	 }
 

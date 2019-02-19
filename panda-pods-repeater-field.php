@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.3.7
+Version: 1.3.8
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.3.7' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.3.8' );
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -864,7 +864,7 @@ function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bl
 		'parent_pod_id'               => '',		
 		'parent_pod_post_id'          => '',		
 		'parent_pod_field_id'         => '',
-		'user_id'					  => 0,
+		'user_id'					  => $current_user->ID,
 		'full_child_pod_name'		  => false,
 	);		
 
@@ -899,7 +899,7 @@ function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bl
 	$values_arr   	= array();
 	$keys_arr	  	= array();
 	$fields_arr   	= array_merge( $fields_arr, $pafields_arr );
-	$vals_arr 		= array();	
+	$vals_arr 		= array();	 
 	foreach( $fields_arr as $k_str => $v_str ){
 		array_push( $keys_arr, '`' . esc_sql( $k_str ) . '`' );	
 		if( is_numeric( $v_str ) ){
