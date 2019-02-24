@@ -24,7 +24,7 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 }
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
-	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', __('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) );
+	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) );
 }
 //admin_enqueue_scripts
 //add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
@@ -101,6 +101,49 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 	} else {
 		$pod_cla = pods( $tb_str );
 	}
+	
+	if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$actTbs_arr ) ) {
+		$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
+
+		//check it is an Advanced Content Type or normal post type
+		$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+
+		if( $parent_arr ){
+		    $condit_arr	=	array();
+			//normal post type fetch all published and draft posts
+			if( $parent_arr['type'] == 'post_type' ){
+				$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
+			}
+
+			$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
+
+
+			//$all_rows = $parentTb_pod->data(); 
+			$parents_str	= '';
+		    if ( 0 < $parentTb_pod->total() ) { 
+		    	$parents_str	=	'<div class="mgt10">';
+		    	$parents_str	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('Assign to another parent: ', 'panda-pods-repeater-field' ) . '</strong>';
+		    	$parents_str	.=	'<select name="pprf_parent_items pprf-left mgt5" id="pprf-parent-items-sel">';
+		    	$parents_str	.=	'<option value="">' . esc_attr__('No', 'panda-pods-repeater-field' ) . '</option>'; 
+		        while ( $parentTb_pod->fetch() ) { 		
+		        	if( $parentTb_pod->display( 'id' ) != $_GET['postid'] ){
+		        		$parents_str	.=	'<option value="' . esc_attr( $parentTb_pod->display( 'id' ) ) . '">' . esc_attr( $parentTb_pod->display( 'name' ) ) . '</option>'; 
+		        	}
+				}
+				$parents_str	.=	'</select>';
+				$parents_str	.=	'</label>';
+				$parents_str	.=	'<label class="pprf-left">';
+				$parents_str	.=	'<button id="pprf-assign-new-parent-btn" class="pprf-left mgr10">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
+
+				$parents_str	.=	'<div id="pprf-assign-new-parent-loader" class="hidden alignleft">	
+										<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class=""/>
+									 </div>	';		
+				$parents_str	.=	'</label>';									 	
+				$parents_str	.=	'</div>';
+			}
+			echo $parents_str;
+		}
+	}
 	// Output a form with all fields
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 } else {
@@ -165,6 +208,20 @@ function pprf_update_parent_fn() {
    
 jQuery(document).ready( function($) {
 	
+	$('#pprf-assign-new-parent-btn').on('click', function(){
+		var data_obj = {
+			action 		: 	'admin_pprf_reassign_parent_fn',		
+			security 	: 	ajax_script.nonce,
+		};
+		
+		$.post(
+			ajax_script.ajaxurl, 
+			data_obj, 
+			function( response_obj ){
+				
+			}
+		);	
+	})
 	// append a div for click
 	//$( '#wpcontent' ).prepend('<div style="height:100%; width:100%; background:#ccc; position: absolute; top: 0; left: 0; " id="expand-div"></div>');
 /*	$('.toplevel_page_panda-pods-repeater-field').on('click', function(){
@@ -232,6 +289,8 @@ jQuery(document).ready( function($) {
 	$('.pods-field-input').on('click keyup change', function(){	 
 		parent.pprfChanged_bln	=	true;		
 	});	 
+
+	
 }).click( 
 	//pprf_resize_fn
 

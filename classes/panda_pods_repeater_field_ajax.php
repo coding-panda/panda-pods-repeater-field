@@ -23,7 +23,9 @@ class Panda_Pods_Repeater_Field_Ajax {
 			add_action( 'wp_ajax_admin_pprf_load_newly_added_fn', 		array( $this, 'admin_pprf_load_newly_added_fn') );	
 			add_action( 'wp_ajax_admin_pprf_delete_item_fn', 			array( $this, 'admin_pprf_delete_item_fn') );	
 			add_action( 'wp_ajax_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
-			add_action( 'wp_ajax_admin_pprf_load_more_fn', 				array( $this, 'admin_pprf_load_more_fn') );							
+			add_action( 'wp_ajax_admin_pprf_load_more_fn', 				array( $this, 'admin_pprf_load_more_fn') );				
+			add_action( 'wp_ajax_admin_pprf_reassign_parent_fn', 		array( $this, 'admin_pprf_reassign_parent_fn') );				
+						
 			// frontend
 
 			//add_action( 'wp_ajax_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
@@ -48,7 +50,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
 			$db_cla      = new panda_pods_repeater_field_db();
 			$tables_arr  = $db_cla->get_tables_fn();
-			define( 'PPRF_ALL_TABLES', serialize( $tables_arr ) );	
+			define( 'PPRF_ALL_TABLES', maybe_serialize( $tables_arr ) );	
 		} 
 	}
 	/**
@@ -64,7 +66,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		} 		
 		global $wpdb, $current_user;
 
-        $tables_arr  = unserialize( PPRF_ALL_TABLES );
+        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
 		
 		if( isset( $_POST['podid'] ) && is_numeric( $_POST['podid'] ) && isset( $_POST['cpodid'] ) && is_numeric( $_POST['cpodid'] ) && isset( $_POST['postid'] )  && isset( $_POST['authorid'] ) && is_numeric( $_POST['authorid'] ) && isset( $_POST['poditemid'] ) && is_numeric( $_POST['poditemid'] ) ){
 			// update panda keys
@@ -145,7 +147,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		} 				
 		global $wpdb, $current_user;
 
-        $tables_arr  = unserialize( PPRF_ALL_TABLES );
+        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
 
 		if( isset( $_POST['podid'] ) && is_numeric( $_POST['podid'] ) && isset( $_POST['cpodid'] ) && is_numeric( $_POST['cpodid'] ) && isset( $_POST['postid'] ) && isset( $_POST['authorid'] ) && is_numeric( $_POST['authorid'] ) && isset( $_POST['itemid'] ) && is_numeric( $_POST['itemid'] ) && isset( $_POST['poditemid'] ) && is_numeric( $_POST['poditemid'] ) ){
 			// update panda keys
@@ -239,7 +241,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		} 		
 		global $wpdb, $current_user;
 
-        $tables_arr  = unserialize( PPRF_ALL_TABLES );
+        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
 		$pprfID_str	= '';
 		$return_arr	= array( 'pprf_id'	=> '' );
 		if( isset( $_POST['order'] ) ){
@@ -285,14 +287,14 @@ class Panda_Pods_Repeater_Field_Ajax {
 	/**
 	 * load more
 	 */
-	function pprf_load_more_fn(){
+	public function pprf_load_more_fn(){
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 			$data_arr	=	array( 'security' => false );
 		    wp_send_json_error( $data_arr );
 		} 		
 		global $wpdb, $current_user;
 
-        $tables_arr  = unserialize( PPRF_ALL_TABLES );
+        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
 
 		$tb_str 	 = '';
 		if( is_numeric( $_POST['saved_tb'] ) ){			
@@ -368,6 +370,22 @@ class Panda_Pods_Repeater_Field_Ajax {
 		    wp_send_json_error( $data_arr );
 		}	
 		$this->pprf_load_more_fn();
+	}	
+
+	public function admin_pprf_reassign_parent_fn(){
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );
+		} 		
+		if( $_POST['action'] != 'admin_pprf_reassign_parent_fn' ){
+			$data_arr	=	array( 'security' => false );
+		    wp_send_json_error( $data_arr );			
+		}
+		global $wpdb, $current_user;
+
+        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
+
+		wp_die();
 	}	
 /*	public function front_pprf_load_more_fn(){
 		if( $_POST['action'] != 'front_pprf_load_more_fn' ){

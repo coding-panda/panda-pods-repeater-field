@@ -1154,6 +1154,25 @@ function pprf_enqueue_scripts_fn() {
 	
 }
 
+
+/**
+ * check pod type
+ */
+
+function pprf_pod_details_fn( $pod_int ){
+	global $wpdb;	
+	$query_str	=	$wpdb->prepare(
+								'SELECT *, pm_tb.`meta_value` AS type FROM `' . $wpdb->prefix . 'posts` AS ps_tb 
+								INNER JOIN 	`' . $wpdb->prefix . 'postmeta` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"
+								WHERE `ID` = %d LIMIT 0, 1 ', array( $pod_int ) 
+							); 
+	
+	$parent_arr	=	$wpdb->get_results( $query_str, ARRAY_A );
+	if( $parent_arr ){
+		$parent_arr	=	$parent_arr[0];
+	}
+	return $parent_arr;
+}
 /*function pprf_family_tree_fn( $atts_arr ){
 
 	global $wpdb;		

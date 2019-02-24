@@ -205,3 +205,14 @@
 .pprf-load-more-wrap .pprf-load-more-btn:hover{
 	background: #F1F1F1;
 }
+
+#wpbody select#pprf-parent-items-sel{
+	height: 23px;
+	margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 0;
+    
+}
+.pprf-left{
+	float: left;
+}
