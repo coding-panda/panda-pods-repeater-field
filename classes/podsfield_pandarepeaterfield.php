@@ -89,7 +89,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		if( !class_exists( 'panda_pods_repeater_field_db' ) ){
 			include_once( PANDA_PODS_REPEATER_DIR . 'classes/panda_pods_repeater_field_db.php' );
 		}
-		self::$actTbs_arr = $this->pods_tables_fn();		
+
+		if( !defined( 'PPRF_PODS_TABLES' ) ){
+			self::$actTbs_arr = $this->pods_tables_fn();		
+		} else {
+			self::$actTbs_arr = unserialize( PPRF_PODS_TABLES );
+		}
 		
 	}
 
@@ -163,7 +168,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				'dependency' => true				
             ),            
             self::$type . '_initial_amount' => array(
-                'label' 	 => __( 'Intial Amount', 'panda-pods-repeater-field' ),
+                'label' 	 => __( 'Initial Amount', 'panda-pods-repeater-field' ),
                 'depends-on' => array( self::$type . '_enable_load_more' => 1 ),
                 'type' 		 => 'number',
                 'default' 	 => '10',
@@ -202,7 +207,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Display labels based on the Admin Table Columns. Only strings and numbers will be displayed.', 'panda-pods-repeater-field' ),			
-            ),              
+            ),      
+            self::$type . '_allow_reassign' => array(
+                'label' 	 => __( 'Allow Reassign', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,	
+                'description'=> __( 'Allow reassigning an item to another parent', 'panda-pods-repeater-field' ),			
+            ),                     
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
@@ -406,6 +418,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				
 				// if it is a wordpress post type, join wp_posts table
 				$join_str  = '';
+
 				//print_r (self::$tbs_arr['pod_' . $savedtb_int ]);
 				if( self::$tbs_arr['pod_' . $savedtb_int ]['type'] == 'post_type' ){
 					$join_str = 'INNER JOIN  `' . $wpdb->posts . '` AS post_tb ON post_tb.ID = main_tb.id';
@@ -602,13 +615,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									<div class="w100 alignleft" id="pprf-row-brief-' . $ids_str . '">
 										<div class="alignleft pd8 pprf-left-col ' . esc_attr( $bg_str ) . '">' . $label_str . '</div>
 										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-											<span class="dashicons dashicons-trash pdt8 pdl5 pdr5 mgb0 "></span>
+											<span class="dashicons dashicons-trash pdt6 pdl5 pdr5 mgb0 "></span>
 											<div id="panda-repeater-trash-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 loading alignleft"/>
 											</div>
 										</div>		
 										<div class="button pprf-right-col center pprf-save-btn" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>	
+											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>	
 											<div id="panda-repeater-save-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 alignleft"/>										
 											</div>
@@ -660,7 +673,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>									
 
 						<div class="button pprf-right-col center pprf-save-btn pprf-save-new-btn alignright " data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
-							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt10 mgb2"/>	
+							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>	
 							<div id="panda-repeater-save-' . $ids_str . '-loader" class="alignleft hidden mgl5">
 								<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 alignleft"/>										
 							</div>
@@ -1146,10 +1159,15 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 function pods_tables_fn( $type_int = 0 ){
 		 
 		global $wpdb, $current_user;
-		
-		$db_cla      = new panda_pods_repeater_field_db();
-		$tables_arr  = $db_cla->get_tables_fn();
+
+		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
+			$db_cla      = new panda_pods_repeater_field_db();
+			$tables_arr  = $db_cla->get_tables_fn();
+			define( 'PPRF_ALL_TABLES', serialize( $tables_arr ) );	
 			
+		} else {
+			$tables_arr  = unserialize( PPRF_ALL_TABLES );			
+		}
 		$podsTbs_arr = array();
 		if( is_array( $tables_arr ) ){
 			foreach( $tables_arr as $tb_str => $tbv_arr ){
@@ -1171,7 +1189,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		
 		self::$tbs_arr = $tables_arr;
 			
-
+		if( ! defined( 'PPRF_PODS_TABLES' )   ){				
+			define( 'PPRF_PODS_TABLES', serialize( $podsTbs_arr ) );	
+		} 	
+	//	print_fn( $podsTbs_arr);
 		return $podsTbs_arr;			 
 	 }
 
