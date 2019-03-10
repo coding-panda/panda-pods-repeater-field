@@ -194,7 +194,9 @@
 	border: 1px solid #e8e8e8;
 	border-radius: 5px;
 } 
-.pprf-load-more-wrap .pprf-load-more-btn{
+.pprf-load-more-wrap .pprf-load-more-btn,
+.pprf-btn,
+#pprf-form input[type="submit"] {
 	padding-left:5px;
 	padding-right:5px;
 	border: 1px solid #e8e8e8;
@@ -202,16 +204,25 @@
 	cursor: pointer;
 	background: #F0F5FF;
 }
-.pprf-load-more-wrap .pprf-load-more-btn:hover{
+.pprf-load-more-wrap .pprf-load-more-btn:hover, 
+.pprf-btn:hover,
+#pprf-form input[type="submit"]:hover{
 	background: #F1F1F1;
 }
-
-#wpbody select#pprf-parent-items-sel{
+#pprf-form input[type="submit"]{
+	font-size: 14px;
+	font-weight: normal;
+	color: #000;
+}
+.pprf-btn{
+	padding: 1px 5px 4px 5px;
+}
+#wpbody select.pprf-in-iframe-sel{
 	height: 23px;
 	margin-right: 10px;
     margin-bottom: 5px;
     padding: 0;
-    
+    font-size: 14px;
 }
 .pprf-left{
 	float: left;

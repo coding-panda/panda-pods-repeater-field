@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 5.0.3
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -240,8 +240,9 @@ $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod
 = 1.3.7 - 9th December 2018 =
 * debug: fixed the problem pods_field() didn't fetch data in ajax
 
-= 1.3.8 - 17th January 2019  =
+= 1.3.8 - 10th March 2019  =
 * Add: optimised some code
+* Add: allow an item to be reassigned to another parent, a field using the same child table.
 
 == Upgrade Notice ==
 
@@ -348,3 +349,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.3.8 =
 * Add: optimised some code
+* Add: allow an item to be reassigned to another parent, a field using the same child table.

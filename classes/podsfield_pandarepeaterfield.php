@@ -207,7 +207,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Display labels based on the Admin Table Columns. Only strings and numbers will be displayed.', 'panda-pods-repeater-field' ),			
-            ),              
+            ),      
+            self::$type . '_allow_reassign' => array(
+                'label' 	 => __( 'Allow Reassign', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,	
+                'description'=> __( 'Allow reassigning an item to another parent', 'panda-pods-repeater-field' ),			
+            ),                     
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',

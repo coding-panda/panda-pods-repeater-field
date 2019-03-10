@@ -411,6 +411,15 @@ function pprf_odd_even_color_fn( ids_str ){
 		}
 	});	
 }
+/**
+ * if reassigned successfully, remove the item and reset colours
+ */
+function pprf_reassign_fn( cpodid, poditemid, itemid ){
+	console.log( cpodid, poditemid, itemid );
+	jQuery( '#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]' ).remove( );
+	//document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
+	pprf_odd_even_color_fn( cpodid + '-' + poditemid );
+}
 jQuery(document).ready( function($) {
 		
 	/**

@@ -24,7 +24,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 			add_action( 'wp_ajax_admin_pprf_delete_item_fn', 			array( $this, 'admin_pprf_delete_item_fn') );	
 			add_action( 'wp_ajax_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
 			add_action( 'wp_ajax_admin_pprf_load_more_fn', 				array( $this, 'admin_pprf_load_more_fn') );				
-			add_action( 'wp_ajax_admin_pprf_reassign_parent_fn', 		array( $this, 'admin_pprf_reassign_parent_fn') );				
+			add_action( 'wp_ajax_admin_pprf_reassign_fn', 				array( $this, 'admin_pprf_reassign_fn') );				
 						
 			// frontend
 
@@ -255,9 +255,9 @@ class Panda_Pods_Repeater_Field_Ajax {
 						}						
 						// remove li and table id from ids_arr
 						//$ids_arr = array_values( array_slice( $ids_arr, 2 ) );
-						$query_str = $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . $tables_arr[ 'pod_' . $ids_arr[1] ]['name'] . '`
-														SET  `pandarf_order` =  "%d" 
-													  WHERE  `id` = "%d";', 
+						$query_str = $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . esc_sql( $tables_arr[ 'pod_' . $ids_arr[1] ]['name'] ) . '`
+														SET  `pandarf_order` =  %d 
+													  WHERE  `id` = %d;', 
 													  array( $i, $ids_arr[2] )
 													);	
 						$wpdb->query( $query_str );							
@@ -372,20 +372,32 @@ class Panda_Pods_Repeater_Field_Ajax {
 		$this->pprf_load_more_fn();
 	}	
 
-	public function admin_pprf_reassign_parent_fn(){
+	public function admin_pprf_reassign_fn(){
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
-			$data_arr	=	array( 'security' => false );
+			$data_arr	=	array( 'security' => false, 'updated' => false  );
 		    wp_send_json_error( $data_arr );
 		} 		
-		if( $_POST['action'] != 'admin_pprf_reassign_parent_fn' ){
-			$data_arr	=	array( 'security' => false );
+		if( $_POST['action'] != 'admin_pprf_reassign_fn' ){
+			$data_arr	=	array( 'security' => true, 'updated' => false  );
 		    wp_send_json_error( $data_arr );			
 		}
 		global $wpdb, $current_user;
 
-        $tables_arr  = maybe_unserialize( PPRF_ALL_TABLES );
-
-		wp_die();
+        $tables_arr = maybe_unserialize( PPRF_ALL_TABLES );
+		$query_str 	= $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . esc_sql( $tables_arr[ 'pod_' . $_POST['cpodid'] ]['name'] ) . '`
+									  	SET  `pandarf_parent_post_id` 	=  %d,
+											 `pandarf_pod_field_id` 	=  %d
+									  	WHERE  `id` = %d', 
+									  array( $_POST['postid'], $_POST['poditemid'], $_POST['itemid'] )
+									);	
+		$done_bln	= $wpdb->query( $query_str );	
+		if( $done_bln ){
+			$data_arr	= array( 'security' => true, 'updated' => $done_bln );
+	    	wp_send_json_success( $data_arr );					
+	    } else {
+			$data_arr	=	array( 'security' => true, 'updated' => false  );
+		    wp_send_json_error( $data_arr );	    	
+	    }
 	}	
 /*	public function front_pprf_load_more_fn(){
 		if( $_POST['action'] != 'front_pprf_load_more_fn' ){
