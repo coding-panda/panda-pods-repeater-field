@@ -10,22 +10,66 @@
 /** WordPress Administration Bootstrap */
 //require_once( '../../../../wp-admin/admin.php' );
 //include_once( ABSPATH . 'wp-admin/admin.php' );
-show_admin_bar( false );
+define( 'WP_USE_THEMES', false ); // get pass the http_host problem
+
+require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
+wp_head();
+
+
+?>
+
+<?php
+//show_admin_bar( false );
 $parentPath_str = '../';
 if ( is_multisite() ){
 	$parentPath_str = '../../';
 }
 $allow_bln = true;
 
-if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts') ){
+if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts')  ){
 	// action before the iframe
 	$allow_bln = false;
 	
 }
+
+$parentTb_pod = false;
+
+if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
+	$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
+
+	//check it is an Advanced Content Type or normal post type
+	$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+
+	if( $parent_arr ){
+	    $condit_arr	=	array();
+		//normal post type fetch all published and draft posts
+		if( $parent_arr['type'] == 'post_type' ){
+			$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
+		}
+
+		$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
+
+		//get current field 
+		foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
+			if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
+		
+				if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // not allowed for public access
+					$allow_bln = true;
+				}
+				break;
+			}
+		}		
+	}
+
+}
+
+
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
-	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) );
+	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
 }
+
+
 //admin_enqueue_scripts
 //add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
 function embeded_fields_enqueue_fn(){
@@ -105,19 +149,19 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 
 	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) && isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$actTbs_arr ) ) {
-		$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
+		//$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
 
 		//check it is an Advanced Content Type or normal post type
-		$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+		//$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
 
-		if( $parent_arr ){
-		    $condit_arr	=	array();
+		if( $parentTb_pod ){
+		   /* $condit_arr	=	array();
 			//normal post type fetch all published and draft posts
 			if( $parent_arr['type'] == 'post_type' ){
 				$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
 			}
 
-			$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
+			$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); */
 			
 			$reassign_bln	= false;
 			//get current field 
@@ -138,7 +182,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 				//$all_rows = $parentTb_pod->data(); 
 				$parents_str	= '';
 			    if ( 0 < $parentTb_pod->total() ) { 
-			    	$parents_str	=	'<div class="pprf-left mgt10 mgb15 w100">';
+			    	$parents_str	=	'<div class="pprf-left mgt10 mgb15 w100" id="pprf-bottom-wrap">';
 			    	$parents_str	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('Assign to parent: ', 'panda-pods-repeater-field' ) . '</strong>';
 			    	$parents_str	.=	'<select name="pprf_parent_items pprf-left mgt5" id="pprf-parent-items-sel" class="pprf-in-iframe-sel">';		    	
 			        while ( $parentTb_pod->fetch() ) { 		
@@ -166,8 +210,8 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					$parents_str	.=	'<label class="pprf-left">';
 					$parents_str	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
 
-					$parents_str	.=	'<div id="pprf-reassign-loader" class="hidden alignleft">	
-											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class=""/>
+					$parents_str	.=	'<div id="pprf-reassign-loader" class="hidden pprf-left">	
+											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="pdt10"/>
 										 </div>	';		
 					$parents_str	.=	'</label>';									 	
 					$parents_str	.=	'</div>';
@@ -183,26 +227,29 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 echo '</div>';
 ?>
 <div id="pprf-on-page-data" data-saved="0"></div>
-
+<br/>
+<br/>
 <div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
 
 <?php
-include_once( ABSPATH . 'wp-admin/admin-footer.php' );
+//include_once( ABSPATH . 'wp-admin/admin-footer.php' );
 ?>
 <script type="text/javascript">
+
 var pprf_loadedResized_bln = false;
 
-// height before each click, 60 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html #wpbody-content').height() + 60;
-// height on load, 60 is for the padding top and bottom
-var pprf_test_orgHei_int      = jQuery('html #wpbody-content').height() + 60;
+// height before each click, 40 is for the padding top and bottom
+var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
+// height on load, 40 is for the padding top and bottom
+var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
 function pprf_resize_fn( hei_int ) { 
 	
 	if( typeof hei_int == 'undefined' ){
-		pprf_orgHei_int = jQuery('html #wpbody-content').height() + 60;
+		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 40;
 	} else {
 		pprf_orgHei_int = hei_int;
 	}
+
 	pprf_update_parent_fn();
 	//parent.pprfParentHei_int;
 }
@@ -331,3 +378,11 @@ jQuery(document).ready( function($) {
 	});	 
 })  		 
 </script>
+<script type="text/javascript">
+	
+if ( window == window.top ) {
+   document.body.innerHTML = 'Access denied!';
+}
+</script>
+<?php
+wp_footer();

@@ -117,34 +117,34 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 	var fullUrl_str	 	= PANDA_PODS_REPEATER_PAGE_URL + 'iframe_id=panda-repeater-edit-' + ids_str + '&podid=' + podid + '&tb=' + cpodid + '&postid=' + postid + '&itemid=' + response_str + '&poditemid=' + poditemid;	
 	var html_str   =	
 	 '<li data-id="' + response_str + '" class="' + trashed_str + '" id="li-' + ids_str + repeated_str + '" style="' + display_str + '">' +
-		'<div class="pprf-row  w100 alignleft">' + 
-			'<div class="w100 alignleft" id="pprf-row-brief-' + ids_str + repeated_str + '">' +
-				'<div class="alignleft pd8 pprf-left-col ' + nextBg_str + ' ">' + label_str + '</div>';
+		'<div class="pprf-row  w100 pprf-left">' + 
+			'<div class="w100 pprf-left" id="pprf-row-brief-' + ids_str + repeated_str + '">' +
+				'<div class="pprf-left pd8 pprf-left-col ' + nextBg_str + ' ">' + label_str + '</div>';
 
 	if( repeated_bln == true ){
 			html_str   +=	
 						'<div class="button pprf-right-col center pprf-dismiss-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
-							'<span class="dashicons dashicons-dismiss pdt6 pdl5 pdr5 mgb0 "></span>' +														
+							'<span class="dashicons dashicons-dismiss pdt6 mgb0 "></span>' +														
 						'</div>' +	
-						'<div class="alignleft pd8">Repeated</div>';			
+						'<div class="pprf-left pd8">Repeated</div>';			
 	} else {
 		html_str   +=				
 				'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
-					'<span class="dashicons dashicons-trash pdt6 pdl5 pdr5 mgb0 "></span>' +
-					'<div id="panda-repeater-trash-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading alignleft"/>' +
+					'<span class="dashicons dashicons-trash pdt6 mgb0 "></span>' +
+					'<div id="panda-repeater-trash-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
+						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading pprf-left"/>' +
 					'</div>' +															
 				'</div>' +	
 				'<div class="button pprf-right-col center pprf-save-btn" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '" data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' +
-					'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon alignleft mgl12 mgt8 mgb2"/>' + 	
-					'<div id="panda-repeater-save-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-						'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/dots-loading.gif" alt="loading" class="mgl8 alignleft"/>' +										
+					'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon  mgt8 mgb2"/>' + 	
+					'<div id="panda-repeater-save-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
+						'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/dots-loading.gif" alt="loading" class="mgl8 pprf-left"/>' +										
 					'</div>' +
 				'</div>' +													
 				'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
-					'<span class="dashicons ' + editIcon_str + ' pdt8 pdl8 pdr8 mgb0 pprf-edit-span"></span>' +
-					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="alignleft hidden mgl5">' +
-						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 alignleft"/>' +
+					'<span class="dashicons ' + editIcon_str + ' pdt8 mgb0 pprf-edit-span"></span>' +
+					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
+						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 pprf-left"/>' +
 					'</div>	' +
 				'</div>';
 	}
@@ -152,7 +152,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 			'</div>' +										   
 			'<div>' + 
 				'<iframe id="panda-repeater-edit-' + ids_str + '" frameborder="0" scrolling="no" src="" style="display:none; " class="panda-repeater-iframe w100"></iframe>' + 
-				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 alignleft center pd3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
+				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 pprf-left center pd3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
 			'</div>' +
 	   	  '</div>' +
 		'</li>'
