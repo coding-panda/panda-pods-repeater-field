@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 5.1.1
-Stable tag: 1.3.8
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,7 @@ add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input_fn
 
 /**
  * The repeater field is only for admin area. If you want it to be available for the frontend users, you can use this filter
+ * Please note nested fields are treated as frontend even the parent field loaded in the admin. No soluction for now
  *
  * @param  boolean $allow_bln allow the input item to be displayed
  * @param  array   $inAdmin_bln is in the admin area
@@ -115,7 +116,7 @@ add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input_fn
  */
 function pprf_allow_frontend_input_fn( $allow_bln, $inAdmin_bln, $name_str, $value_ukn, $options_arr, $pod_obj, $id_int  ){
 	if( !is_admin() ){		
-		if( $pod_obj->pod == 'comic' ){
+		if( $pod_obj->pod == 'your_pod_slug' ){
 			$allow_bln	=	true;			
 		}		
 	}
@@ -134,7 +135,7 @@ add_filter('pprf_load_panda_repeater_allow', 'pprf_allow_fn', 11, 2);
  */
 function pprf_allow_fn( $allow_bln, $get_arr ){
 	
-	$pod_obj	=	pods('comic');		
+	$pod_obj	=	pods('your_pod_slug');		
 	if( $get_arr['podid'] == $pod_obj->pod_id ){
 		$allow_bln = true;
 	}
@@ -153,7 +154,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 7. Under the Admin UI tab, untick Show Admin Menu in Dashboard, because if you add an item to it, it is not linked to any parent posts.
 8. Now we create a new post type in Pod. We name it "Comic" and we use Table Based storage, because we want to reduce the burden of the WordPress Posts table.
 9. Once it has been created, we add a new field to Comic. We name it "Comic Box 1" here. At the bottom of the Field Type, you will find Pods Table As Repeater Field. Select it and then click the tab "Additional Field Options".
-10. Now you can see a Pods Table "comic_content" we just created in the combo box. Select it, add or update the field and save Pod. You can set field width, defaulted to 100%. You can also limit the number of entries of the repeater field. Enable Trash will allow you to move items to Trash and Restore them if you still want them. Trashed items won't be pulled out by pods_field() and pandarf_items_fn(), but if you diable Trash later on, the trashed items will still be pulled out.
+10. Now you can see a Pods Table "comic_content" we just created in the combo box. Select it, add or update the field and save Pod. You can set field width, defaulted to 100%. You can also limit the number of entries of the repeater field. Enable Trash will allow you to move items to Trash and Restore them if you still want them. Trashed items won't be pulled out by pods_field() and pandarf_items_fn(), but if you diable Trash later on, the trashed items will still be pulled out. There are other advanced options to choose. They should be self-explanatory.
 11. If you are doing nested repeater fields, I recommend you set it to 100%. A sample of nested repeater fields.
 12. OK, the set up is done. Now if you are adding a new Comic, 
 13. you will see "Comic Box 1" in the More Fields area.
@@ -286,9 +287,13 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 = 1.3.7 - 9th December 2018 =
 * debug: fixed the problem pods_field() didn't fetch data in ajax
 
-= 1.3.8 - 10th March 2019  =
-* Add: optimised some code
-* Add: allow an item to be reassigned to another parent, a field using the same child table.
+= 1.3.8 - 10th March 2019 =
+* add: optimised some code
+* add: allow an item to be reassigned to another parent, a field using the same child table.
+
+= 1.4.0 - 24th March 2019  =
+* change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
+* change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"
 
 == Upgrade Notice ==
 
@@ -396,3 +401,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.3.8 =
 * Add: optimised some code
 * Add: allow an item to be reassigned to another parent, a field using the same child table.
+
+= 1.4.0 =
+* Change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
+* Change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"

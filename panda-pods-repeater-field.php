@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.3.8
+Version: 1.4.0
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: Multimedia Panda
@@ -214,6 +214,7 @@ class Panda_Pods_Repeater_Field {
 			wp_enqueue_style('pprf_fields');		 			
 
 		}
+		
 		//wp_enqueue_script( 'panda-pods-repeater-resize-iframe', plugins_url( 'js/resize-iframe/iframeResizer.min.js', __FILE__ ), array( 'jquery' ), false, true );
 		wp_register_script(  'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true  );
 		wp_enqueue_script( 'panda-pods-repeater-admin-scripts' );
@@ -1129,7 +1130,7 @@ function pprf_enqueue_scripts_fn() {
 	/**
 	 * All scripts goes here
 	 */
-
+	
 	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true );
 
 	wp_enqueue_script( 'panda-pods-repeater-scripts' );
