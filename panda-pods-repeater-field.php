@@ -201,15 +201,17 @@ class Panda_Pods_Repeater_Field {
 		/**
 		 * All admin styles goes here
 		 */
-		wp_register_style(  'panda-pods-repeater-admin-styles', plugins_url( 'css/admin.css', __FILE__ ) );
+		wp_register_style(  'panda-pods-repeater-general-styles', plugins_url( 'css/general.css', __FILE__ ) );
+		wp_enqueue_style( 'panda-pods-repeater-general-styles' );		
+		wp_register_style(  'panda-pods-repeater-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array( 'panda-pods-repeater-general-styles') );
 		wp_enqueue_style( 'panda-pods-repeater-admin-styles' );
 
 		/**
 		 * All admin scripts goes here
 		 */
 		if( isset( $_GET ) && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ 
-			wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.css', __FILE__ ), array( 'panda-pods-repeater-admin-styles') );
-			wp_enqueue_style('pprf_fields');		 
+			wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.css', __FILE__ ), array( 'panda-pods-repeater-general-styles', 'panda-pods-repeater-admin-styles') );
+			wp_enqueue_style('pprf_fields');		 			
 
 		}
 		//wp_enqueue_script( 'panda-pods-repeater-resize-iframe', plugins_url( 'js/resize-iframe/iframeResizer.min.js', __FILE__ ), array( 'jquery' ), false, true );
@@ -463,18 +465,18 @@ function pprf_load_fn(){
  *
  * @since 1.0.0
  */
-add_action( 'admin_init', 'check_some_other_plugin', 20 );
+add_action( 'init', 'check_some_other_plugin', 20 );
 function check_some_other_plugin() {
 	
   //if ( is_plugin_active( 'pods/init.php' ) ) {
 	if ( defined( 'PODS_VERSION' ) ) {
 		$GLOBALS[ 'Panda_Pods_Repeater_Field' ] = Panda_Pods_Repeater_Field::init();
-		
+		 
 	}
   //}
  
 }
- 
+
 
 /**
  * Throw admin nag if Pods isn't activated.
@@ -1113,14 +1115,22 @@ function pprf_enqueue_scripts_fn() {
 	/**
 	 * All styles goes here
 	 */
-	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ), array(), 1.2 );
+	wp_register_style(  'panda-pods-repeater-general-styles', plugins_url( 'css/general.css', __FILE__ ) );
+	wp_enqueue_style( 'panda-pods-repeater-general-styles' );		
+	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.css', __FILE__ ), array('panda-pods-repeater-general-styles'), 1.2 );
 	wp_enqueue_style( 'panda-pods-repeater-styles');
 
+	if( isset( $_GET ) && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ 
+		wp_enqueue_style( 'dashicons' );
+		wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.css', __FILE__ ), array( 'panda-pods-repeater-general-styles', 'panda-pods-repeater-styles') );
+		wp_enqueue_style('pprf_fields');		 
+
+	}
 	/**
 	 * All scripts goes here
 	 */
 
-	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( ), false, true );
+	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true );
 
 	wp_enqueue_script( 'panda-pods-repeater-scripts' );
 
@@ -1133,7 +1143,8 @@ function pprf_enqueue_scripts_fn() {
 		 	'nonce' 	=> wp_create_nonce( 'panda-pods-repeater-field-nonce' ),
 		)
 	);	
-	$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+	//$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+	$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';			
 	wp_localize_script( 
 		'panda-pods-repeater-scripts', 
 		'PANDA_PODS_REPEATER_PAGE_URL', 

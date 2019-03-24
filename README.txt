@@ -96,6 +96,52 @@ This API will return the wpdb inserted ID if successful, or false on failure.
 An example of basic usage. IDs from the Screenshots section:
 $id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274, 'user_id' => $current_user->ID ) );
 
+= How to allow the repeater field in a Pod from at the frontend =
+
+
+add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input_fn', 10, 7 ); 
+
+/**
+ * The repeater field is only for admin area. If you want it to be available for the frontend users, you can use this filter
+ *
+ * @param  boolean $allow_bln allow the input item to be displayed
+ * @param  array   $inAdmin_bln is in the admin area
+ * @param  string  $name
+ * @param  mixed   $value
+ * @param  array   $options
+ * @param  array   $pod
+ * @param  int     $id
+ * @return boolean still allow or not
+ */
+function pprf_allow_frontend_input_fn( $allow_bln, $inAdmin_bln, $name_str, $value_ukn, $options_arr, $pod_obj, $id_int  ){
+	if( !is_admin() ){		
+		if( $pod_obj->pod == 'comic' ){
+			$allow_bln	=	true;			
+		}		
+	}
+	return  $allow_bln;
+}
+
+add_filter('pprf_load_panda_repeater_allow', 'pprf_allow_fn', 11, 2);
+
+/**
+ * The repeater field is only for logged in users with edit_posts capability 
+ * If you want it to be available for the frontend users, you can use this filter
+ *
+ * @param  boolean $allow_bln allow the form to be displayed
+ * @param  array   $get_arr variables from $_GET
+ * @return boolean still allow or not
+ */
+function pprf_allow_fn( $allow_bln, $get_arr ){
+	
+	$pod_obj	=	pods('comic');		
+	if( $get_arr['podid'] == $pod_obj->pod_id ){
+		$allow_bln = true;
+	}
+	return  $allow_bln;
+
+}
+
 == Screenshots ==
 
 1. After the activation of Pods Framework, please also activate Advance Content Type and Table Storage in Pods Admin, under the Components section.

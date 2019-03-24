@@ -189,6 +189,40 @@ body #wpwrap{
 .toplevel_page_panda-pods-repeater-field .compat-item{
 	display: none;
 }
+
+#pprf-form input[type="submit"] {
+	padding-left:5px;
+	padding-right:5px;
+	border: 1px solid #e8e8e8;
+	border-radius: 5px;	
+	cursor: pointer;
+	background: #F0F5FF;
+}
+#pprf-form input[type="submit"]:hover{
+	background: #F1F1F1;
+}
+#pprf-form input[type="submit"]{
+	font-size: 14px;
+	font-weight: normal;
+	color: #000;
+}
+.pprf-btn{
+	padding: 1px 5px 4px 5px;
+}
+#pprf-form select.pprf-in-iframe-sel{
+	height: 27px;
+	margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 0;
+    font-size: 14px;
+}
+
+#pprf-form{
+	padding: 10px;
+}
+#pprf-form .pods-boolean input{
+	top:3px;
+}
 /* Resposnive */
 
 

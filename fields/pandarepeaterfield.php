@@ -10,21 +10,28 @@
 /** WordPress Administration Bootstrap */
 //require_once( '../../../../wp-admin/admin.php' );
 //include_once( ABSPATH . 'wp-admin/admin.php' );
-show_admin_bar( false );
+define( 'WP_USE_THEMES', false ); // get pass the http_host problem
+
+require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
+wp_head();
+
+
+//show_admin_bar( false );
 $parentPath_str = '../';
 if ( is_multisite() ){
 	$parentPath_str = '../../';
 }
 $allow_bln = true;
 
-if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts') ){
+if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts')  ){
 	// action before the iframe
 	$allow_bln = false;
 	
 }
+
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
-	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) );
+	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
 }
 //admin_enqueue_scripts
 //add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
@@ -166,8 +173,8 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					$parents_str	.=	'<label class="pprf-left">';
 					$parents_str	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
 
-					$parents_str	.=	'<div id="pprf-reassign-loader" class="hidden alignleft">	
-											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class=""/>
+					$parents_str	.=	'<div id="pprf-reassign-loader" class="hidden pprf-left">	
+											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="pdt10"/>
 										 </div>	';		
 					$parents_str	.=	'</label>';									 	
 					$parents_str	.=	'</div>';
@@ -183,26 +190,29 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 echo '</div>';
 ?>
 <div id="pprf-on-page-data" data-saved="0"></div>
-
+<br/>
+<br/>
 <div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
 
 <?php
-include_once( ABSPATH . 'wp-admin/admin-footer.php' );
+//include_once( ABSPATH . 'wp-admin/admin-footer.php' );
 ?>
 <script type="text/javascript">
+
 var pprf_loadedResized_bln = false;
 
 // height before each click, 60 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html #wpbody-content').height() + 60;
+var pprf_orgHei_int = jQuery('html body').height() ;
 // height on load, 60 is for the padding top and bottom
-var pprf_test_orgHei_int      = jQuery('html #wpbody-content').height() + 60;
+var pprf_test_orgHei_int      = jQuery('html body').height() ;
 function pprf_resize_fn( hei_int ) { 
 	
 	if( typeof hei_int == 'undefined' ){
-		pprf_orgHei_int = jQuery('html #wpbody-content').height() + 60;
+		pprf_orgHei_int = jQuery('html body').height() ;
 	} else {
 		pprf_orgHei_int = hei_int;
 	}
+
 	pprf_update_parent_fn();
 	//parent.pprfParentHei_int;
 }
@@ -331,3 +341,11 @@ jQuery(document).ready( function($) {
 	});	 
 })  		 
 </script>
+<script type="text/javascript">
+	
+if ( window == window.top ) {
+   document.body.innerHTML = 'Access denied!';
+}
+</script>
+<?php
+wp_footer();
