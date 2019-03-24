@@ -214,7 +214,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Allow reassigning an item to another parent', 'panda-pods-repeater-field' ),			
-            ),                     
+            ),    
+            self::$type . '_public_access' => array(
+                'label' 	 => __( 'Allow Public Access', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,	
+                'description'=> __( 'Allow not logged in users to access the field. e.g. render it out in a frontend Pod form.', 'panda-pods-repeater-field' ),			
+            ),                               
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
@@ -325,11 +332,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 		}*/
 
-		/*if( !is_admin() ){
-			$allow_bln 		= 	false;
+		if( !is_admin() ){ // Nested fields are treated as frontend even loaded in the admin			
 			$inAdmin_bln	=	false;
 		} 
-		*/
+		
 		//$allow_bln = true;
 		
 		$allow_bln = apply_filters( 'pprf_load_panda_repeater_allow_input', $allow_bln, $inAdmin_bln, $name, $value, $options, $pod, $id );
