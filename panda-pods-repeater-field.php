@@ -1102,8 +1102,10 @@ function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	return false;
 	
 }				
-
-add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
+if( !is_admin() ){
+	add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
+}
+//add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
 /**
  * Enqueue front-end scripts
  *

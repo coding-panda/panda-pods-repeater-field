@@ -31,10 +31,10 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 	$allow_bln = false;
 	
 }
-
+global $current_user;
 $parentTb_pod = false;
 
-if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
+if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && ! $allow_bln ){
 	$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
 
 	//check it is an Advanced Content Type or normal post type
@@ -53,9 +53,23 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 		foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
 			if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
 		
-				if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // not allowed for public access
+				if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
 					$allow_bln = true;
+				} else {
+					// $cField_arr['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
+					if( is_user_logged_in() ){
+						foreach( $current_user->roles as $role_str ){ // the user role can access
+							$ok_ukn	=	get_post_meta( $cField_arr['id'], $role_str, true );
+							if( $ok_ukn ){
+								$allow_bln = true;
+								break;
+							}
+						}						
+					}
+					//if( get_post_meta()
+					
 				}
+
 				break;
 			}
 		}		
@@ -114,6 +128,9 @@ if( $wid_int == 50 ){
 }
 ?>
 <style>
+html {
+    margin-top: 0px !important; 
+}	
 @media  (min-width: 992px) {
 .pods-form-fields .pods-field {
 	width: <?php echo esc_html( $wid_int );?>%;
@@ -238,14 +255,14 @@ echo '</div>';
 
 var pprf_loadedResized_bln = false;
 
-// height before each click, 40 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
+// height before each click, 60 is for the padding top and bottom
+var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
 // height on load, 40 is for the padding top and bottom
-var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
+var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
 function pprf_resize_fn( hei_int ) { 
 	
 	if( typeof hei_int == 'undefined' ){
-		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 40;
+		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 60;
 	} else {
 		pprf_orgHei_int = hei_int;
 	}

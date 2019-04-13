@@ -519,7 +519,7 @@ jQuery(document).ready( function($) {
 			} else {
 				
 				$('#' + iframe_str ).hide('slow');	
-				$('#' + exp_str ).hide('slow');	
+				$('#' + exp_str ).hide('slow');					
 			//	if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons') ){	
 					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
 					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-edit');		
