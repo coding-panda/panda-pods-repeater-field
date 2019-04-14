@@ -143,7 +143,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 				'</div>' +													
 				'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
 					'<span class="dashicons ' + editIcon_str + ' pdt8 mgb0 pprf-edit-span"></span>' +
-					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
+					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgt8 mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 pprf-left"/>' +
 					'</div>	' +
 				'</div>';
@@ -474,7 +474,8 @@ jQuery(document).ready( function($) {
 		});		
 	}	*/
 	
-	$('.pprf-row-load-iframe').live( 'click', function(){
+	//$('.pprf-row-load-iframe').live( 'click', function(){
+	$(document.body).on('click', '.pprf-row-load-iframe', function(){	
 		var url_str    	= $( this ).data('url');
 		var ids_str	   	= $( this ).data('target');
 		var exp_str		= 'panda-repeater-edit-expand-' + ids_str;
@@ -484,14 +485,15 @@ jQuery(document).ready( function($) {
 			// restore this item		
 			pprf_delete_item_fn( trash_ele.data('podid'), trash_ele.data('postid'), trash_ele.data('tb'), trash_ele.data('itemid'), trash_ele.data('userid'), trash_ele.data('iframe_id'), trash_ele.data('poditemid'), 0 );
 		} else { 
-
+			var addEdit_str	= ' .pprf-edit';	
 			if( $( this ).hasClass('pprf-add') ){
+				addEdit_str	= '.pprf-add';	
 				iframe_str 	= 'panda-repeater-add-new-' + ids_str;
 				exp_str		= 'panda-repeater-add-new-expand-' + ids_str;
 			}	
 			
 			if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons-edit') ){		
-
+				
 				//if iframe not loaded
 				
 				if( $('#' + iframe_str ).attr('src') == '' ){
@@ -499,8 +501,10 @@ jQuery(document).ready( function($) {
 					$('#' + iframe_str + '-' + 'loader' ).removeClass('hidden');		
 				}
 				
-				$('#' + iframe_str ).show('slow');
-				$('#' + exp_str ).show('slow');	
+				$('#' + iframe_str ).show('slow',function(){
+	
+				});
+				$('#' + exp_str ).show();	
 				$('#' + iframe_str ).on('load', function(){
 					
 					$('#' + iframe_str + '-' + 'loader' ).addClass('hidden');	
@@ -511,18 +515,21 @@ jQuery(document).ready( function($) {
 					//$('#pprf-row-brief-' + ids_str + '' ).addClass('hidden');	
 					//$('#' + iframe_str )[0].contentWindow.pprf_resize_fn();
 					//console.log( $(this).parent().height() );
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-edit');						
 				});	
 			//	if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons') ){	
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-arrow-up');
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-edit');		
+
 				//}
 			} else {
 				
-				$('#' + iframe_str ).hide('slow');	
-				$('#' + exp_str ).hide('slow');					
+				$('#' + iframe_str ).hide('slow',function(){
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-edit');	
+				});	
+				$('#' + exp_str ).hide();					
 			//	if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons') ){	
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-edit');		
+						
 			//	}
 			}
 			$('#pprf-row-brief-' + ids_str + ' .dashicons-trash' ).removeClass('dashicons-arrow-up');
@@ -532,7 +539,8 @@ jQuery(document).ready( function($) {
 	/**
 	 * click to explan its iframe
 	 */
-	$(".pprf-expand-bar").live( 'click', function(){
+	//$(".pprf-expand-bar").live( 'click', function(){
+	$(document.body).on('click', '.pprf-expand-bar', function(){		
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
 		if( $( this ).hasClass('pprf-add-expand') ){
@@ -547,7 +555,8 @@ jQuery(document).ready( function($) {
 	/**
 	 * click to delete
 	 */
-	 $('.pprf-trash-btn').live( 'click', function(){
+	 //$('.pprf-trash-btn').live( 'click', function(){
+	$(document.body).on('click', '.pprf-trash-btn', function(){		
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
 		if( $( this ).hasClass('pprf-add-expand') ){
@@ -567,7 +576,8 @@ jQuery(document).ready( function($) {
 		pprf_delete_item_fn( $( this ).data('podid'), $( this ).data('postid'), $( this ).data('tb'), $( this ).data('itemid'), $( this ).data('userid'), $( this ).data('iframe_id'), $( this ).data('poditemid'), trash_int );
 	 })
 	 
-	 $('.pprf-save-btn').live( 'click', function(){
+	 //$('.pprf-save-btn').live( 'click', function(){
+	$(document.body).on('click', '.pprf-save-btn', function(){			
 		 if( $( this ).hasClass( 'pprf-btn-ready' ) ){
 			var ids_str		= $( this ).data('target');
 			var iframe_str 	= 'panda-repeater-edit-' + ids_str;
@@ -611,7 +621,8 @@ jQuery(document).ready( function($) {
 	 /**
 	  * toggle trashed and current
 	  */
-	 $('.pprf-tab .dashicons-trash').live('click', function(){
+	// $('.pprf-tab .dashicons-trash').live('click', function(){
+	$(document.body).on('click', '.pprf-tab .dashicons-trash', function(){			
 	 	
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-trashed').css('display', 'block');
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-not-trashed').css('display', 'none');
@@ -619,14 +630,15 @@ jQuery(document).ready( function($) {
 	 	$( this ).parent().addClass('active');
 	 	pprf_odd_even_color_fn( $( this).parent().data('target') );
 
-	 })
-	 $('.pprf-tab .dashicons-portfolio').live('click', function(){
+	})
+	//$('.pprf-tab .dashicons-portfolio').live('click', function(){
+	$(document.body).on('click', '.pprf-tab .dashicons-portfolio', function(){			
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-trashed').css('display', 'none');
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-not-trashed').css('display', 'block');
 	 	$( this ).parent().parent().children('.active').removeClass('active');
 	 	$( this ).parent().addClass('active');	 	
 	 	pprf_odd_even_color_fn( $( this).parent().data('target') );
-	 })	 
+	})	 
 
  	/**
  	 * remove repeated

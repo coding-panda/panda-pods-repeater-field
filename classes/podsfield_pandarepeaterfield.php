@@ -235,10 +235,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
                 'dependency' => true,
-                'description'=> __( 'Allow not logged in users to access the field. e.g. render it out in a frontend Pod form. Not recommended.', 'panda-pods-repeater-field' ),			
+                'description'=> __( 'Allow not logged in users to access the field. Not recommended. A user role with edit_posts capability can always access the field.', 'panda-pods-repeater-field' ),			
             ),   
             self::$type . '_role_access' => array( // this is saved into _posts
-                'label' 	 => __( 'Access Allowed to User Roles', 'panda-pods-repeater-field' ),                
+                'label' 	 => __( 'Access Allowed To User Roles', 'panda-pods-repeater-field' ),                
                 'depends-on' => array( self::$type . '_public_access' => 0 ),
                 'group'		 => $roles_arr,	                
                 'description'=> __( 'Only a user role with edit_posts capability can access the field. Grand the access right to more roles here.', 'panda-pods-repeater-field' ),	                
@@ -673,7 +673,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 										</div>																	
 										<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' . $ids_str . '" data-url="' . $fullUrl_str . '">
 											<span class="dashicons ' . $edit_str . ' pdt8 mgb0 pprf-edit-span"></span>
-											<div id="panda-repeater-edit-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
+											<div id="panda-repeater-edit-' . $ids_str . '-loader" class="pprf-left hidden mgt8 mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>
 											</div>	
 										</div>
@@ -726,7 +726,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>
 						<div id="pprf-row-brief-' . $ids_str . '" class="alignright pprf-right-col button pprf-add pprf-row-load-iframe pprf-add " data-target="' . $ids_str . '" data-url="' . $fullUrl_str . '">
 							<span class="dashicons dashicons-edit pdt8 mgb0 "></span>
-							<div id="panda-repeater-add-new-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
+							<div id="panda-repeater-add-new-' . $ids_str . '-loader" class="pprf-left hidden mgt8 mgl5">
 								<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>
 							</div>	
 						</div>																		
