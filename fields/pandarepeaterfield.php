@@ -34,7 +34,7 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 global $current_user;
 $parentTb_pod = false;
 
-if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && ! $allow_bln ){
+if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 	$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
 
 	//check it is an Advanced Content Type or normal post type
@@ -48,31 +48,32 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && ! $allow_bln ){
 		}
 
 		$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
-
-		//get current field 
-		foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
-			if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
-		
-				if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
-					$allow_bln = true;
-				} else {
-					// $cField_arr['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
-					if( is_user_logged_in() ){
-						foreach( $current_user->roles as $role_str ){ // the user role can access
-							$ok_ukn	=	get_post_meta( $cField_arr['id'], $role_str, true );
-							if( $ok_ukn ){
-								$allow_bln = true;
-								break;
-							}
-						}						
+		if( ! $allow_bln ){
+			//get current field 
+			foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
+				if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
+			
+					if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
+						$allow_bln = true;
+					} else {
+						// $cField_arr['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
+						if( is_user_logged_in() ){
+							foreach( $current_user->roles as $role_str ){ // the user role can access
+								$ok_ukn	=	get_post_meta( $cField_arr['id'], $role_str, true );
+								if( $ok_ukn ){
+									$allow_bln = true;
+									break;
+								}
+							}						
+						}
+						//if( get_post_meta()
+						
 					}
-					//if( get_post_meta()
-					
-				}
 
-				break;
-			}
-		}		
+					break;
+				}
+			}	
+		}	
 	}
 
 }
@@ -80,7 +81,9 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && ! $allow_bln ){
 
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
+	echo '<div class="mg10">';
 	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
+	echo '</div>';
 }
 
 
@@ -191,6 +194,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					break;
 				}
 			}
+
 			//If reassigning allowed
 			if( $reassign_bln ){
 				$sameChildFs_arr	=	pprf_same_child_tb_fields_fn( $parentTb_pod, $ctb_str );
