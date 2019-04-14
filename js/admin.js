@@ -143,7 +143,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 				'</div>' +													
 				'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
 					'<span class="dashicons ' + editIcon_str + ' pdt8 mgb0 pprf-edit-span"></span>' +
-					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgt8 mgl5">' +
+					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 pprf-left"/>' +
 					'</div>	' +
 				'</div>';
@@ -502,7 +502,8 @@ jQuery(document).ready( function($) {
 				}
 				
 				$('#' + iframe_str ).show('slow',function(){
-	
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-edit');		
 				});
 				$('#' + exp_str ).show();	
 				$('#' + iframe_str ).on('load', function(){
