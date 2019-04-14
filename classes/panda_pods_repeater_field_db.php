@@ -83,6 +83,13 @@ class panda_pods_repeater_field_db {
 	 */
 	public function get_tables_fn( $allTables_bln = false )	{
 		global $wpdb;
+		/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added
+			$savedTbs_str  = wp_cache_get( 'PPRF_ALL_TABLES' );
+			if( $savedTbs_str ){
+				return maybe_unserialize( $savedTbs_str );
+			}
+		}*/
+
 		$podsTb_arr    = array();
 		$sql_str       = 'SHOW TABLES LIKE "%"';
 		$tables_arr    = $wpdb->get_results( $sql_str );				
@@ -137,7 +144,7 @@ class panda_pods_repeater_field_db {
 				
 			}
 		}
-		
+		//wp_cache_set ( 'PPRF_ALL_TABLES', serialize( $podsTb_arr ) , 60*60*24 ); 
 		//$podsTb_arr = array_values( $podsTb_arr );
 		return $podsTb_arr;
 
@@ -148,6 +155,14 @@ class panda_pods_repeater_field_db {
 	 */
 	public function get_pods_tb_info_fn( $tb_str ){
 		global $wpdb;
+		$theTb_str	=	$tb_str;
+		/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added
+			$saved_str  = wp_cache_get( 'PPRF_' . $theTb_str );
+
+			if( $saved_str ){
+				return maybe_unserialize( $saved_str );
+			}
+		}*/		
 		$tbPrefix_str  = $wpdb->prefix;
 		// if prefix not found, add it to the target tb
 		if( strpos( $tb_str, $wpdb->prefix ) === 0 ){
@@ -173,6 +188,7 @@ class panda_pods_repeater_field_db {
 			$tableInfo_arr['type'] = $items_arr[0]['type'] == ''? 'pod' : $items_arr[0]['type'] ; 				
 		}
 		
+		//wp_cache_set ( 'PPRF_' . $theTb_str, serialize( $tableInfo_arr ) , 60*60*24 ); 
 		return $tableInfo_arr;		
 	}
 	/**
