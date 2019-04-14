@@ -1078,6 +1078,20 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
  */
 function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	global $wpdb;
+
+	/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added
+		$saved_str  = wp_cache_get( 'PPRF_field_' . $fieldName_str . '_' . $parentID_int );
+
+		if( $saved_str ){
+			$saved_arr	= maybe_unserialize( $saved_str );
+			if( is_array( $saved_arr ) ){
+				return  $saved_arr;
+			} else {
+				return false;
+			}
+		}
+	}*/	
+
 	$para_arr 	=	array( $fieldName_str );
 	$where_str	=	'';
 	if( is_numeric( $parentID_int ) && $parentID_int != 0 ){
@@ -1097,7 +1111,11 @@ function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	
 	$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
 	if( count( $items_arr ) ){
+
+		//wp_cache_set ( 'PPRF_field_' . $fieldName_str . '_' . $parentID_int, serialize( $items_arr[0] ) , 60*60*24 ); 
 		return $items_arr[0];
+	} else {
+		//wp_cache_set ( 'PPRF_field_' . $fieldName_str . '_' . $parentID_int, 0 , 60*60*24 ); 
 	}
 	return false;
 	
