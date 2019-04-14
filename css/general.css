@@ -49,7 +49,9 @@
 	display:none;	
 
 }
-
+.pprf-redorder-list{
+    padding-inline-start: 0;
+}
 .pprf-redorder-list li{
 
 	/*padding:5px;	
