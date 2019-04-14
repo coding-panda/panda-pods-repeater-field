@@ -293,7 +293,11 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 
 = 1.4.0 - 24th March 2019  =
 * change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
-* change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"
+* change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg".
+* change: JavaScript 'live' to 'on'.
+* add: allow chosen user roles to access the field.
+* fix: The field was opened and closed immediately on mobile.
+
 
 == Upgrade Notice ==
 
@@ -404,4 +408,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.0 =
 * Change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
-* Change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"
+* Change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg".
+* Change: JavaScript 'live' to 'on'
+* Add: allow chosen user roles to access the field.
+* Fix: The field was opened and closed immediately on mobile.
