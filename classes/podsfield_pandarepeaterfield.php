@@ -673,7 +673,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 										</div>																	
 										<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' . $ids_str . '" data-url="' . $fullUrl_str . '">
 											<span class="dashicons ' . $edit_str . ' pdt8 mgb0 pprf-edit-span"></span>
-											<div id="panda-repeater-edit-' . $ids_str . '-loader" class="pprf-left hidden mgt8 mgl5">
+											<div id="panda-repeater-edit-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>
 											</div>	
 										</div>
@@ -726,7 +726,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>
 						<div id="pprf-row-brief-' . $ids_str . '" class="alignright pprf-right-col button pprf-add pprf-row-load-iframe pprf-add " data-target="' . $ids_str . '" data-url="' . $fullUrl_str . '">
 							<span class="dashicons dashicons-edit pdt8 mgb0 "></span>
-							<div id="panda-repeater-add-new-' . $ids_str . '-loader" class="pprf-left hidden mgt8 mgl5">
+							<div id="panda-repeater-add-new-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
 								<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>
 							</div>	
 						</div>																		
