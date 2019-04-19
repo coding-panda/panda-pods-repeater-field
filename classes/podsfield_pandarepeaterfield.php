@@ -147,8 +147,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							'25'  => '25%',													
 							); 
 		$bln_arr   	= array(
-							'0' 	=> 'No',	
-							'1'  	=> 'Yes',																							
+							'0' 	=> __('No', 'panda-pods-repeater-field' ),	
+							'1'  	=> __('Yes', 'panda-pods-repeater-field' ),																							
 							); 		
 		$options = array( 
            
