@@ -87,8 +87,8 @@ class Panda_Pods_Repeater_Field {
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
-		// Localize our plugin
-		add_action( 'init', array( $this, 'localization_setup' ) );
+		// Localize our plugin, doesn't work
+		//add_action( 'init', array( $this, 'localization_setup' ) );
 
 		/**
 		 * Scripts/ Styles
@@ -183,7 +183,7 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function localization_setup() {
-		load_plugin_textdomain( 'panda-pods-repeater-field', true, plugins_url( 'languages', __FILE__ )  );
+		//load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );
 		
 	}
 
@@ -1253,4 +1253,9 @@ function pprf_same_child_tb_fields_fn( $pod_cla, $ctb_str = '' ){
 	}	
 
 	return $return_arr;
+}
+// load language
+add_action( 'init', 'pprf_localization_setup_fn' );
+function pprf_localization_setup_fn() {
+	load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );	
 }
