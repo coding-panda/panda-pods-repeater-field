@@ -171,7 +171,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => 0,
                 'type' 		 => 'number',
                 'data' 		 => '',
-				'dependency' => true
+				'dependency' => true,
+				'description'=> __( 'Leave it to 0 if you want to Enable Load More', 'panda-pods-repeater-field' ),
             ),	
             self::$type . '_enable_load_more' => array(
                 'label' 	 => __( 'Enable Load More', 'panda-pods-repeater-field' ),
@@ -187,6 +188,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'number',
                 'default' 	 => '10',
                 'data' 		 => '',	
+                'description'=> __( 'Default amount to load, no negative number.', 'panda-pods-repeater-field' ),
             ),            
             self::$type . '_enable_trash' => array(
                 'label' 	 => __( 'Enable Trash', 'panda-pods-repeater-field' ),
@@ -206,7 +208,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'label' 	 => __( 'Order', 'panda-pods-repeater-field' ),
                 'default' 	 => 'ASC',
                 'type' 		 => 'pick',
-                'data' 		 => array('ASC' => 'Ascending', 'DESC' => 'Descending' ),
+                'data' 		 => array('ASC' => __('Ascending', 'panda-pods-repeater-field' ), 'DESC' => __('Descending', 'panda-pods-repeater-field' ) ),
 				'description'=> __( 'Default to Ascending', 'panda-pods-repeater-field' ),
             ),	
             self::$type . '_display_order_info' => array(
@@ -481,10 +483,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 				if( isset( $options['pandarepeaterfield_order'] ) && $options['pandarepeaterfield_order'] == 'DESC' ){
 					$order_str		.=	'DESC';
-					$orderInfo_str	.=	'descending';
+					$orderInfo_str	.=	esc_html__( '- descending', 'panda-pods-repeater-field');
 				} else {
 					$order_str		.=	'ASC';
-					$orderInfo_str	.=	'- ascending';
+					$orderInfo_str	.=	esc_html__( '- ascending', 'panda-pods-repeater-field');
 				}
 
 

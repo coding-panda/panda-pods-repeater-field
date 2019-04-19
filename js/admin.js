@@ -174,17 +174,17 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_delete_item_fn', 'trash' : trashed, 'security' : ajax_script.nonce };
 		var info_str	=	'';
 		if( trashed == 0 ){
-			info_str	=	' It will be restored.';
+			info_str	=	strs_obj.be_restored;
 		}		
 		if( trashed == 1 ){
-			info_str	=	' You can recover it from trash.';
+			info_str	=	strs_obj.can_recover;
 		}
 		if( trashed == 2 ){
-			info_str	=	' It will be deleted permanently.';
+			info_str	=	strs_obj.be_deleted;
 		}
 		//panda-repeater-edit-13-506 236
 		var data_obj  = para_obj;
-		var passt_bln = confirm( 'Are you sure? ' + info_str );
+		var passt_bln = confirm( strs_obj.you_sure + ' ' + info_str );
 		//$('#overlord').removeClass('hidden');		
 		
 		if( passt_bln == true  ){
@@ -608,7 +608,7 @@ jQuery(document).ready( function($) {
 		
 		  if( pprfChanged_bln ){
 			evt.preventDefault();
-			var leave_bln = confirm('It seems like you have made some changes in a repeater field. Ignore the changes?');
+			var leave_bln = confirm( strs_obj.Ignore_changes );
 			if ( leave_bln == true){
 				pprfChanged_bln	=	false;
 				$( this ).click();

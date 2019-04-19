@@ -12,18 +12,24 @@
 //include_once( ABSPATH . 'wp-admin/admin.php' );
 define( 'WP_USE_THEMES', false ); // get pass the http_host problem
 
-require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
-wp_head();
+
+$isAdmin_bln	=	false;
+if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ // is_admin doesn't work for nested fields
+	$isAdmin_bln	=	true;	
+} {
+	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
+	wp_head();
+}
 
 
 ?>
 
 <?php
 //show_admin_bar( false );
-$parentPath_str = '../';
+/*$parentPath_str = '../';
 if ( is_multisite() ){
 	$parentPath_str = '../../';
-}
+}*/
 $allow_bln = true;
 
 if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts')  ){
@@ -32,20 +38,19 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 	
 }
 global $current_user;
-$parentTb_pod = false;
-
+$parentTb_pod = false; 
 if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
-	$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
-
-	//check it is an Advanced Content Type or normal post type
-	$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
-
-	if( $parent_arr ){
-	    $condit_arr	=	array();
-		//normal post type fetch all published and draft posts
-		if( $parent_arr['type'] == 'post_type' ){
-			$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
-		}
+                
+    //check it is an Advanced Content Type or normal post type
+    $parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+                    
+    if( $parent_arr ){
+        $parentTb_str   =	$parent_arr['post_name'] ;
+        $condit_arr    	=	array();
+	    //normal post type fetch all published and draft posts
+	    if( $parent_arr['type'] == 'post_type' ){
+	        $condit_arr =     array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
+	    }
 
 		$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
 		if( ! $allow_bln ){
@@ -406,4 +411,6 @@ if ( window == window.top ) {
 }
 </script>
 <?php
-wp_footer();
+if( !$isAdmin_bln ){
+	wp_footer();
+}
