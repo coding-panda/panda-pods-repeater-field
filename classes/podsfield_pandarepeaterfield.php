@@ -734,7 +734,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>																		
 						<iframe id="panda-repeater-add-new-' . $ids_str . '" name="panda-repeater-add-new-' . $ids_str . '" frameborder="0" src="" scrolling="no" style="display:none;" class="panda-repeater-iframe w100" >
 						</iframe>
-						<div id="panda-repeater-add-new-expand-' . $ids_str . '" class="w100 pprf-left center pd3 pprf-expand-bar pprf-add-expand" data-target="' . $ids_str . '"  style="display:none;">' . esc_html__('Content missing? Click here to expand', 'panda-pods-repeater-field' ). '</div>
+						<div id="panda-repeater-add-new-expand-' . $ids_str . '" class="w100 pprf-left center pdt3 pdb3 pprf-expand-bar pprf-add-expand" data-target="' . $ids_str . '"  style="display:none;">' . esc_html__('Content missing? Click here to expand', 'panda-pods-repeater-field' ). '</div>
 					</div>
 				 </div>';
 

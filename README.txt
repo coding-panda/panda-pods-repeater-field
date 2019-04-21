@@ -298,6 +298,12 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: allow chosen user roles to access the field.
 * fix: The field was opened and closed immediately on mobile.
 
+= 1.4.1 - 20th April 2019  =
+* change: Made JavaScript alerts translatable. 
+* add: Chinese language support.
+* fix: error when a Pods table did not exist.
+* fix: error on multisites.
+* fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.
 
 == Upgrade Notice ==
 
@@ -412,3 +418,10 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Change: JavaScript 'live' to 'on'
 * Add: allow chosen user roles to access the field.
 * Fix: The field was opened and closed immediately on mobile.
+
+= 1.4.1 =
+* Change: Made JavaScript alerts translatable. 
+* Add: Chinese language support.
+* Fix: error when a Pods table did not exist.
+* Fix: error on multisites.
+* Fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.

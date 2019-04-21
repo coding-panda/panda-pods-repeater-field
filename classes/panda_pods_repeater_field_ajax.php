@@ -161,14 +161,28 @@ class Panda_Pods_Repeater_Field_Ajax {
 				
 				//$now_str		= date('Y-m-d H:i:s');
 				$table_str 	 	= $wpdb->prefix . $tables_arr['pod_' . $_POST['cpodid'] ]['name'] ;			  
+
+				$where_arr		= array();
+			    $join_str		= 	'';        
+				//check it is an Advanced Content Type or normal post type
+			    $pDetails_arr	=	pprf_pod_details_fn( $_POST['cpodid'] );
+			    			            
+			    if( $pDetails_arr ){
+				    //normal post type fetch all published and draft posts
+				    if( $pDetails_arr['type'] == 'post_type' ){
+				    	 $join_str	=	'INNER JOIN `' . $wpdb->prefix . 'posts` AS ps_tb ON ps_tb.`ID` = t.`id`';				    	
+				    }
+				}					
 				// fetch the child item data and see if the item belong to the current post
 				$where_str   	= '   `t`.`pandarf_parent_pod_id`  = %d
 							   	  AND `t`.`pandarf_parent_post_id` = %d
 							   	  AND `t`.`pandarf_pod_field_id`   = %d '; 						
 				//$query_str  	= $wpdb->prepare( 'SELECT id FROM `' . $table_str . '` AS t WHERE `t`.`pandarf_categories` REGEXP "(:\"' . $_POST['podid'] . '.' . $_POST['postid'] . '.' . $_POST['poditemid'] . '\";{1,})" AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , array( $_POST['itemid'] ) );	
-				$where_arr		= $where_arr		= array( $_POST['podid'], $_POST['postid'],  $_POST['poditemid'], $_POST['itemid'] );				   	  
-				$query_str  	= $wpdb->prepare( 'SELECT * FROM `' . $table_str . '` AS t WHERE ' . $where_str . ' AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , $where_arr );	
-				
+				$where_arr		= array( $_POST['podid'], $_POST['postid'],  $_POST['poditemid'], $_POST['itemid'] );				   	  
+
+			
+				$query_str  	= $wpdb->prepare( 'SELECT * FROM `' . $table_str . '` AS t ' . $join_str . ' WHERE ' . $where_str . ' AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1;' , $where_arr );	
+			
 				$item_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
 				if( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) && $_POST['itemid'] === $item_arr[0]['id'] ){
 					
@@ -203,6 +217,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 											'ppod_fie_id'	=> $_POST['poditemid'],		
 											'action'		=> $del_str,								
 										) ;	
+
 						wp_send_json_success( $data_arr ); 
 					}					
 				} else {

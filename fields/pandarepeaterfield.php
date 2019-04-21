@@ -255,7 +255,7 @@ echo '</div>';
 <div id="pprf-on-page-data" data-saved="0"></div>
 <br/>
 <br/>
-<div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
+<div class="click-to-close-arrow aligncenter" title="Click this bar to close" ><?php esc_html_e('Click here to collapse', 'panda-pods-repeater-field' ); ?></div>
 
 <?php
 //include_once( ABSPATH . 'wp-admin/admin-footer.php' );

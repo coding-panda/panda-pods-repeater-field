@@ -22,6 +22,9 @@ define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_VERSION', '1.4.1' );
+
+
+
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -197,7 +200,7 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function admin_enqueue_scripts() {
-
+		global $pprfStrs_arr;
 		/**
 		 * All admin styles goes here
 		 */
@@ -227,18 +230,11 @@ class Panda_Pods_Repeater_Field {
 			 	'nonce' 	=> wp_create_nonce( 'panda-pods-repeater-field-nonce' ),
 			)
 		);		
-		// translation 
-		$strs_arr = array(
-			'be_restored' 		=> esc_html__( 'It will be restored.', 'panda-pods-repeater-field' ),
-			'can_recover' 		=> esc_html__( 'You can recover it from trash.', 'panda-pods-repeater-field' ),
-			'be_deleted' 		=> esc_html__( 'It will be deleted permanently.', 'panda-pods-repeater-field' ),
-			'you_sure' 			=> esc_html__( 'Are you sure?', 'panda-pods-repeater-field' ),
-			'Ignore_changes' 	=> esc_html__( 'It seems like you have made some changes in a repeater field. Ignore the changes?', 'panda-pods-repeater-field' ),
-		);
+
 		wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
 			'strs_obj', 
-			$strs_arr
+			$pprfStrs_arr
 		);			
 		$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 		wp_localize_script( 
@@ -514,7 +510,7 @@ function panda_repeater_admin_notice_pods_not_active() {
 		if ( $pagenow == 'plugins.php' ) {
 			?>
 			<div class="error">
-				<p><?php _e( 'You have activated Panda Pods Repeater Field. Pods Framework plugin required.', 'panda_repeater' ); ?></p>
+				<p><?php esc_html_e( 'You have activated Panda Pods Repeater Field. Pods Framework plugin required.', 'panda-pods-repeater-field' ); ?></p>
 			</div>
 		<?php
 
@@ -548,7 +544,7 @@ function panda_repeater_admin_notice_pods_min_version_fail() {
 			if ( $page === 'pods' ) {
 				?>
 				<div class="updated">
-					<p><?php _e( 'Panda Repeater, requires Pods version '.$minimum_version.' or later. Current version of Pods is '.PODS_VERSION, 'panda_repeater' ); ?></p>
+					<p><?php esc_html_e( 'Panda Pods Repeater Field requires Pods version 2.3.18 or later.', 'panda-pods-repeater-field' ); ?></p>
 				</div>
 			<?php
 
@@ -606,6 +602,20 @@ function panda_repeater_admin_notice_pods_min_version_fail() {
 	exit();
 	return  $found_bln;
 }*/
+
+add_action( 'wp_loaded', 'pprf_translate_fn' );
+
+function pprf_translate_fn(){
+	// translation 
+	$pprfStrs_arr = array(
+		'be_restored' 		=> esc_html__( 'It will be restored.', 'panda-pods-repeater-field' ),
+		'can_recover' 		=> esc_html__( 'You can recover it from trash.', 'panda-pods-repeater-field' ),
+		'be_deleted' 		=> esc_html__( 'It will be deleted permanently.', 'panda-pods-repeater-field' ),
+		'you_sure' 			=> esc_html__( 'Are you sure?', 'panda-pods-repeater-field' ),
+		'Ignore_changes' 	=> esc_html__( 'It seems like you have made some changes in a repeater field. Ignore the changes?', 'panda-pods-repeater-field' ),
+	);
+	$GLOBALS['pprfStrs_arr'] = $pprfStrs_arr;
+}
 /**
  * pandarf_pods_fn extension of pods( $table, $params )
  *
@@ -1150,7 +1160,7 @@ if( !is_admin() ){
  * @since 1.0.0
  */
 function pprf_enqueue_scripts_fn() {
-
+	global $pprfStrs_arr;
 	/**
 	 * All styles goes here
 	 */
@@ -1172,6 +1182,12 @@ function pprf_enqueue_scripts_fn() {
 	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true );
 
 	wp_enqueue_script( 'panda-pods-repeater-scripts' );
+	//translation
+	wp_localize_script( 
+		'panda-pods-repeater-scripts', 
+		'strs_obj', 
+		$pprfStrs_arr
+	);
 
 	// prepare ajax
 	wp_localize_script( 

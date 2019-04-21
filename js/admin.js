@@ -152,7 +152,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 			'</div>' +										   
 			'<div>' + 
 				'<iframe id="panda-repeater-edit-' + ids_str + '" frameborder="0" scrolling="no" src="" style="display:none; " class="panda-repeater-iframe w100"></iframe>' + 
-				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 pprf-left center pd3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
+				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 pprf-left center pdt3 pdb3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
 			'</div>' +
 	   	  '</div>' +
 		'</li>'
