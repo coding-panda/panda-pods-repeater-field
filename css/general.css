@@ -49,7 +49,9 @@
 	display:none;	
 
 }
-
+.pprf-redorder-list{
+    padding-inline-start: 0;
+}
 .pprf-redorder-list li{
 
 	/*padding:5px;	
@@ -151,7 +153,9 @@
 
 .pprf-save-icon{
 	height:16px !important;
-	
+	display: block;
+    margin-left: auto;
+    margin-right: auto;	
 }
 .hidden{
 	display:none;

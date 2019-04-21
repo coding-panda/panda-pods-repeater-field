@@ -12,18 +12,24 @@
 //include_once( ABSPATH . 'wp-admin/admin.php' );
 define( 'WP_USE_THEMES', false ); // get pass the http_host problem
 
-require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
-wp_head();
+
+$isAdmin_bln	=	false;
+if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ // is_admin doesn't work for nested fields
+	$isAdmin_bln	=	true;	
+} {
+	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
+	wp_head();
+}
 
 
 ?>
 
 <?php
 //show_admin_bar( false );
-$parentPath_str = '../';
+/*$parentPath_str = '../';
 if ( is_multisite() ){
 	$parentPath_str = '../../';
-}
+}*/
 $allow_bln = true;
 
 if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts')  ){
@@ -31,34 +37,48 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 	$allow_bln = false;
 	
 }
-
-$parentTb_pod = false;
-
+global $current_user;
+$parentTb_pod = false; 
 if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
-	$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
-
-	//check it is an Advanced Content Type or normal post type
-	$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
-
-	if( $parent_arr ){
-	    $condit_arr	=	array();
-		//normal post type fetch all published and draft posts
-		if( $parent_arr['type'] == 'post_type' ){
-			$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
-		}
+                
+    //check it is an Advanced Content Type or normal post type
+    $parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+                    
+    if( $parent_arr ){
+        $parentTb_str   =	$parent_arr['post_name'] ;
+        $condit_arr    	=	array();
+	    //normal post type fetch all published and draft posts
+	    if( $parent_arr['type'] == 'post_type' ){
+	        $condit_arr =     array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
+	    }
 
 		$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
+		if( ! $allow_bln ){
+			//get current field 
+			foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
+				if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
+			
+					if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
+						$allow_bln = true;
+					} else {
+						// $cField_arr['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
+						if( is_user_logged_in() ){
+							foreach( $current_user->roles as $role_str ){ // the user role can access
+								$ok_ukn	=	get_post_meta( $cField_arr['id'], $role_str, true );
+								if( $ok_ukn ){
+									$allow_bln = true;
+									break;
+								}
+							}						
+						}
+						//if( get_post_meta()
+						
+					}
 
-		//get current field 
-		foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
-			if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
-		
-				if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // not allowed for public access
-					$allow_bln = true;
+					break;
 				}
-				break;
-			}
-		}		
+			}	
+		}	
 	}
 
 }
@@ -66,7 +86,9 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 
 $allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
 if( !$allow_bln ){
+	echo '<div class="mg10">';
 	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
+	echo '</div>';
 }
 
 
@@ -114,6 +136,9 @@ if( $wid_int == 50 ){
 }
 ?>
 <style>
+html {
+    margin-top: 0px !important; 
+}	
 @media  (min-width: 992px) {
 .pods-form-fields .pods-field {
 	width: <?php echo esc_html( $wid_int );?>%;
@@ -174,6 +199,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					break;
 				}
 			}
+
 			//If reassigning allowed
 			if( $reassign_bln ){
 				$sameChildFs_arr	=	pprf_same_child_tb_fields_fn( $parentTb_pod, $ctb_str );
@@ -229,7 +255,7 @@ echo '</div>';
 <div id="pprf-on-page-data" data-saved="0"></div>
 <br/>
 <br/>
-<div class="click-to-close-arrow aligncenter" title="Click this bar to close" >Click here to collapse</div>
+<div class="click-to-close-arrow aligncenter" title="Click this bar to close" ><?php esc_html_e('Click here to collapse', 'panda-pods-repeater-field' ); ?></div>
 
 <?php
 //include_once( ABSPATH . 'wp-admin/admin-footer.php' );
@@ -238,14 +264,14 @@ echo '</div>';
 
 var pprf_loadedResized_bln = false;
 
-// height before each click, 40 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
+// height before each click, 60 is for the padding top and bottom
+var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
 // height on load, 40 is for the padding top and bottom
-var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 40;
+var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
 function pprf_resize_fn( hei_int ) { 
 	
 	if( typeof hei_int == 'undefined' ){
-		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 40;
+		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 60;
 	} else {
 		pprf_orgHei_int = hei_int;
 	}
@@ -385,4 +411,6 @@ if ( window == window.top ) {
 }
 </script>
 <?php
-wp_footer();
+if( !$isAdmin_bln ){
+	wp_footer();
+}

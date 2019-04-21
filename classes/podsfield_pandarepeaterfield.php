@@ -110,9 +110,23 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 */
 	public function options () {
 
-		global $wpdb;
+		global $wpdb, $wp_roles;
 		$tables_arr = $this->pods_tables_fn( 2 );
-
+		
+		
+		$roles_arr	= array(); //
+		foreach( $wp_roles->roles as $role_str => $details_arr ){ //Only a user role with edit_posts capability can access the field. Grand the access right to more roles here.
+			
+			if( ! isset( $details_arr['capabilities']['edit_posts'] ) || $details_arr['capabilities']['edit_posts'] == 0 ){				
+				//array_push( $roles_arr, $role_str );
+				$roles_arr[ $role_str ] = array(
+											'label'      => $details_arr['name'],
+											'default'    => 0,
+											'type'       => 'boolean',											
+										  );
+			}
+		}
+		//$roles_arr	= array_keys( $wp_roles->roles );
 		
 		if( isset( $_GET['id'] ) && is_numeric( $_GET['id'] ) ){
 			if( isset( $tables_arr['pod_' . $_GET['id'] ] ) ){
@@ -133,8 +147,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							'25'  => '25%',													
 							); 
 		$bln_arr   	= array(
-							'0' 	=> 'No',	
-							'1'  	=> 'Yes',																							
+							'0' 	=> __('No', 'panda-pods-repeater-field' ),	
+							'1'  	=> __('Yes', 'panda-pods-repeater-field' ),																							
 							); 		
 		$options = array( 
            
@@ -157,7 +171,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => 0,
                 'type' 		 => 'number',
                 'data' 		 => '',
-				'dependency' => true
+				'dependency' => true,
+				'description'=> __( 'Leave it to 0 if you want to Enable Load More', 'panda-pods-repeater-field' ),
             ),	
             self::$type . '_enable_load_more' => array(
                 'label' 	 => __( 'Enable Load More', 'panda-pods-repeater-field' ),
@@ -173,6 +188,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'type' 		 => 'number',
                 'default' 	 => '10',
                 'data' 		 => '',	
+                'description'=> __( 'Default amount to load, no negative number.', 'panda-pods-repeater-field' ),
             ),            
             self::$type . '_enable_trash' => array(
                 'label' 	 => __( 'Enable Trash', 'panda-pods-repeater-field' ),
@@ -190,9 +206,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
             ),	  
             self::$type . '_order' => array(
                 'label' 	 => __( 'Order', 'panda-pods-repeater-field' ),
-                'default' 	 => '0',
+                'default' 	 => 'ASC',
                 'type' 		 => 'pick',
-                'data' 		 => array('ASC' => 'Ascending', 'DESC' => 'Descending' ),
+                'data' 		 => array('ASC' => __('Ascending', 'panda-pods-repeater-field' ), 'DESC' => __('Descending', 'panda-pods-repeater-field' ) ),
 				'description'=> __( 'Default to Ascending', 'panda-pods-repeater-field' ),
             ),	
             self::$type . '_display_order_info' => array(
@@ -220,8 +236,15 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
-                'description'=> __( 'Allow not logged in users to access the field. e.g. render it out in a frontend Pod form.', 'panda-pods-repeater-field' ),			
-            ),                               
+                'dependency' => true,
+                'description'=> __( 'Allow not logged in users to access the field. Not recommended. A user role with edit_posts capability can always access the field.', 'panda-pods-repeater-field' ),			
+            ),   
+            self::$type . '_role_access' => array( // this is saved into _posts
+                'label' 	 => __( 'Access Allowed To User Roles', 'panda-pods-repeater-field' ),                
+                'depends-on' => array( self::$type . '_public_access' => 0 ),
+                'group'		 => $roles_arr,	                
+                'description'=> __( 'Only a user role with edit_posts capability can access the field. Grand the access right to more roles here.', 'panda-pods-repeater-field' ),	                
+            ),                                          
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
@@ -332,10 +355,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 		}*/
 
-		if( !is_admin() ){ // Nested fields are treated as frontend even loaded in the admin			
+		/*if( !is_admin() ){ // Nested fields are treated as frontend even loaded in the admin			
 			$inAdmin_bln	=	false;
-		} 
-		
+		} */
+		if( isset( $options['pandarepeaterfield_public_access'] ) && $options['pandarepeaterfield_public_access'] == 1 ){ 
+			$allow_bln = true;			
+		}		
 		//$allow_bln = true;
 		
 		$allow_bln = apply_filters( 'pprf_load_panda_repeater_allow_input', $allow_bln, $inAdmin_bln, $name, $value, $options, $pod, $id );
@@ -458,10 +483,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 				if( isset( $options['pandarepeaterfield_order'] ) && $options['pandarepeaterfield_order'] == 'DESC' ){
 					$order_str		.=	'DESC';
-					$orderInfo_str	.=	'descending';
+					$orderInfo_str	.=	esc_html__( '- descending', 'panda-pods-repeater-field');
 				} else {
 					$order_str		.=	'ASC';
-					$orderInfo_str	.=	'- ascending';
+					$orderInfo_str	.=	esc_html__( '- ascending', 'panda-pods-repeater-field');
 				}
 
 
@@ -538,7 +563,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				// remove anything after /wp-admin/, otherwise, it will load a missing page				
 				//$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 
-				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';			
+				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
+				if( is_admin( ) ){
+					// remove anything after /wp-admin/, otherwise, it will load a missing page				
+					$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+				} else {
+					$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';			
+				}		
 				$src_str 	  	= $adminUrl_str . '?page=panda-pods-repeater-field&';
 				
 				//$src_str   = PANDA_PODS_REPEATER_URL . 'fields/pandarepeaterfield.php?';
@@ -703,7 +734,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						</div>																		
 						<iframe id="panda-repeater-add-new-' . $ids_str . '" name="panda-repeater-add-new-' . $ids_str . '" frameborder="0" src="" scrolling="no" style="display:none;" class="panda-repeater-iframe w100" >
 						</iframe>
-						<div id="panda-repeater-add-new-expand-' . $ids_str . '" class="w100 pprf-left center pd3 pprf-expand-bar pprf-add-expand" data-target="' . $ids_str . '"  style="display:none;">' . esc_html__('Content missing? Click here to expand', 'panda-pods-repeater-field' ). '</div>
+						<div id="panda-repeater-add-new-expand-' . $ids_str . '" class="w100 pprf-left center pdt3 pdb3 pprf-expand-bar pprf-add-expand" data-target="' . $ids_str . '"  style="display:none;">' . esc_html__('Content missing? Click here to expand', 'panda-pods-repeater-field' ). '</div>
 					</div>
 				 </div>';
 

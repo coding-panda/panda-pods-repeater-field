@@ -152,7 +152,7 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 			'</div>' +										   
 			'<div>' + 
 				'<iframe id="panda-repeater-edit-' + ids_str + '" frameborder="0" scrolling="no" src="" style="display:none; " class="panda-repeater-iframe w100"></iframe>' + 
-				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 pprf-left center pd3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
+				'<div id="panda-repeater-edit-expand-' + ids_str + '" class="w100 pprf-left center pdt3 pdb3 pprf-expand-bar pprf-edit-expand" data-target="' + ids_str + '"  style="display:none;">Content missing? Click here to expand</div>' + 
 			'</div>' +
 	   	  '</div>' +
 		'</li>'
@@ -174,17 +174,17 @@ function pprf_delete_item_fn( podid, postid, cpodid, itemid, authorid , iframeid
 		var para_obj  	= { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'itemid' : itemid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_delete_item_fn', 'trash' : trashed, 'security' : ajax_script.nonce };
 		var info_str	=	'';
 		if( trashed == 0 ){
-			info_str	=	' It will be restored.';
+			info_str	=	strs_obj.be_restored;
 		}		
 		if( trashed == 1 ){
-			info_str	=	' You can recover it from trash.';
+			info_str	=	strs_obj.can_recover;
 		}
 		if( trashed == 2 ){
-			info_str	=	' It will be deleted permanently.';
+			info_str	=	strs_obj.be_deleted;
 		}
 		//panda-repeater-edit-13-506 236
 		var data_obj  = para_obj;
-		var passt_bln = confirm( 'Are you sure? ' + info_str );
+		var passt_bln = confirm( strs_obj.you_sure + ' ' + info_str );
 		//$('#overlord').removeClass('hidden');		
 		
 		if( passt_bln == true  ){
@@ -474,7 +474,8 @@ jQuery(document).ready( function($) {
 		});		
 	}	*/
 	
-	$('.pprf-row-load-iframe').live( 'click', function(){
+	//$('.pprf-row-load-iframe').live( 'click', function(){
+	$(document.body).on('click', '.pprf-row-load-iframe', function(){	
 		var url_str    	= $( this ).data('url');
 		var ids_str	   	= $( this ).data('target');
 		var exp_str		= 'panda-repeater-edit-expand-' + ids_str;
@@ -484,14 +485,15 @@ jQuery(document).ready( function($) {
 			// restore this item		
 			pprf_delete_item_fn( trash_ele.data('podid'), trash_ele.data('postid'), trash_ele.data('tb'), trash_ele.data('itemid'), trash_ele.data('userid'), trash_ele.data('iframe_id'), trash_ele.data('poditemid'), 0 );
 		} else { 
-
+			var addEdit_str	= ' .pprf-edit';	
 			if( $( this ).hasClass('pprf-add') ){
+				addEdit_str	= '.pprf-add';	
 				iframe_str 	= 'panda-repeater-add-new-' + ids_str;
 				exp_str		= 'panda-repeater-add-new-expand-' + ids_str;
 			}	
 			
 			if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons-edit') ){		
-
+				
 				//if iframe not loaded
 				
 				if( $('#' + iframe_str ).attr('src') == '' ){
@@ -499,8 +501,11 @@ jQuery(document).ready( function($) {
 					$('#' + iframe_str + '-' + 'loader' ).removeClass('hidden');		
 				}
 				
-				$('#' + iframe_str ).show('slow');
-				$('#' + exp_str ).show('slow');	
+				$('#' + iframe_str ).show('slow',function(){
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-edit');		
+				});
+				$('#' + exp_str ).show();	
 				$('#' + iframe_str ).on('load', function(){
 					
 					$('#' + iframe_str + '-' + 'loader' ).addClass('hidden');	
@@ -511,18 +516,21 @@ jQuery(document).ready( function($) {
 					//$('#pprf-row-brief-' + ids_str + '' ).addClass('hidden');	
 					//$('#' + iframe_str )[0].contentWindow.pprf_resize_fn();
 					//console.log( $(this).parent().height() );
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-edit');						
 				});	
 			//	if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons') ){	
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-arrow-up');
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-edit');		
+
 				//}
 			} else {
 				
-				$('#' + iframe_str ).hide('slow');	
-				$('#' + exp_str ).hide('slow');	
+				$('#' + iframe_str ).hide('slow',function(){
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
+					$('#pprf-row-brief-' + ids_str + '' + addEdit_str + ' .dashicons' ).addClass('dashicons-edit');	
+				});	
+				$('#' + exp_str ).hide();					
 			//	if( $('#pprf-row-brief-' + ids_str + ' .dashicons' ).hasClass('dashicons') ){	
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).removeClass('dashicons-arrow-up');
-					$('#pprf-row-brief-' + ids_str + ' .dashicons' ).addClass('dashicons-edit');		
+						
 			//	}
 			}
 			$('#pprf-row-brief-' + ids_str + ' .dashicons-trash' ).removeClass('dashicons-arrow-up');
@@ -532,7 +540,8 @@ jQuery(document).ready( function($) {
 	/**
 	 * click to explan its iframe
 	 */
-	$(".pprf-expand-bar").live( 'click', function(){
+	//$(".pprf-expand-bar").live( 'click', function(){
+	$(document.body).on('click', '.pprf-expand-bar', function(){		
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
 		if( $( this ).hasClass('pprf-add-expand') ){
@@ -547,7 +556,8 @@ jQuery(document).ready( function($) {
 	/**
 	 * click to delete
 	 */
-	 $('.pprf-trash-btn').live( 'click', function(){
+	 //$('.pprf-trash-btn').live( 'click', function(){
+	$(document.body).on('click', '.pprf-trash-btn', function(){		
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
 		if( $( this ).hasClass('pprf-add-expand') ){
@@ -567,7 +577,8 @@ jQuery(document).ready( function($) {
 		pprf_delete_item_fn( $( this ).data('podid'), $( this ).data('postid'), $( this ).data('tb'), $( this ).data('itemid'), $( this ).data('userid'), $( this ).data('iframe_id'), $( this ).data('poditemid'), trash_int );
 	 })
 	 
-	 $('.pprf-save-btn').live( 'click', function(){
+	 //$('.pprf-save-btn').live( 'click', function(){
+	$(document.body).on('click', '.pprf-save-btn', function(){			
 		 if( $( this ).hasClass( 'pprf-btn-ready' ) ){
 			var ids_str		= $( this ).data('target');
 			var iframe_str 	= 'panda-repeater-edit-' + ids_str;
@@ -597,7 +608,7 @@ jQuery(document).ready( function($) {
 		
 		  if( pprfChanged_bln ){
 			evt.preventDefault();
-			var leave_bln = confirm('It seems like you have made some changes in a repeater field. Ignore the changes?');
+			var leave_bln = confirm( strs_obj.Ignore_changes );
 			if ( leave_bln == true){
 				pprfChanged_bln	=	false;
 				$( this ).click();
@@ -611,7 +622,8 @@ jQuery(document).ready( function($) {
 	 /**
 	  * toggle trashed and current
 	  */
-	 $('.pprf-tab .dashicons-trash').live('click', function(){
+	// $('.pprf-tab .dashicons-trash').live('click', function(){
+	$(document.body).on('click', '.pprf-tab .dashicons-trash', function(){			
 	 	
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-trashed').css('display', 'block');
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-not-trashed').css('display', 'none');
@@ -619,14 +631,15 @@ jQuery(document).ready( function($) {
 	 	$( this ).parent().addClass('active');
 	 	pprf_odd_even_color_fn( $( this).parent().data('target') );
 
-	 })
-	 $('.pprf-tab .dashicons-portfolio').live('click', function(){
+	})
+	//$('.pprf-tab .dashicons-portfolio').live('click', function(){
+	$(document.body).on('click', '.pprf-tab .dashicons-portfolio', function(){			
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-trashed').css('display', 'none');
 	 	$( '#panda-repeater-fields-' + $( this).parent().data('target') + ' .pprf-not-trashed').css('display', 'block');
 	 	$( this ).parent().parent().children('.active').removeClass('active');
 	 	$( this ).parent().addClass('active');	 	
 	 	pprf_odd_even_color_fn( $( this).parent().data('target') );
-	 })	 
+	})	 
 
  	/**
  	 * remove repeated

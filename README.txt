@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 5.1.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,7 +293,17 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 
 = 1.4.0 - 24th March 2019  =
 * change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
-* change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"
+* change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg".
+* change: JavaScript 'live' to 'on'.
+* add: allow chosen user roles to access the field.
+* fix: The field was opened and closed immediately on mobile.
+
+= 1.4.1 - 20th April 2019  =
+* change: Made JavaScript alerts translatable. 
+* add: Chinese language support.
+* fix: error when a Pods table did not exist.
+* fix: error on multisites.
+* fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.
 
 == Upgrade Notice ==
 
@@ -404,4 +414,14 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.0 =
 * Change: changed the way a repeater field is rendered out so it can be brought out at frontend for not logged in users.
-* Change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg"
+* Change: changed filter names from "pprf_load_panda_repeater_allow" to "pprf_load_panda_repeater_allow_input", "pprf_load_panda_repeater_allow_msg" to "pprf_load_panda_repeater_allow_input_msg".
+* Change: JavaScript 'live' to 'on'
+* Add: allow chosen user roles to access the field.
+* Fix: The field was opened and closed immediately on mobile.
+
+= 1.4.1 =
+* Change: Made JavaScript alerts translatable. 
+* Add: Chinese language support.
+* Fix: error when a Pods table did not exist.
+* Fix: error on multisites.
+* Fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.

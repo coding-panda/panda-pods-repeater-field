@@ -1,0 +1,297 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Panda Pods Repeater Field\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 19:11+0000\n"
+"PO-Revision-Date: 2019-04-20 19:13+0000\n"
+"Last-Translator: Xu, Dongjie <thecodingpanda@gmail.com>\n"
+"Language-Team: 简体中文\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.2; wp-5.1.1"
+
+#: panda-pods-repeater-field.php:270
+msgid "Panda Repeater Options"
+msgstr "熊猫自复项选项"
+
+#: panda-pods-repeater-field.php:290
+msgid "Enable something?"
+msgstr "启用什么？"
+
+#: panda-pods-repeater-field.php:291 panda-pods-repeater-field.php:298
+msgid "Helpful info about this option that will appear in its help bubble"
+msgstr "有关此选项的有用信息将显示在其帮助窗口中"
+
+#: panda-pods-repeater-field.php:297
+msgid "Enter some text"
+msgstr "输入一些文字"
+
+#: panda-pods-repeater-field.php:303
+msgid "Dependency Example"
+msgstr "依赖示例"
+
+#: panda-pods-repeater-field.php:311
+msgid "Dependent Option"
+msgstr "依赖选项"
+
+#: panda-pods-repeater-field.php:334 panda-pods-repeater-field.php:350
+msgid "Panda Repeater"
+msgstr "熊猫自复项"
+
+#. Name of the plugin
+#: panda-pods-repeater-field.php:425
+msgid "Panda Pods Repeater Field"
+msgstr "熊猫自复项"
+
+#: panda-pods-repeater-field.php:513
+msgid ""
+"You have activated Panda Pods Repeater Field. Pods Framework plugin required."
+msgstr "你已经激活了Panda Pods Repeater Field，需要Pods Framework插件。"
+
+#: panda-pods-repeater-field.php:547
+msgid "Panda Pods Repeater Field requires Pods version 2.3.18 or later."
+msgstr "熊猫自复项需要Pods版本2.3.18或更高版本。"
+
+#: panda-pods-repeater-field.php:611
+msgid "It will be restored."
+msgstr "它将被恢复。"
+
+#: panda-pods-repeater-field.php:612
+msgid "You can recover it from trash."
+msgstr "您可以从垃圾箱中恢复它。"
+
+#: panda-pods-repeater-field.php:613
+msgid "It will be deleted permanently."
+msgstr "它将被永久删除。"
+
+#: panda-pods-repeater-field.php:614
+msgid "Are you sure?"
+msgstr "你确定吗？"
+
+#: panda-pods-repeater-field.php:615
+msgid ""
+"It seems like you have made some changes in a repeater field. Ignore the "
+"changes?"
+msgstr "您似乎做一些更改。忽略这些更改？"
+
+#: classes/podsfield_pandarepeaterfield.php:150
+msgid "No"
+msgstr "不"
+
+#: classes/podsfield_pandarepeaterfield.php:151
+msgid "Yes"
+msgstr "好"
+
+#: classes/podsfield_pandarepeaterfield.php:156
+msgid "Pods Table"
+msgstr "Pods表单"
+
+#: classes/podsfield_pandarepeaterfield.php:163
+msgid "Field Width"
+msgstr "显示宽度"
+
+#: classes/podsfield_pandarepeaterfield.php:170
+msgid "Entry Limit"
+msgstr "加载限额"
+
+#: classes/podsfield_pandarepeaterfield.php:175
+msgid "Leave it to 0 if you want to Enable Load More"
+msgstr "如果要启用“加载更多”，请将其保留为0"
+
+#: classes/podsfield_pandarepeaterfield.php:178
+msgid "Enable Load More"
+msgstr "启用加载更多选项"
+
+#: classes/podsfield_pandarepeaterfield.php:186
+msgid "Initial Amount"
+msgstr "初始量"
+
+#: classes/podsfield_pandarepeaterfield.php:191
+msgid "Default amount to load, no negative number."
+msgstr "默认加载量，只能非负数。"
+
+#: classes/podsfield_pandarepeaterfield.php:194
+msgid "Enable Trash"
+msgstr "启用垃圾箱"
+
+#: classes/podsfield_pandarepeaterfield.php:201
+msgid "Order By"
+msgstr "排序字段"
+
+#: classes/podsfield_pandarepeaterfield.php:205
+msgid ""
+"Enter a field of the table. Default to pandarf_order. If not pandarf_order, "
+"re-order will be disabled. Min PHP version 5.5."
+msgstr "输入表格的字段。默认为pandarf_order。如果不是pandarf_order，拖放重排将被禁用。低于PHP 5.5不可用。"
+
+#: classes/podsfield_pandarepeaterfield.php:208
+msgid "Order"
+msgstr "排序"
+
+#: classes/podsfield_pandarepeaterfield.php:211
+msgid "Ascending"
+msgstr "升序"
+
+#: classes/podsfield_pandarepeaterfield.php:211
+msgid "Descending"
+msgstr "降序"
+
+#: classes/podsfield_pandarepeaterfield.php:212
+msgid "Default to Ascending"
+msgstr "默认为升序"
+
+#: classes/podsfield_pandarepeaterfield.php:215
+msgid "Display Order Info"
+msgstr "显示排列信息"
+
+#: classes/podsfield_pandarepeaterfield.php:221
+msgid "Apply Admin Table Columns"
+msgstr "和管理员表列同步"
+
+#: classes/podsfield_pandarepeaterfield.php:225
+msgid ""
+"Display labels based on the Admin Table Columns. Only strings and numbers "
+"will be displayed."
+msgstr "根据管理员表列显示标签。仅显示字符串和数字。"
+
+#: classes/podsfield_pandarepeaterfield.php:228
+msgid "Allow Reassign"
+msgstr "允许重新分配"
+
+#: classes/podsfield_pandarepeaterfield.php:232
+msgid "Allow reassigning an item to another parent"
+msgstr "允许将项重新分配给另一个父项"
+
+#: classes/podsfield_pandarepeaterfield.php:235
+msgid "Allow Public Access"
+msgstr "允许大众访问"
+
+#: classes/podsfield_pandarepeaterfield.php:240
+msgid ""
+"Allow not logged in users to access the field. Not recommended. A user role "
+"with edit_posts capability can always access the field."
+msgstr "允许未登录的用户访问该项。不建议。具有edit_posts功能的用户始终可以访问该项。"
+
+#: classes/podsfield_pandarepeaterfield.php:243
+msgid "Access Allowed To User Roles"
+msgstr "允许访问的用户角色"
+
+#: classes/podsfield_pandarepeaterfield.php:246
+msgid ""
+"Only a user role with edit_posts capability can access the field. Grand the "
+"access right to more roles here."
+msgstr "只有具有edit_posts功能的用户才能访问该项。如果想授予访问权给更多角色，请选择："
+
+#: classes/podsfield_pandarepeaterfield.php:369
+msgid "You do not have permission to edit this item."
+msgstr "您无权编辑此项目。"
+
+#: classes/podsfield_pandarepeaterfield.php:421
+msgid ". "
+msgstr "。"
+
+#: classes/podsfield_pandarepeaterfield.php:468
+msgid "Ordered by: "
+msgstr "排序："
+
+#: classes/podsfield_pandarepeaterfield.php:486
+msgid "- descending"
+msgstr "- 降序"
+
+#: classes/podsfield_pandarepeaterfield.php:489
+msgid "- ascending"
+msgstr "- 升序"
+
+#: classes/podsfield_pandarepeaterfield.php:686
+#: classes/podsfield_pandarepeaterfield.php:737
+msgid "Content missing? Click here to expand"
+msgstr "内容缺失？点击此处展开"
+
+#: classes/podsfield_pandarepeaterfield.php:751
+msgid "Append to"
+msgstr "附加"
+
+#: classes/podsfield_pandarepeaterfield.php:752
+msgid "Replace"
+msgstr "重载"
+
+#: classes/podsfield_pandarepeaterfield.php:754
+msgid "the list with"
+msgstr " "
+
+#: classes/podsfield_pandarepeaterfield.php:756
+msgid "new items from item"
+msgstr "新项到列表。起始项："
+
+#: classes/podsfield_pandarepeaterfield.php:757
+msgid "Start from 0"
+msgstr "从0开始"
+
+#: classes/podsfield_pandarepeaterfield.php:758
+msgid "Load"
+msgstr "加载"
+
+#: classes/podsfield_pandarepeaterfield.php:759
+msgid " | Total items:"
+msgstr " | 共有"
+
+#: classes/podsfield_pandarepeaterfield.php:771
+msgid "No Advanced Content Type Table Selected"
+msgstr "未选择高级内容类型表"
+
+#: fields/pandarepeaterfield.php:90
+msgid "You do not have permission to load this item."
+msgstr "您无权加载此项目"
+
+#: fields/pandarepeaterfield.php:212
+msgid "Assign to parent: "
+msgstr "分配给父项"
+
+#: fields/pandarepeaterfield.php:224
+msgid "field: "
+msgstr "项："
+
+#: fields/pandarepeaterfield.php:237
+msgid "Assign"
+msgstr "分配"
+
+#: fields/pandarepeaterfield.php:251
+msgid "Invalid table"
+msgstr "无效的表格"
+
+#: fields/pandarepeaterfield.php:258
+msgid "Click here to collapse"
+msgstr "点击此处缩小"
+
+#. Description of the plugin
+msgid ""
+"Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it "
+"is that it is not just a repeater field. It is a quick way to set up a "
+"relational database and present the data on the same page. It takes the "
+"advantage of Pods table storage, so you don’t need to worry that the posts "
+"and postmeta data table may expand dramatically and slow down the page "
+"loading. This plugin is compatible with Pods Framework 2.6.1 or later. To "
+"download Pods Framework, please visit http://pods.io/. After each update, "
+"please clear the cache to make sure the CSS and JS are updated. Usually, "
+"Ctrl + F5 will do the trick."
+msgstr ""
+"熊猫自复项是Pods "
+"Framework的插件。它的美妙之处在于它不仅仅是一个重复项。这是一种快速设置关系数据库并在同一页面上显示数据的方法。它利用了Pods表存储的优势，因此您无需担心帖子和postmeta数据表可能会增加过快并减慢页面加载速度。此插件与Pods"
+" Framework 2.6.1或更高版本兼容。要下载Pods Framework，请访问http://pods."
+"io/。每次更新后，请清除缓存以确保更新CSS和JS。通常，Ctrl + F5会起作用。"
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/panda-pods-repeater-field/"
+msgstr "https://wordpress.org/plugins/panda-pods-repeater-field/"
+
+#. Author of the plugin
+msgid "Dongjie Xu"
+msgstr "许栋杰"
+
+#. Author URI of the plugin
+msgid "http://www.multimediapanda.co.uk/"
+msgstr "http://www.multimediapanda.co.uk/"
