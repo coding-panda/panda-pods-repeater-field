@@ -1271,7 +1271,7 @@ function pprf_same_child_tb_fields_fn( $pod_cla, $ctb_str = '' ){
 	return $return_arr;
 }
 // load language
-add_action( 'init', 'pprf_localization_setup_fn' );
+add_action( 'plugins_loaded', 'pprf_localization_setup_fn' );
 function pprf_localization_setup_fn() {
 	load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );	
 }
