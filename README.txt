@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.1.1
-Stable tag: 1.4.1
+Tested up to: 5.2.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -305,6 +305,9 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * fix: error on multisites.
 * fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.
 
+= 1.4.2 - 27th May 2019  =
+* add: added a filter pandarf_pods_field_fields.
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -425,3 +428,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Fix: error when a Pods table did not exist.
 * Fix: error on multisites.
 * Fix: error when a repeater field is a custom post type, although using a custom post type as a repeater field is not part of the plan.
+
+= 1.4.2 =
+* Add: added a filter pandarf_pods_field_fields.
