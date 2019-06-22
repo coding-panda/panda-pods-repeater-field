@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.2.1
-Stable tag: 1.4.2
+Tested up to: 5.2.2
+Stable tag: 1.4.3 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -308,6 +308,10 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 = 1.4.2 - 27th May 2019  =
 * add: added a filter pandarf_pods_field_fields.
 
+= 1.4.3 - 22th June 2019  =
+* add: locked down the font size in the form so it won't be affected by the theme
+* change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -431,3 +435,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.2 =
 * Add: added a filter pandarf_pods_field_fields.
+
+= 1.4.3 =
+* Add: locked down the font size in the form so it won't be affected by the theme
+* Change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api

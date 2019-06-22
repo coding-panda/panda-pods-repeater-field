@@ -190,7 +190,13 @@ body #wpwrap{
 .toplevel_page_panda-pods-repeater-field .compat-item{
 	display: none;
 }
-
+#pprf-form .pods-form-front .pods-field-input,
+#pprf-form .pods-form-front .pods-field-input input,
+#pprf-form .pods-form-front .pods-field-input textarea,
+#pprf-form .pods-form-front .pods-field-input select,
+#pprf-form .pods-form-front .pprf-left-col {
+	font-size: 14px;
+}
 #pprf-form input[type="submit"] {
 	padding-left:5px;
 	padding-right:5px;
