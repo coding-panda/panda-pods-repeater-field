@@ -227,3 +227,7 @@ select.pprf-in-iframe-sel{
 .pprf-left{
 	float: left;
 }
+,
+.pprf-order-info {
+	font-size: 14px;
+}

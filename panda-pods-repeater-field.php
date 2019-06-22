@@ -3,11 +3,11 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.4.2 
+Version: 1.4.3
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
-Text Domain: Multimedia Panda
-
+Text Domain: panda-pods-repeater-field
+Domain Path: /languages
 */
 
 
@@ -21,10 +21,10 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.2' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.3' );
 
 
-
+ 
 /**
  * Panda_Pods_Repeater_Field class
  *
@@ -981,7 +981,7 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 	print_r( $pods_obj->pod_id );
 	echo '</pre>';*/
 	$repeater_arr = is_pandarf_fn( $params_arr->name, $pods_obj->pod_id );	
-	
+	//echo $pods_obj->id() .  ' ' . $pods_obj->id;
 	if( $repeater_arr ){
 		$savedtb_str	=	$pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'];
 		$items_arr		=	array();
@@ -1005,7 +1005,7 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 			$fields_arr = array( 
 								'child_pod_name' 		=> $items_arr[0]['post_name'] , 
 								'parent_pod_id' 		=> $repeater_arr['post_parent'], 
-								'parent_pod_post_id' 	=> $pods_obj->id, 
+								'parent_pod_post_id' 	=> $pods_obj->id(),
 								'parent_pod_field_id' 	=> $repeater_arr['ID']
 								);
 			$fields_arr	= apply_filters( 'pandarf_pods_field_fields', $fields_arr, $value_ukn, $row_arr, $params_arr, $pods_obj  );
