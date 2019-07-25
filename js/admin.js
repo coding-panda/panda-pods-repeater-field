@@ -644,9 +644,10 @@ jQuery(document).ready( function($) {
  	/**
  	 * remove repeated
  	 */
- 	$( '.pprf-dismiss-btn').live('click', function(){
+ 	//$( '.pprf-dismiss-btn').live('click', function(){ 
+ 	$(document.body).on('click', '.pprf-dismiss-btn', function(){	
  		$('#li-' + $( this ).data('target') + '-repeated' ).remove();
  	})
 });
-
+ 
 var pprfChanged_bln	=	false;	
