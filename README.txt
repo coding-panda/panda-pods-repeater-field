@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.2.2
-Stable tag: 1.4.3 
+Tested up to: 5.2.3
+Stable tag: 1.4.4 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -312,6 +312,10 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: locked down the font size in the form so it won't be affected by the theme
 * change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api
 
+= 1.4.4 - 22ND September 2019 =
+* fix: TypeError: Backbone.Marionette is undefined
+* fix: $(...).live is not a function error using jquery
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -439,3 +443,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.4.3 =
 * Add: locked down the font size in the form so it won't be affected by the theme
 * Change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api
+
+= 1.4.4 =
+* Fix: TypeError: Backbone.Marionette is undefined
+* Fix: $(...).live is not a function error using jquery

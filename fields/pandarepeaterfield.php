@@ -14,9 +14,10 @@ define( 'WP_USE_THEMES', false ); // get pass the http_host problem
 
 
 $isAdmin_bln	=	false;
+
 if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ // is_admin doesn't work for nested fields
 	$isAdmin_bln	=	true;	
-} {
+} else {
 	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
 	wp_head();
 }
