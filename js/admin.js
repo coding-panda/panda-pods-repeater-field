@@ -305,7 +305,7 @@ jQuery('.pprf-load-more-btn').click( function( evt ){
 
 function pprf_load_more_fn( target_str, ele_obj ){
 	var loaded_arr	=	new Array();
-	$( '#panda-repeater-fields-' + target_str + ' .pprf-redorder-list li' ).each( function( idx_int ) {
+	jQuery( '#panda-repeater-fields-' + target_str + ' .pprf-redorder-list li' ).each( function( idx_int ) {
 		loaded_arr[ idx_int ] = parseInt( jQuery( this ).data('id') );
 	});
 	

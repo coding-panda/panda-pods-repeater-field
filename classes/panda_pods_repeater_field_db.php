@@ -217,7 +217,8 @@ class panda_pods_repeater_field_db {
 				}*/				
 			}
 		}
-		
+
+		pprf_updated_tables( $tb_str, 'add' );	
 
 	}	
 	/**
