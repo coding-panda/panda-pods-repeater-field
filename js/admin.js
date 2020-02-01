@@ -123,25 +123,25 @@ function item_html_fn( $item_arr, podid, postid, cpodid, authorid , iframeid, po
 
 	if( repeated_bln == true ){
 			html_str   +=	
-						'<div class="button pprf-right-col center pprf-dismiss-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
+						'<div class="button pprf-right-col center pprf-dismiss-btn ' + delAct_str + ' ' + btnTrashed_str + '" role="button" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
 							'<span class="dashicons dashicons-dismiss pdt6 mgb0 "></span>' +														
 						'</div>' +	
 						'<div class="pprf-left pd8">Repeated</div>';			
 	} else {
 		html_str   +=				
-				'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + ' ' + btnTrashed_str + '" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
+				'<div class="button pprf-right-col center pprf-trash-btn ' + delAct_str + ' ' + btnTrashed_str + '" role="button" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '"  data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' + 
 					'<span class="dashicons dashicons-trash pdt6 mgb0 "></span>' +
 					'<div id="panda-repeater-trash-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl8 loading pprf-left"/>' +
 					'</div>' +															
 				'</div>' +	
-				'<div class="button pprf-right-col center pprf-save-btn" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '" data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' +
+				'<div class="button pprf-right-col center pprf-save-btn" role="button" data-podid="' + podid + '"  data-postid="' + postid + '"  data-tb="' + cpodid + '"  data-itemid="' + response_str + '"  data-userid="' + authorid + '"  data-iframe_id="panda-repeater-edit-' + ids_str + '" data-poditemid="' + poditemid + '" data-target="' + ids_str + '" >' +
 					'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/save-icon-tran.png" class="pprf-save-icon  mgt8 mgb2"/>' + 	
 					'<div id="panda-repeater-save-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + 'images/dots-loading.gif" alt="loading" class="mgl8 pprf-left"/>' +										
 					'</div>' +
 				'</div>' +													
-				'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
+				'<div class="button pprf-edit pprf-row-load-iframe alignright pprf-right-col center pprf-edit-btn" role="button" data-target="' + ids_str + '" data-url="' + fullUrl_str + '">' +
 					'<span class="dashicons ' + editIcon_str + ' pdt8 mgb0 pprf-edit-span"></span>' +
 					'<div id="panda-repeater-edit-' + ids_str + '-loader" class="pprf-left hidden mgl5">' +
 						'<img src = "' + PANDA_PODS_REPEATER_URL + '/images/dots-loading.gif" alt="loading" class="mgl9 pprf-left"/>' +
@@ -460,22 +460,27 @@ jQuery(document).ready( function($) {
 			cursor:         'move',
 			opacity:        0.7,
 			tolerance:      'intersect',		
-			update: updateIndex_fn		
+			update: updateIndex_fn
 		});		
 	}
-	
-/*	if( $('.pprf-row').length != 0 ){
+/*    $('.pprf-redorder-list.pandarf_order').on('click','.pprf-redorder-list.pandarf_order .pprf-row-load-iframe',function(e) {
+      	e.stopPropagation();
+    
+     });	
+	if( $('.pprf-row').length != 0 ){
 		$('.pprf-row').sortable({
 			helper: fixHelperModified_fn,
 			cursor:         'move',
 			opacity:        0.7,
 			tolerance:      'pointer',		
-			update: updateIndex_fn		
+			update: updateIndex_fn,
+			items : ':not(.pprf-row-load-iframe)'				
 		});		
 	}	*/
 	
 	//$('.pprf-row-load-iframe').live( 'click', function(){
-	$(document.body).on('click', '.pprf-row-load-iframe', function(){	
+	$(document.body).on('click', '.pprf-row-load-iframe', function( e ){	
+		e.stopPropagation();
 		var url_str    	= $( this ).data('url');
 		var ids_str	   	= $( this ).data('target');
 		var exp_str		= 'panda-repeater-edit-expand-' + ids_str;
@@ -557,7 +562,8 @@ jQuery(document).ready( function($) {
 	 * click to delete
 	 */
 	 //$('.pprf-trash-btn').live( 'click', function(){
-	$(document.body).on('click', '.pprf-trash-btn', function(){		
+	$(document.body).on('click', '.pprf-trash-btn', function( e ){		
+		e.stopPropagation();
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
 		if( $( this ).hasClass('pprf-add-expand') ){
@@ -578,7 +584,8 @@ jQuery(document).ready( function($) {
 	 })
 	 
 	 //$('.pprf-save-btn').live( 'click', function(){
-	$(document.body).on('click', '.pprf-save-btn', function(){			
+	$(document.body).on('click', '.pprf-save-btn', function( e ){		
+		 e.stopPropagation();	
 		 if( $( this ).hasClass( 'pprf-btn-ready' ) ){
 			var ids_str		= $( this ).data('target');
 			var iframe_str 	= 'panda-repeater-edit-' + ids_str;
