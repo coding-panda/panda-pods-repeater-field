@@ -3,7 +3,7 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.2.4
+Tested up to: 5.3.2
 Stable tag: 1.4.5 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -319,6 +319,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 = 1.4.5 - 2ND November 2019 =
 * add: Added some code to add the relationship fields if they are missing. Useful for migrating the repeater fields or create them by code.
 * fix: the $ not a function problem when clicking the Load button.
+* Change: Resize the window after running all JavaScripts.
 
 == Upgrade Notice ==
 
@@ -455,3 +456,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.4.5 =
 * Add: Added some code to add the relationship fields if they are missing. Useful for migrating the repeater fields or create them by code.
 * Fix: the $ not a function problem when clicking the Load button.
+* Change: Resize the window after running all JavaScripts.
