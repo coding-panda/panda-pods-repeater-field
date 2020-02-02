@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.4.4
+Version: 1.4.5
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.4' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.5' );
 
  
  
@@ -1277,4 +1277,46 @@ function pprf_same_child_tb_fields_fn( $pod_cla, $ctb_str = '' ){
 add_action( 'plugins_loaded', 'pprf_localization_setup_fn' );
 function pprf_localization_setup_fn() {
 	load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );	
+}
+/**
+ * load the tables that been updated with pprf columns. 
+ * @since 1.4.5
+ * @param $table string the table name to search. If empty, return the saved record for the updated tables.
+ * @param $operate string Works if $table is not empty. If $operate is empty, return ture or false respectively if the table is found or not. Return null.
+ * @param $operate string Works if $table is not empty. If $operate = 'add', add the table to the record. Return null.
+ * @param $operate string Works if $table is not empty. If $operate = 'remove', remove the table from the record. Return null.
+ * @return array|boolean|null See the descriptions of the parameters above.
+ */
+function pprf_updated_tables( $table = '', $operate = '' ){
+	$updated_tables = get_option('pprf_updated_tables', array() );
+
+	if( ! is_array( $updated_tables ) ){
+		$updated_tables = array();
+	}
+
+	if( $table == '' ){
+		return $updated_tables;
+	} else {
+		if( isset( $updated_tables[ $table ] ) ){
+			if( '' == $operate ){
+				return true;
+			}
+			if( 'remove' == $operate ){
+				unset( $updated_tables[ $table ] );
+				return update_option( 'pprf_updated_tables', $updated_tables );
+				
+			}
+
+		} else {
+			if( 'add' == $operate ){
+				$updated_tables[ $table ] = array();// set it as an array for futurn use
+				return update_option( 'pprf_updated_tables', $updated_tables );
+				
+			}
+			return false;
+		}
+
+	}
+
+	return false;
 }

@@ -1065,6 +1065,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		
 						//order
 						if( $isNew_bln ){
+							pprf_updated_tables( $table_str, 'remove' );
+							if( pprf_updated_tables( $table_str ) == false ){
+								$db_cla->update_columns_fn( $pdTb_str );
+							}
+							//$db_cla->update_columns_fn( $table_str );					
 							$query_str  	= $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM `' . $table_str . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = "%s" AND `pandarf_pod_field_id` = %d' , array( $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );	
 							
 							$order_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	

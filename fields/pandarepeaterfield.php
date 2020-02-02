@@ -347,7 +347,7 @@ jQuery(document).ready( function($) {
 	$('.updated, .update-nag').remove();
 	// remove admin outlook
 	$('#adminmenuback, #adminmenuwrap, #wpadminbar, #wpfooter, #screen-meta-links, #screen-meta').remove();
-	pprf_resize_fn();
+
 	$('.pods-form-ui-field-type-pick').on('change', function(){				
 		pprf_resize_fn( );		
 	})
@@ -403,6 +403,13 @@ jQuery(document).ready( function($) {
 	$('.pods-field-input').on('click keyup change', function(){	 
 		parent.pprfChanged_bln	=	true;		
 	});	 
+
+	/**
+	 * after running all javascript, resize the window 
+	 */
+	$(window).load(function(){
+		pprf_resize_fn();
+	} );
 })  		 
 </script>
 <script type="text/javascript">
