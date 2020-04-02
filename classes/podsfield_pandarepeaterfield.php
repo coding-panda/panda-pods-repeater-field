@@ -374,11 +374,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			$options 		 = (array) $options;
 			
 			$form_field_type = PodsForm::$field_type;
-			//echo $name . ' ' . $id ;
-			
-			/*if ( is_array( $value ) ){					
-				$value = implode( ' ', $value );
-			}*/
 			
 			$savedtb_str = trim( $options[ self::$typeTb_str ] );
 			
@@ -423,7 +418,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			}			
 			if( $tb_str != ''  ){
 				$tbInfo_arr	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
-				//$tbabbr_str  = $tbInfo_arr['type'] == 'pod'? 't' : 'd';
 				
 				// load items for the current post only using regular expression
 				$where_str   =    '   `pandarf_parent_pod_id`  = %d
@@ -431,16 +425,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							   	  AND `pandarf_pod_field_id`   = %d '; 		
 				$search_arr  = 	array( $options['pod_id'], $id, $options['id'] );			  	
 
-				//'where'   => '`' . $tbabbr_str . '`.`pandarf_categories` REGEXP "(:\"' . $options['pod_id'] . '.' . $id . '.' . $options['id'] . '\";{1,})"', 
-				
-				/*
-				only load published, couldn't find a way ar
-				$params = array(
-					'where'   => $where_str
-				); 			
-				$pod_cla   = pods( $tb_str, $params );
-			
-				$rows_obj  = $pod_cla->data();*/
 				$limit_str	=	'';
 				$limit_bln	=	false;
 				if( isset( $options['pandarepeaterfield_entry_limit'] ) && is_numeric( $options['pandarepeaterfield_entry_limit'] ) &&  $options['pandarepeaterfield_entry_limit'] != 0 ){
@@ -458,7 +442,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				// if it is a wordpress post type, join wp_posts table
 				$join_str  = '';
 
-				//print_r (self::$tbs_arr['pod_' . $savedtb_int ]);
 				if( self::$tbs_arr['pod_' . $savedtb_int ]['type'] == 'post_type' ){
 					$join_str = 'INNER JOIN  `' . $wpdb->posts . '` AS post_tb ON post_tb.ID = main_tb.id';
 				}
@@ -476,7 +459,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$order_str		=	'`' . $options['pandarepeaterfield_order_by'] . '` ' ;
 						$orderInfo_str	.=	$options['pandarepeaterfield_order_by'] . ' ' ;
 					}
-					//$options['pandarepeaterfield_order']	=	abs( intval( $options['pandarepeaterfield_initial_amount'] ) );						
+
 				} else {
 					$orderInfo_str	.=	'pandarf_order ';
 				}	
@@ -592,9 +575,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$options['id']		=	esc_attr( $options['id'] );
 				$options['pod_id']	=	esc_attr( $options['pod_id'] );			
 
+				$child_pod 		= new pods( $options['pandarepeaterfield_table'] );
+
 				$adminCols_arr		=	array(); // if apply admin columns is picked, use admin columns instead of name
-				if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){
-					$child_pod 		= new pods( $options['pandarepeaterfield_table'] );
+				if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){					
 					$adminCols_arr 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );
 				}				
 									
@@ -630,8 +614,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
 										
 						$ids_str     	= esc_attr( $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'] );
 						$fullUrl_str 	= esc_attr( $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] );	
-						
-						$title_str   	= apply_filters( 'pprf_item_title', $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $savedtb_int, $row_obj['id'], $id, $options['id'] );
+
+						$title_str		= $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ];
+						// integration with Simpods MVC
+						if( isset( $child_pod->fields[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ] ) ){
+							$title_str		= $this->simpods_area_field_value( $child_pod->fields[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $title_str );
+						}	
+						$title_str   	= apply_filters( 'pprf_item_title', $title_str, $savedtb_int, $row_obj['id'], $id, $options['id'] );
 						$title_str	 	= esc_attr( $title_str );
 
 						$label_str		= ''; 
@@ -644,6 +633,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									continue;
 								}
 								$colVal_ukn	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $adminCol_str );
+								// integration with Simpods MVC
+								if( isset( $child_pod->fields[ $adminCol_str ] ) ){
+									$colVal_ukn		= $this->simpods_area_field_value( $child_pod->fields[ $adminCol_str ], $colVal_ukn );
+								}									
 								if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
 									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
 								}							
@@ -1290,4 +1283,37 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			}
 		}
 	}	 
+	/**
+	 * Fetch the first item in the simpodsareafield
+	 * 
+	 */
+	public function simpods_area_field_value( $field_details, $item_value ){
+
+		if( ! defined( 'SIMPODS_VERSION' ) || is_array( $item_value ) || ! isset( $field_details[ 'type' ] ) || $field_details[ 'type' ] != 'simpodsareafield' ){
+			return $item_value;
+		}
+
+		$ids = explode( ',', $item_value );
+		// simpods area field only store numbers
+		if( ! is_numeric( $ids[ 0 ] ) ){
+			return $item_value;
+		}
+		global $funs_cla;
+
+		$fields_arr = array(
+						'id' => $ids[ 0 ],
+						);
+		$atts_arr 	= array(
+						'target_tb' => 'pods_' . $field_details[ 'options' ][ 'simpodsareafield_table' ],
+						'limit'		=> 1,
+						);
+		$value_arr = $funs_cla->simpods_select_fn( $fields_arr, $atts_arr );		
+
+		if( ! empty( $value_arr ) && isset( $value_arr[ 0 ]['sp_title'] ) ){
+			return $value_arr[ 0 ]['sp_title'];
+		} else {
+			return $item_value;
+		}
+
+	}
 }
