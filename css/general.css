@@ -231,3 +231,14 @@ select.pprf-in-iframe-sel{
 .pprf-order-info {
 	font-size: 14px;
 }
+
+.pods-form-front .pods-field .pods-field-input .pprf-load-more-wrap .panda-repeater-to-load{
+width: 110px;
+min-width: initial;
+padding: 0;
+}
+.pods-form-front .pods-field .pods-field-input .pprf-load-more-wrap input[name="panda-repeater-amount"],
+.pods-form-front .pods-field .pods-field-input .pprf-load-more-wrap input[name="panda-repeater-start-from"]{
+                width: 60px;
+                padding: 0;
+}

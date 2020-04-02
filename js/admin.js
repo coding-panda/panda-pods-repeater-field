@@ -460,7 +460,9 @@ jQuery(document).ready( function($) {
 			cursor:         'move',
 			opacity:        0.7,
 			tolerance:      'intersect',		
-			update: updateIndex_fn
+			update: 		updateIndex_fn,
+			cancel: 		'.pprf-row-load-iframe, .pprf-save-btn, pprf-trash-btn',
+			handle: 		'.pprf-left-col'
 		});		
 	}
 /*    $('.pprf-redorder-list.pandarf_order').on('click','.pprf-redorder-list.pandarf_order .pprf-row-load-iframe',function(e) {
@@ -562,7 +564,7 @@ jQuery(document).ready( function($) {
 	 * click to delete
 	 */
 	 //$('.pprf-trash-btn').live( 'click', function(){
-	$(document.body).on('click', '.pprf-trash-btn', function( e ){		
+	$( document.body ).on('click', '.pprf-trash-btn', function( e ){		
 		e.stopPropagation();
 		var ids_str	   	= $( this ).data('target');
 		var iframe_str 	= 'panda-repeater-edit-' + ids_str;
