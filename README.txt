@@ -322,7 +322,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * Change: Resize the window after running all JavaScripts.
 
 = 1.4.6 - 4th February 2020 =
-* fix: Fixed the problem that the trahs, save and edit buttons had to be clicked twice on mobiles to work.
+* fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
 * add: some styling for the load more div.
 * add: Integration with Simpods Area Field.
 
@@ -464,6 +464,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Change: Resize the window after running all JavaScripts.
 
 = 1.4.6 =
-* Fix: Fixed the problem that the trahs, save and edit buttons had to be clicked twice on mobiles to work.
+* Fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
 * Add: some styling for the load more div.
 * Add: Integration with Simpods Area Field.
