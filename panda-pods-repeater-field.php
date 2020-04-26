@@ -35,7 +35,7 @@ define( 'PANDA_PODS_REPEATER_VERSION', '1.4.5' );
 class Panda_Pods_Repeater_Field {
 
 	var $menuTitle_str 		= 'Panda Pods Repeater Field';
-			
+	public $can_elementor	= false;
 	const type_str	   		= 'pandarepeaterfield';
 	/**
 	 * Constructor for the Panda_Pods_Repeater_Field class
@@ -47,8 +47,20 @@ class Panda_Pods_Repeater_Field {
 	 */
 	public function __construct() {		
 		
-		$files_arr   = array('panda_pods_repeater_field_db',  'podsfield_pandarepeaterfield', 'panda_pods_repeater_field_ajax');
-		
+		$files_arr   = array(
+						'panda_pods_repeater_field_db',  
+						'podsfield_pandarepeaterfield', 
+						'panda_pods_repeater_field_ajax',
+						
+						);
+	
+		$active_plugins = get_option('active_plugins');
+	
+		if( in_array('elementor/elementor.php', $active_plugins ) && ! wp_doing_ajax() ){ 
+		 	$this->can_elementor = true;
+		 	array_push( $files_arr, 'pprf_elementor_accordion_widget' );
+		}
+
 		$class_bln   = true;
 		
 		for( $i = 0; $i < count( $files_arr ); $i ++ ){
@@ -83,7 +95,7 @@ class Panda_Pods_Repeater_Field {
 			//add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod_fn' ), 10, 3 );			
 				
 		}
-		$this->instances_fn();
+		$this->instances();
 		/**
 		 * Plugin Setup
 		 */
@@ -129,8 +141,12 @@ class Panda_Pods_Repeater_Field {
 		//add_screen_option( 'per_page',  array( 'default' => 0,
 			//'option' => 'pprf-auto-load' , 'label' => _x( 'Panda Pods Repeater Field auto load', 'panda-pods-repeater-fields' )) );
 		//	add filter to migrate package
-		
-					
+
+		// Elementor widget
+		if( $this->can_elementor ){ 
+   			add_action( 'elementor/widgets/widgets_registered',  array( $this, 'register_widgets' ) );		
+		}
+						
 					
 	}
 
@@ -378,7 +394,7 @@ class Panda_Pods_Repeater_Field {
 		 return $output; 	
 	}
 
-	private function instances_fn(){
+	private function instances(){
 		global $wpdb, $current_user;
 		
 		$query_str = $wpdb->prepare( 'SELECT COUNT(`post_id`) AS count FROM `' . $wpdb->postmeta . '`  WHERE `meta_key` LIKE "type" AND  `meta_value` LIKE  "%s";', array( self::type_str ) );		
@@ -388,7 +404,13 @@ class Panda_Pods_Repeater_Field {
 		return md5( $items_arr[0]['count'] ) ;
 		
 	}
-
+	/**
+	 * register widgets
+	 */ 
+	public function register_widgets() {
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\PPRF_Elementor_Accordion_Widget() );
+		
+	}
 } // Panda_Pods_Repeater_Field
 
 /**
@@ -827,6 +849,12 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 	//echo $child_pod;
 
 echo '</pre>';	*/
+
+	if( pprf_updated_tables(  $filter_arr['child_pod_name'] ) == false ){
+		$db_cla 	 = new panda_pods_repeater_field_db();	
+		$db_cla->update_columns_fn(  $filter_arr['child_pod_name'] );
+	}
+
 	if( is_object( $child_pod ) && $atts_arr['count_only'] == false ){
 		$i 	= 	0;
 		foreach( $child_pod->fields as $k_str => $v_arr ){
@@ -841,6 +869,7 @@ echo '</pre>';	*/
 				}*/
 				$relatePick_arr	 = array('user', 'post_type', 'pod', 'media');
 				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'file' ) || ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pick' && in_array( $v_arr['pick_object'], $relatePick_arr ) ) ){
+
 					$fields_str .= ',(
 									SELECT GROUP_CONCAT( psl' . $i .  '_tb.related_item_id ORDER BY psl' . $i .  '_tb.weight ASC SEPARATOR "," )
 									FROM `' . $wpdb->prefix . 'podsrel` AS psl' . $i .  '_tb

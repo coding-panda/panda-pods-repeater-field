@@ -34,7 +34,7 @@ var pprfParentHei_int = jQuery('html').height();
 /**
  * insert a new row to the page after adding a new item
  */
-function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, parentName ){
+function pprf_new_fn( podid, postid, cpodid, authorid , iframeid, poditemid, parentName ){ 
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( poditemid ) ) {
 		
 		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_load_newly_added_fn', 'security' : ajax_script.nonce };

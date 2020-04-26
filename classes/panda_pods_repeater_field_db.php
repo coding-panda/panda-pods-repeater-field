@@ -77,7 +77,7 @@ class panda_pods_repeater_field_db {
 	}	
 
 	/**
-	 * get_tables_fn: get tables from database, by default, only return wp_posts, wp_users and pods tables
+	 * get_tables: get tables from database, by default, only return wp_posts, wp_users and pods tables
 	 * 
 	 * @param: $allTables_bln Boolean return all tables or not
 	 */
@@ -192,7 +192,7 @@ class panda_pods_repeater_field_db {
 		return $tableInfo_arr;		
 	}
 	/**
-	 * update_columns_fn: check if a table column exists
+	 * update_columns: check if a table column exists
 	 * 
 	 * @param string $tb_str table name
 	 * @use $this->column_exist_fn() to check if a column exists
