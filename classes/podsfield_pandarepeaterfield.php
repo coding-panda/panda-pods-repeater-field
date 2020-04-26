@@ -615,8 +615,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$ids_str     	= esc_attr( $savedtb_int . '-' . $row_obj['id'] . '-' . $options['id'] );
 						$fullUrl_str 	= esc_attr( $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-edit-' . $ids_str . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] );	
 
-						$title_str		= $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ];
-						// integration with Simpods MVC
+						$title_str		= $row_obj[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ];	
+						// integration with Simpods MVC Area Field
 						if( isset( $child_pod->fields[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ] ) ){
 							$title_str		= $this->simpods_area_field_value( $child_pod->fields[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $title_str );
 						}	
@@ -632,21 +632,27 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									$id_bln	=	true;
 									continue;
 								}
-								$colVal_ukn	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $adminCol_str );
-								// integration with Simpods MVC
-								if( isset( $child_pod->fields[ $adminCol_str ] ) ){
-									$colVal_ukn		= $this->simpods_area_field_value( $child_pod->fields[ $adminCol_str ], $colVal_ukn );
+								$colVal_ukn	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $adminCol_str ); 
+								// integration with Simpods MVC Area Field
+								if( isset( $child_pod->fields[ $adminCol_str ] ) ){ 
+									if( $child_pod->fields[ $adminCol_str ]['type'] == 'pick' &&  $child_pod->fields[ $adminCol_str ]['pick_object'] == 'user' ){
+										$colVal_ukn = $colVal_ukn['display_name'];
+									}
+									if( $child_pod->fields[ $adminCol_str ]['type'] == 'simpodsareafield' ){
+										$colVal_ukn		= $this->simpods_area_field_value( $child_pod->fields[ $adminCol_str ], $colVal_ukn );
+									}
 								}									
 								if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
 									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
 								}							
 							}
+
 							if( $id_bln ){
 								$label_str = '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . ' ' . $label_str;
 							}
 							//echo '<pre>';	
 						}
-						if( $label_str	== '' ){
+						if( $label_str	== '' ){ 
 							$label_str		= '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . '<strong> ' . self::$tbs_arr['pod_' . $savedtb_int ]['name_label'] . ':</strong> ' . esc_html( $title_str );
 						}
 						
