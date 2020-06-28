@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.5' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.6' );
 
  
  
@@ -35,7 +35,7 @@ define( 'PANDA_PODS_REPEATER_VERSION', '1.4.5' );
 class Panda_Pods_Repeater_Field {
 
 	var $menuTitle_str 		= 'Panda Pods Repeater Field';
-	public $can_elementor	= false;
+	//public $can_elementor	= false;
 	const type_str	   		= 'pandarepeaterfield';
 	/**
 	 * Constructor for the Panda_Pods_Repeater_Field class
@@ -56,10 +56,10 @@ class Panda_Pods_Repeater_Field {
 	
 		$active_plugins = get_option('active_plugins');
 	
-		if( in_array('elementor/elementor.php', $active_plugins ) && ! wp_doing_ajax() ){ 
-		 	$this->can_elementor = true;
-		 	array_push( $files_arr, 'pprf_elementor_accordion_widget' );
-		}
+		// if( in_array('elementor/elementor.php', $active_plugins ) && ! wp_doing_ajax() ){ 
+		//  	$this->can_elementor = true;
+		//  	array_push( $files_arr, 'pprf_elementor_accordion_widget' );
+		// }
 
 		$class_bln   = true;
 		
@@ -143,9 +143,9 @@ class Panda_Pods_Repeater_Field {
 		//	add filter to migrate package
 
 		// Elementor widget
-		if( $this->can_elementor ){ 
-   			add_action( 'elementor/widgets/widgets_registered',  array( $this, 'register_widgets' ) );		
-		}
+		// if( $this->can_elementor ){ 
+  //  			add_action( 'elementor/widgets/widgets_registered',  array( $this, 'register_widgets' ) );		
+		// }
 						
 					
 	}
@@ -1348,4 +1348,36 @@ function pprf_updated_tables( $table = '', $operate = '' ){
 	}
 
 	return false;
+}
+/**
+ * Check if a string contains images, videos, audio medias or relevant shortcode start with them.
+ * @since 1.4.5
+ * @param $content string the string
+ * @return return relevant icons if it contains a media .
+ */
+function pprf_check_media_in_content( $content ){
+	$html = ' ';
+	preg_match_all('/(<img .*?>|\[img.*?\]|\[image.*?\])/is', $content, $tags );
+	
+	if( ! empty( $tags[0] ) ){
+		$html 	.= ' <span class="dashicons dashicons-format-image" title ="' . esc_attr__( 'Contains images', 'panda-pods-repeater-field' ). '"></span>';
+	}
+	preg_match_all('/(<video .*?>|\[video.*?\])/is', $content, $tags );
+	
+	if( ! empty( $tags[0] ) ){
+		$html 	.= ' <span class="dashicons dashicons-format-video" title ="' . esc_attr__( 'Contains videos', 'panda-pods-repeater-field' ). '"></span>';
+	}
+
+	preg_match_all('/(<audio .*?>|\[audio.*?\])/is', $content, $tags );
+	
+	if( ! empty( $tags[0] ) ){
+		$html 	.= ' <span class="dashicons dashicons-format-audio"  title ="' . esc_attr__( 'Contains audio', 'panda-pods-repeater-field' ). '"></span>';
+	}
+	preg_match_all('/(\[.*?\])/is', $content, $tags );
+	
+	if( ! empty( $tags[0] ) ){
+		$html 	.= ' <span class="dashicons dashicons-wordpress"  title ="' . esc_attr__( 'Maybe contain shortcode', 'panda-pods-repeater-field' ). '"></span>';
+	}	
+
+	return 	$html;
 }

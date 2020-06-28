@@ -114,7 +114,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 					$data_arr	=	array( 
 										'id' 				=> $item_arr[0]['id'], 
-										'title' 			=> $item_arr[0][ $title_str ], 
+										'title' 			=> substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $item_arr[0][ $title_str ] ) ), 0, 80 ) . pprf_check_media_in_content( $item_arr[0][ $title_str ] ) , 
 										'pprf_name_label' 	=> $tables_arr['pod_' . $_POST['cpodid'] ]['name_label'], 										
 										'label' 			=> '' 
 									);

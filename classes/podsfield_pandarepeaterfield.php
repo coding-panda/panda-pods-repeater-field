@@ -621,7 +621,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							$title_str		= $this->simpods_area_field_value( $child_pod->fields[ self::$tbs_arr['pod_' . $savedtb_int ]['name_field'] ], $title_str );
 						}	
 						$title_str   	= apply_filters( 'pprf_item_title', $title_str, $savedtb_int, $row_obj['id'], $id, $options['id'] );
-						$title_str	 	= esc_attr( $title_str );
+						$title_str	 	= substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $title_str ) ), 0, 80 ) . pprf_check_media_in_content( $title_str ) ;
 
 						$label_str		= ''; 
 						if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){
@@ -643,7 +643,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									}
 								}									
 								if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
-									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
+									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $colVal_ukn ) ), 0, 80 ) . pprf_check_media_in_content( $colVal_ukn )  ;
 								}							
 							}
 
@@ -653,9 +653,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							//echo '<pre>';	
 						}
 						if( $label_str	== '' ){ 
-							$label_str		= '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . '<strong> ' . self::$tbs_arr['pod_' . $savedtb_int ]['name_label'] . ':</strong> ' . esc_html( $title_str );
+							$label_str		= '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . '<strong> ' . self::$tbs_arr['pod_' . $savedtb_int ]['name_label'] . ':</strong> ' .  $title_str;
 						}
-						
+
+						// remove javascript
+						//$label_str = preg_replace( '/<script\\b[^>]*>(.*?)<\\/script>/is', '', $label_str );
 						echo '<li data-id="' . $row_obj['id'] . '" class="' . $trashed_str . '" id="li-' . $ids_str . '" style="' . $css_str . '">';						
 						echo 	'<div class="pprf-row pprf-left ">
 									<div class="w100 pprf-left" id="pprf-row-brief-' . $ids_str . '">

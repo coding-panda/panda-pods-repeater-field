@@ -121,9 +121,18 @@
 .pprf-white-bg{
 	background-color: #ffffff;
 }
-.pprf-left-col{
-	
+.pprf-left-col{	
 	border-right:double #e8e8e8 thick;
+}
+.pprf-left-col .dashicons{
+	height: 14px;
+	width: 14px;
+	font-size: 14px;
+	margin-top: 4px; 
+}
+.pprf-left-col .dashicons::before{
+	font-size: 14px;
+	
 }
 .pprf-right-col{
 	width: 43px;	

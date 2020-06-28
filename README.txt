@@ -325,6 +325,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
 * add: some styling for the load more div.
 * add: Integration with Simpods Area Field.
+* add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
 
 == Upgrade Notice ==
 
@@ -467,3 +468,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
 * Add: some styling for the load more div.
 * Add: Integration with Simpods Area Field.
+* Add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
