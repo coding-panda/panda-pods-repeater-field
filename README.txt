@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.4
-Stable tag: 1.4.6 
+Tested up to: 5.4.2
+Stable tag: 1.4.7 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -327,6 +327,9 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: Integration with Simpods Area Field.
 * add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
 
+= 1.4.7 - 29th July 2020 =
+* fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -469,3 +472,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Add: some styling for the load more div.
 * Add: Integration with Simpods Area Field.
 * Add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
+
+= 1.4.7 =
+* Fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.

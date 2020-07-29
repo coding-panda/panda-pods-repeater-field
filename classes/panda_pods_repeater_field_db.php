@@ -83,19 +83,12 @@ class panda_pods_repeater_field_db {
 	 */
 	public function get_tables_fn( $allTables_bln = false )	{
 		global $wpdb;
-		/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added
-			$savedTbs_str  = wp_cache_get( 'PPRF_ALL_TABLES' );
-			if( $savedTbs_str ){
-				return maybe_unserialize( $savedTbs_str );
-			}
-		}*/
 
 		$podsTb_arr    = array();
 		
-
 		$tables_arr = get_option( 'simpods_all_tables', array() ); // integrated with Simpods MVC
 
-		if( $tables_arr === false ){
+		if( empty( $tables_arr ) || ! is_array( $tables_arr ) ){
 			$sql_str       = 'SHOW TABLES LIKE "%"';
 			$tables_arr    = $wpdb->get_results( $sql_str );		
 		}
