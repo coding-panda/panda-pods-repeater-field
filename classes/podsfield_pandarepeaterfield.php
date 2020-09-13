@@ -1315,7 +1315,12 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						'target_tb' => 'pods_' . $field_details[ 'options' ][ 'simpodsareafield_table' ],
 						'limit'		=> 1,
 						);
-		$value_arr = $funs_cla->simpods_select_fn( $fields_arr, $atts_arr );		
+		$value_arr  = array();
+		if( method_exists( $funs_cla, 'simpods_select' ) ){ // Since Simpods 3.0.0
+			$value_arr = $funs_cla->simpods_select( $fields_arr, $atts_arr );		
+		} else if( method_exists( $funs_cla, 'simpods_select_fn' ) ){ // before Simpods 3.0.0
+			$value_arr = $funs_cla->simpods_select_fn( $fields_arr, $atts_arr );		
+		}
 
 		if( ! empty( $value_arr ) && isset( $value_arr[ 0 ]['sp_title'] ) ){
 			return $value_arr[ 0 ]['sp_title'];
