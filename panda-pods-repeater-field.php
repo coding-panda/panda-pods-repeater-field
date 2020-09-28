@@ -407,10 +407,10 @@ class Panda_Pods_Repeater_Field {
 	/**
 	 * register widgets
 	 */ 
-	public function register_widgets() {
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\PPRF_Elementor_Accordion_Widget() );
+	// public function register_widgets() {
+	// 	\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\PPRF_Elementor_Accordion_Widget() );
 		
-	}
+	// }
 } // Panda_Pods_Repeater_Field
 
 /**
@@ -577,66 +577,18 @@ function panda_repeater_admin_notice_pods_min_version_fail() {
 
 }
 
-//add_filter('pods_packages_export', 'pprf_pods_migrate_export_fn');
-/**
- * update the pprf values for export
- */
-/*function pprf_pods_migrate_export_fn( $export_arr, $params_arr ){
-	global $wpdb;
-	if ( !class_exists( 'Pods_Migrate_Packages' ) ){
-    	return;
-	}
-	if( isset( $export_arr['pods'] ) ){
-		foreach( $export_arr['pods'] as $k_str => $pod_arr ){
-			if( isset( $pod_arr['fields'] ) ){
-				foreach( $pod_arr['fields'] as $kk_str => $field_arr ){
-					if( $field_arr['type'] == 'pandarepeaterfield' && isset(  $field_arr['pandarepeaterfield_table'] ) ){
-						$podID_arr 	= explode( '_', $field_arr['pandarepeaterfield_table'] ); 
-						if( isset( $podID_arr[1] ) && is_numeric( $podID_arr[1] ) ){
-							// get the pod name
-							$post_obj = get_post( $podID_arr[1] );
-							if( $post_obj ){
-								$export_arr['pods'][ $k_str ]['fields'][ $kk_str ]['pandarepeaterfield_table']	= $podID_arr[0] . '_' . $podID_arr[1] . '_' . $post_obj->post_name;
-							}						
-						}
-					}
-				}
-			}
-		}
-	}
-	return $export_arr;
-}*/
-
-//add_filter('pods_packages_import', 'pprf_pods_migrate_import_fn');
-/**
- * update the pprf values for import
- */
-/*function pprf_pods_migrate_import_fn( $found_arr, $data_arr, $replace_bln ){
-	global $wpdb;
-	if ( !class_exists( 'Pods_Migrate_Packages' ) ){
-    	return;
-	}
-	echo '<pre>';
-	print_r( $found_arr );
-	print_r( $data_arr );
-	print_r( $replace_bln );
-	echo '</pre>';
-	exit();
-	return  $found_bln;
-}*/
-
 add_action( 'wp_loaded', 'pprf_translate_fn' );
 
 function pprf_translate_fn(){
 	// translation 
-	$pprfStrs_arr = array(
+	$strings = array(
 		'be_restored' 		=> esc_html__( 'It will be restored.', 'panda-pods-repeater-field' ),
 		'can_recover' 		=> esc_html__( 'You can recover it from trash.', 'panda-pods-repeater-field' ),
 		'be_deleted' 		=> esc_html__( 'It will be deleted permanently.', 'panda-pods-repeater-field' ),
 		'you_sure' 			=> esc_html__( 'Are you sure?', 'panda-pods-repeater-field' ),
 		'Ignore_changes' 	=> esc_html__( 'It seems like you have made some changes in a repeater field. Ignore the changes?', 'panda-pods-repeater-field' ),
 	);
-	$GLOBALS['pprfStrs_arr'] = $pprfStrs_arr;
+	$GLOBALS['pprfStrs_arr'] = $strings;
 }
 /**
  * pandarf_pods_fn extension of pods( $table, $params )
@@ -663,11 +615,10 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 		$claName_str = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files_arr[ 0 ] ) ) ) ) ;			
 		include_once $file_str;		
 		
-
 		$db_cla 	 = new panda_pods_repeater_field_db();	
 		$tbInfo_arr	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
 		$tbabbr_str  = $tbInfo_arr['type'] == 'pod'? 't' : 'd';	
-		//$where_str   = ' `' . $tbabbr_str . '`.`pandarf_categories` REGEXP "(:\"' . $search_arr['pod_id'] . '.' . $search_arr['post_id'] . '.' . $search_arr['pod_field_id'] . '\";{1,})"'; 
+
 		$where_str   = '   `' . $tbabbr_str . '`.`pandarf_parent_pod_id`  = ' . intval( $search_arr['pod_id'] ) . '
 					   AND `' . $tbabbr_str . '`.`pandarf_parent_post_id` = "' . intval( $search_arr['post_id'] ) . '"
 					   AND `' . $tbabbr_str . '`.`pandarf_pod_field_id`   = ' . intval( $search_arr['pod_field_id'] ) . ' '; 
@@ -678,15 +629,7 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 		}
 			
 		$pod_cla   = pods( $tb_str, $params_arr );
-		// Loop through the items returned 
-		//while ( $pod_cla->fetch() ) { 
-			//using a media function. Consider pods_image_url, or pods_image_id_from_field
-			//$picture = $pod_cla->field('image');
-           //pass ID of image to a WordPress image function and output it
-           //echo wp_get_attachment_image( $picture['ID'] );
-			//or use pods_display
-			
-		//} 	
+	
 		$rows_obj  = $pod_cla->data();	
 		
 		
