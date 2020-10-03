@@ -1306,7 +1306,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		if( ! is_numeric( $ids[ 0 ] ) ){
 			return $item_value;
 		}
-		global $funs_cla;
+		global $funs_cla, $funs;
 
 		$fields_arr = array(
 						'id' => $ids[ 0 ],

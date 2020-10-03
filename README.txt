@@ -332,6 +332,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 
 = 1.4.8 - 13th September 2020 =
 * add: Catch up with Simpods 3.0.0 on area field
+* add: Minified CSS and JavaScript files.
 
 == Upgrade Notice ==
 
@@ -481,3 +482,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.8 =
 * Add: Catch up with Simpods 3.0.0 on area field
+* Add: Minified CSS and JavaScript files.

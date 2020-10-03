@@ -3,278 +3,305 @@
 .update-nag,
 .error,
 .notice,
-#adminmenuback, 
-#adminmenuwrap, 
+#adminmenuback,
+#adminmenuwrap,
 #wpadminbar,
 #wpfooter,
-#screen-meta-links{
-	display:none !important;	
+#screen-meta-links {
+  display: none !important;
 }
-html.wp-toolbar{	
-	padding-top: 0;
-}
-#wpcontent{
-	padding:0;	
-}
-.auto-fold #wpcontent{
-	padding-left:0;
-}
-#wpcontent, #wpfooter {
-    margin-left: 0px !important;		
-}
-#wpbody{
-	padding: 20px;
-}
-#message,	
-.pods-form{
-	clear:both;
-}
-.pods-file{
-	display:block !important;
-}
-.pods-form-fields .pods-field {
-	float: left;
-	/*padding: 5px;*/
-}
-.pods-form-front .pods-field-input input,
-.pods-form-front .pods-field-input textarea{
-    padding: 5px 10px;
-    border-radius: 5px;
-    
-}
-.pods-field-input .pods-slider-field {
-    max-width: calc( 100% - 16px );
-    margin: 0 8px;
-}
-.pods-form-front .pods-field-input select {
-    padding: 4px 10px;
-    border-radius: 5px;
-	height: 31px;
-	
-	margin-top: 2px !important;
 
+html.wp-toolbar {
+  padding-top: 0;
 }
-.pods-form-front .pods-field-label{
-	width: 100% !important;
-	
+
+#wpcontent {
+  padding: 0;
+}
+
+.auto-fold #wpcontent {
+  padding-left: 0;
+}
+
+#wpcontent, #wpfooter {
+  margin-left: 0px !important;
+}
+
+#wpbody {
+  padding: 20px;
+}
+
+#message,
+.pods-form {
+  clear: both;
+}
+
+.pods-file {
+  display: block !important;
+}
+
+.pods-form-fields .pods-field {
+  float: left;
+  /*padding: 5px;*/
+}
+
+.pods-form-front .pods-field-input input,
+.pods-form-front .pods-field-input textarea {
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.pods-field-input .pods-slider-field {
+  max-width: calc( 100% - 16px);
+  margin: 0 8px;
+}
+
+.pods-form-front .pods-field-input select {
+  padding: 4px 10px;
+  border-radius: 5px;
+  height: 31px;
+  margin-top: 2px !important;
+}
+
+.pods-form-front .pods-field-label {
+  width: 100% !important;
 }
 
 .pods-form-front .pods-field-input {
-
-    width: 100% !important;
-	
+  width: 100% !important;
 }
-.pods-file-col.pods-file-name{
-	padding-top: 0 !important;
+
+.pods-file-col.pods-file-name {
+  padding-top: 0 !important;
 }
 
 body {
-	background:#ffffff;	
-}
-body > div, body > form, body > span, body > p body > table{
-	/*display:none;	*/
-}
-body #wpwrap{
-	display:block !important;		
-}
-.pods-form-fields .pods-field:nth-child(2n+1){
-   /* background:#9CF;*/
-}
-.pods-field-label{
-	font-size:14px;
-	font-weight:bolder;
-
-}
-.click-to-expand{
-   /* background:url(../../wp-content/plugins/panda-pods-repeater-field/fields/images/arrow-down.png) repeat-y;background:#a0d6dc;*/
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cccccc+0,ffffff+100&1+0,0+100 */
-	/*background: -moz-linear-gradient(left,  rgba(204,204,204,1) 0%, rgba(255,255,255,0) 100%); *//* FF3.6-15 */
-	/*background: -webkit-linear-gradient(left,  rgba(204,204,204,1) 0%,rgba(255,255,255,0) 100%);*/ /* Chrome10-25,Safari5.1-6 */
-	/*background: linear-gradient(to right,  rgba(204,204,204,1) 0%,rgba(255,255,255,0) 100%);*/ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	/*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#00ffffff',GradientType=1 );*/ /* IE6-9 */
-	/*background-image:url(../images/click-to-expand.png);*/
-	background-repeat: repeat-y;
-	
-    height: 100%;
-    left: 0px;
-    position: absolute;
-    top: 0;
-    width: 15px;	
-	cursor:pointer;
-}
-.click-to-expand:hover{
-	background-image:url(../images/down-flying-arrow.gif);
-}
-.click-to-expand-arrow{
-	background:url(../images/arrow-down.png) no-repeat 0 2px;
-    height: 30px;
-    left: 0px;
-    position: absolute;
-    top: 0;
-    width: 15px;	
-	cursor:pointer;
+  background: #ffffff;
 }
 
-.click-to-close{
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,cccccc+100&0+0,1+100 */
-	/*background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(204,204,204,1) 100%);*/ /* FF3.6-15 */
-	/*background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(204,204,204,1) 100%);*/ /* Chrome10-25,Safari5.1-6 */
-	/*background: linear-gradient(to right,  rgba(255,255,255,0) 0%,rgba(204,204,204,1) 100%);*/ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	/*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#cccccc',GradientType=1 ); *//* IE6-9 */
-	/*background-image:url(../images/click-to-contract.png);*/
-	background-repeat: repeat-y;
-    height: 100%;
-    right: 0px;
-    position: absolute;
-    top: 0;
-    width: 15px;	
-	cursor:pointer;	
+body > div, body > form, body > span, body > p body > table {
+  /*display:none;	*/
 }
-.click-to-close:hover{
-	background-image:url(../images/up-flying-arrow.gif);
+
+body #wpwrap {
+  display: block !important;
 }
-.click-to-close-arrow{
-	/*background: url(../images/arrow-up.png) no-repeat #e3eef4;*/
-	background-color: #e3eef4;
-	height: 20px;
-	right: 0px;
-	position: absolute;
-	top: 0;
-	width: 100%;
-	cursor: pointer;
-	text-align: center;
-	padding: 3px 0;
-	color: #0073aa;
-	font-size: 11px;
+
+.pods-form-fields .pods-field:nth-child(2n+1) {
+  /* background:#9CF;*/
 }
-.bottom{
-	top:auto;
-	bottom: 0;	
+
+.pods-field-label {
+  font-size: 14px;
+  font-weight: bolder;
 }
+
+.click-to-expand {
+  /* background:url(../../wp-content/plugins/panda-pods-repeater-field/fields/images/arrow-down.png) repeat-y;background:#a0d6dc;*/
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cccccc+0,ffffff+100&1+0,0+100 */
+  /*background: -moz-linear-gradient(left,  rgba(204,204,204,1) 0%, rgba(255,255,255,0) 100%); */
+  /* FF3.6-15 */
+  /*background: -webkit-linear-gradient(left,  rgba(204,204,204,1) 0%,rgba(255,255,255,0) 100%);*/
+  /* Chrome10-25,Safari5.1-6 */
+  /*background: linear-gradient(to right,  rgba(204,204,204,1) 0%,rgba(255,255,255,0) 100%);*/
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#00ffffff',GradientType=1 );*/
+  /* IE6-9 */
+  /*background-image:url(../images/click-to-expand.png);*/
+  background-repeat: repeat-y;
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  top: 0;
+  width: 15px;
+  cursor: pointer;
+}
+
+.click-to-expand:hover {
+  background-image: url(../images/down-flying-arrow.gif);
+}
+
+.click-to-expand-arrow {
+  background: url(../images/arrow-down.png) no-repeat 0 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0;
+  width: 15px;
+  cursor: pointer;
+}
+
+.click-to-close {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,cccccc+100&0+0,1+100 */
+  /*background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(204,204,204,1) 100%);*/
+  /* FF3.6-15 */
+  /*background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(204,204,204,1) 100%);*/
+  /* Chrome10-25,Safari5.1-6 */
+  /*background: linear-gradient(to right,  rgba(255,255,255,0) 0%,rgba(204,204,204,1) 100%);*/
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#cccccc',GradientType=1 ); */
+  /* IE6-9 */
+  /*background-image:url(../images/click-to-contract.png);*/
+  background-repeat: repeat-y;
+  height: 100%;
+  right: 0px;
+  position: absolute;
+  top: 0;
+  width: 15px;
+  cursor: pointer;
+}
+
+.click-to-close:hover {
+  background-image: url(../images/up-flying-arrow.gif);
+}
+
+.click-to-close-arrow {
+  /*background: url(../images/arrow-up.png) no-repeat #e3eef4;*/
+  background-color: #e3eef4;
+  height: 20px;
+  right: 0px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+  padding: 3px 0;
+  color: #0073aa;
+  font-size: 11px;
+}
+
+.bottom {
+  top: auto;
+  bottom: 0;
+}
+
 .pods-form-front .pods-field .pods-form-ui-field-type-file,
 .pods-form-ui-row-type-pick .pods-form-ui-field select,
 .pods-form-front .pods-field .pods-field-input select,
 .pods-form-front .pods-field .pods-file-add,
 .pods-form-front .pods-field .pods-form-ui-field-type-wysiwyg,
 .pods-form-front .pods-field .pods-field-input input,
-.pods-form-front .pods-field .pods-field-input textarea{
-	/*width:95%;*/
-	width: calc( 100% - 2px );
+.pods-form-front .pods-field .pods-field-input textarea {
+  /*width:95%;*/
+  width: calc( 100% - 2px);
 }
-.pods-form-front .pods-field .pods-file-add{
-	margin: 0 1px;
+
+.pods-form-front .pods-field .pods-file-add {
+  margin: 0 1px;
 }
-.pods-form-front .pods-field .pods-validate-error-message{
-	position:absolute;
+
+.pods-form-front .pods-field .pods-validate-error-message {
+  position: absolute;
 }
-.panda-repeater-field-delete-bn{
-	padding: 5px 15px;
-	background: #E35959;
-	color: #fff;
-	border-radius: 5px;
-	font-weight: bold;
-	box-shadow: 2px 2px 2px 2px #ccc;	
-	cursor: pointer;
+
+.panda-repeater-field-delete-bn {
+  padding: 5px 15px;
+  background: #E35959;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 2px 2px 2px 2px #ccc;
+  cursor: pointer;
 }
-.pods-submit{
-	clear: both;
+
+.pods-submit {
+  clear: both;
 }
-.pods-submit-button{
-	padding: 5px 15px;
-	background: #F1F1F1;
-	color: #666;
-	border-radius: 5px;
-	font-weight: 600;
-	cursor: pointer;	
+
+.pods-submit-button {
+  padding: 5px 15px;
+  background: #F1F1F1;
+  color: #666;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
 }
-.toplevel_page_panda-pods-repeater-field .compat-item{
-	display: none;
+
+.toplevel_page_panda-pods-repeater-field .compat-item {
+  display: none;
 }
+
 #pprf-form .pods-form-front .pods-field-input,
 #pprf-form .pods-form-front .pods-field-input input,
 #pprf-form .pods-form-front .pods-field-input textarea,
 #pprf-form .pods-form-front .pods-field-input select,
 #pprf-form .pods-form-front .pprf-left-col {
-	font-size: 14px;
+  font-size: 14px;
 }
+
 #pprf-form input[type="submit"] {
-	padding-left:5px;
-	padding-right:5px;
-	border: 1px solid #e8e8e8;
-	border-radius: 5px;	
-	cursor: pointer;
-	background: #F0F5FF;
-}
-#pprf-form input[type="submit"]:hover{
-	background: #F1F1F1;
-}
-#pprf-form input[type="submit"]{
-	font-size: 14px;
-	font-weight: normal;
-	color: #000;
-}
-.pprf-btn{
-	padding: 1px 5px 4px 5px;
-}
-#pprf-form select.pprf-in-iframe-sel{
-	height: 27px;
-	margin-right: 10px;
-    margin-bottom: 5px;
-    padding: 0;
-    font-size: 14px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #F0F5FF;
 }
 
-#pprf-form{
-	padding: 10px;
+#pprf-form input[type="submit"]:hover {
+  background: #F1F1F1;
 }
-#pprf-form .pods-boolean input{
-	top:3px;
+
+#pprf-form input[type="submit"] {
+  font-size: 14px;
+  font-weight: normal;
+  color: #000;
 }
+
+.pprf-btn {
+  padding: 1px 5px 4px 5px;
+}
+
+#pprf-form select.pprf-in-iframe-sel {
+  height: 27px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding: 0;
+  font-size: 14px;
+}
+
+#pprf-form {
+  padding: 10px;
+}
+
+#pprf-form .pods-boolean input {
+  top: 3px;
+}
+
 /* Resposnive */
-
-
-@media (max-width: 1250px) and (min-width: 1200px) {
-
+@media (min-width: 992px) {
+  .pods-form-fields .pods-field:nth-child(4n+1) {
+    clear: left;
+  }
 }
 
-@media (max-width: 1199px) and (min-width: 1006px) { 
-	
-}
-@media (max-width: 1005px) and (min-width: 992px) { 
-	
-}
-@media  (min-width: 992px) {
-
-.pods-form-fields .pods-field:nth-child(4n+1){
-    clear:left
-}
-}
-@media (max-width: 991px) and (min-width: 769px) { 
-
-.pods-form-fields .pods-field:nth-child(3n+1){
-    clear:left
-}
-}
-@media (max-width: 768px)  and (min-width: 670px){ 
-.pods-form-fields .pods-field {
-	width: 100%;
-}
-.pods-form-fields .pods-field:nth-child(2n+1){
-    clear:left
-}
-}
-@media (max-width: 689px) and (min-width: 491px){ 	
-.pods-form-fields .pods-field {
-	width: 100%;
+@media (max-width: 991px) and (min-width: 769px) {
+  .pods-form-fields .pods-field:nth-child(3n+1) {
+    clear: left;
+  }
 }
 
+@media (max-width: 768px) and (min-width: 670px) {
+  .pods-form-fields .pods-field {
+    width: 100%;
+  }
+  .pods-form-fields .pods-field:nth-child(2n+1) {
+    clear: left;
+  }
 }
-@media (max-width: 490px) { 	
-.pods-form-fields .pods-field {
-	width: 100%;
+
+@media (max-width: 689px) and (min-width: 491px) {
+  .pods-form-fields .pods-field {
+    width: 100%;
+  }
 }
+
+@media (max-width: 490px) {
+  .pods-form-fields .pods-field {
+    width: 100%;
+  }
 }
+
 /* IE 10+ */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
 
-}
+/*# sourceMappingURL=pprf.css.map */
