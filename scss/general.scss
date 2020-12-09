@@ -51,6 +51,10 @@
 }
 .pprf-redorder-list{
     padding-inline-start: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 0;
+	padding-right: 0;    
 }
 .pprf-redorder-list li{
 
@@ -59,6 +63,7 @@
 	border-left: 5px solid #46b450;*/
 	float: left;
 	width: 100%;
+	margin: 0;
 
 }
 .pprf-redorder-list.pandarf_order li{
@@ -98,7 +103,9 @@
 	box-shadow: none !important;	
 	float:left;
 	height: 30px;	
+	min-height:initial;
 	cursor: pointer;
+	margin:0;
 }
 .pprf-text-right{
 	text-align: right;
@@ -107,7 +114,7 @@
 .button.pprf-save-btn,
 .button.pprf-trash-btn{
 	border-right: 1px solid #e8e8e8 !important;	
-	margin-top:3px;
+	margin:0px;
 }
 .pprf-grey-bg{
 	background-color: #f1f1f1;
@@ -137,6 +144,7 @@
 .pprf-right-col{
 	width: 43px;	
 	padding:0 !important;
+	margin:0;
 }
 .pprf-right-col .dashicons{
 	width: 100%;

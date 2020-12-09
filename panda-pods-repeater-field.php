@@ -1111,9 +1111,19 @@ function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
 	
 }				
 if( !is_admin() ){
-	add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
+	add_action( 'after_setup_theme', 'load_pprf_frontend_scripts' );
+	/**
+	 * load the PPRF scripts and style
+	 */ 
+	function load_pprf_frontend_scripts(){
+		$can_load_pprf_scripts = true;
+		$can_load_pprf_scripts = apply_filters( 'load_pprf_scripts_frontend', $can_load_pprf_scripts ); 
+		if( true == $can_load_pprf_scripts ){
+			add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts' ) ;	
+		}
+	}
 }
-//add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts_fn' ) ;	
+//add_action( 'wp_enqueue_scripts', 'pprf_enqueue_scripts' ) ;	
 /**
  * Enqueue front-end scripts
  *
@@ -1121,7 +1131,7 @@ if( !is_admin() ){
  *
  * @since 1.0.0
  */
-function pprf_enqueue_scripts_fn() {
+function pprf_enqueue_scripts() {
 	global $pprfStrs_arr;
 	/**
 	 * All styles goes here

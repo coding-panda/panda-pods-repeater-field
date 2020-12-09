@@ -67,7 +67,8 @@ function pprf_new_fn(podid, postid, cpodid, authorid, iframeid, poditemid, paren
       } // if add a new one, activeate the live items tab
 
 
-      jQuery('#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab .dashicons-portfolio').click();
+      jQuery('#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab .dashicons-portfolio').click(); //jQuery( document ).on('click', '#panda-repeater-fields-tabs-' + cpodid + '-' + poditemid + ' .pprf-tab .dashicons-portfolio' );
+
       pprf_odd_even_color_fn(cpodid + '-' + poditemid);
     });
   }
@@ -260,17 +261,19 @@ function pprf_delete_item_fn(podid, postid, cpodid, itemid, authorid, iframeid, 
       });
     }
   }
-}
+} //jQuery('.pprf-redorder-btn').click( function(){
 
-jQuery('.pprf-redorder-btn').click(function () {
+
+jQuery(document).on('click', '.pprf-redorder-btn', function (evt) {
   var id = jQuery(this).data('id');
   jQuery(this).addClass('hidden');
   jQuery(this).parent().children('.pprf-save-redorder-btn').removeClass('hidden');
   jQuery(this).parent().children('.pprf-redorder-list-wrap').removeClass('hidden');
   jQuery(this).parent().children('.pprf-row').addClass('hidden');
   jQuery('#' + id + '-add-new').addClass('hidden');
-});
-jQuery('.pprf-save-redorder-btn').click(function () {
+}); //jQuery('.pprf-save-redorder-btn').click( function(){
+
+jQuery(document).on('click', '.pprf-save-redorder-btn', function (evt) {
   var id = jQuery(this).data('id');
   jQuery(this).addClass('hidden');
   jQuery(this).parent().children('.pprf-redorder-list-wrap').addClass('hidden');
@@ -282,8 +285,9 @@ jQuery('.pprf-save-redorder-btn').click(function () {
 /**
  * load more
  */
+//jQuery('.pprf-load-more-btn').click( function( evt ){
 
-jQuery('.pprf-load-more-btn').click(function (evt) {
+jQuery(document).on('click', '.pprf-load-more-btn', function (evt) {
   evt.preventDefault();
   jQuery('#pprf-load-more-wrap-' + jQuery(this).data('target') + ' .pprf-ajax-img').css('display', 'block');
   pprf_load_more_fn(jQuery(this).data('target'), jQuery(this));
@@ -405,7 +409,7 @@ function pprf_odd_even_color_fn(ids_str) {
 
 
 function pprf_reassign_fn(cpodid, poditemid, itemid) {
-  console.log(cpodid, poditemid, itemid);
+  //console.log( cpodid, poditemid, itemid );
   jQuery('#panda-repeater-fields-' + cpodid + '-' + poditemid + ' .pprf-redorder-list li[data-id="' + itemid + '"]').remove(); //document.getElementById( iframeid ).contentWindow.pprf_resize_fn() ;
 
   pprf_odd_even_color_fn(cpodid + '-' + poditemid);
@@ -512,16 +516,16 @@ jQuery(document).ready(function ($) {
   //$(".pprf-expand-bar").live( 'click', function(){
 
   $(document.body).on('click', '.pprf-expand-bar', function () {
-    var ids_str = $(this).data('target');
-    var iframe_str = 'panda-repeater-edit-' + ids_str;
+    var ids = $(this).data('target');
+    var iframe = 'panda-repeater-edit-' + ids;
 
     if ($(this).hasClass('pprf-add-expand')) {
-      iframe_str = 'panda-repeater-add-new-' + ids_str;
+      iframe = 'panda-repeater-add-new-' + ids;
     }
 
-    if (typeof document.getElementById(iframe_str) != 'undefined') {
-      if (typeof document.getElementById(iframe_str).contentWindow.pprf_resize_fn != 'undefined') {
-        document.getElementById(iframe_str).contentWindow.pprf_resize_fn();
+    if (typeof document.getElementById(iframe) != 'undefined') {
+      if (typeof document.getElementById(iframe).contentWindow.pprf_resize_fn != 'undefined') {
+        document.getElementById(iframe).contentWindow.pprf_resize_fn();
       }
     }
   });
@@ -582,8 +586,9 @@ jQuery(document).ready(function ($) {
     //			$('#pprf-on-page-data').data('saved', '1');			
     //		 }
     pprfChanged_bln = true;
-  });
-  $('#publishing-action .button, #save-action .button').click(function (evt) {
+  }); // $('#publishing-action .button, #save-action .button').click( function( evt ){
+
+  $(document).on('click', '#publishing-action .button, #save-action .button', function () {
     if (pprfChanged_bln) {
       evt.preventDefault();
       var leave_bln = confirm(strs_obj.Ignore_changes);

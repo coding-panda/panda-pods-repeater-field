@@ -3,7 +3,7 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.4.2
+Tested up to: 5.6
 Stable tag: 1.4.8 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -330,9 +330,12 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 = 1.4.7 - 29th July 2020 =
 * fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.
 
-= 1.4.8 - 13th September 2020 =
+= 1.4.8 - 9th December 2020 =
 * add: Catch up with Simpods 3.0.0 on area field
 * add: Minified CSS and JavaScript files.
+* add: add a filter load_pprf_scripts_frontend to toggle loading PPRF scripts and styles at the front end.
+* add: added more frontend css.
+* fix: some JavaScript to catch up with WordPress 5.6 update
 
 == Upgrade Notice ==
 
@@ -481,5 +484,8 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.
 
 = 1.4.8 =
-* Add: Catch up with Simpods 3.0.0 on area field
-* Add: Minified CSS and JavaScript files.
+* add: Catch up with Simpods 3.0.0 on area field
+* add: Minified CSS and JavaScript files.
+* add: add a filter load_pprf_scripts_frontend to toggle loading PPRF scripts and styles at the front end.
+* add: added more frontend css.
+* fix: some JavaScript to catch up with WordPress 5.6 update
