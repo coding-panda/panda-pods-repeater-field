@@ -1,0 +1,1 @@
+{"version":3,"sources":["admin.scss"],"names":[],"mappings":"AAAA,eACC,MAAA","file":"admin.min.css","sourcesContent":[".pprf-left-col{\r\n\twidth: calc(100% - 151px);\t\r\n} "]}

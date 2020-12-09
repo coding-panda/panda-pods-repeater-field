@@ -77,23 +77,23 @@ class panda_pods_repeater_field_db {
 	}	
 
 	/**
-	 * get_tables_fn: get tables from database, by default, only return wp_posts, wp_users and pods tables
+	 * get_tables: get tables from database, by default, only return wp_posts, wp_users and pods tables
 	 * 
 	 * @param: $allTables_bln Boolean return all tables or not
 	 */
 	public function get_tables_fn( $allTables_bln = false )	{
 		global $wpdb;
-		/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added
-			$savedTbs_str  = wp_cache_get( 'PPRF_ALL_TABLES' );
-			if( $savedTbs_str ){
-				return maybe_unserialize( $savedTbs_str );
-			}
-		}*/
 
 		$podsTb_arr    = array();
-		$sql_str       = 'SHOW TABLES LIKE "%"';
-		$tables_arr    = $wpdb->get_results( $sql_str );				
 		
+		$tables_arr = get_option( 'simpods_all_tables', array() ); // integrated with Simpods MVC
+
+		if( empty( $tables_arr ) || ! is_array( $tables_arr ) ){
+			$sql_str       = 'SHOW TABLES LIKE "%"';
+			$tables_arr    = $wpdb->get_results( $sql_str );		
+		}
+
+		//$pods_tables = get_transient( 'pprf_pods_tables' ); // need to hook into Pods
 		
 		foreach( $tables_arr as $idx_int => $table_obj ) {
 			foreach( $table_obj as $tableName_str ) {
@@ -103,47 +103,54 @@ class panda_pods_repeater_field_db {
 				if( $allTables_bln ){
 					array_push( $podsTb_arr, $table_str );
 				} else {
-					// only return pods tables
-					if(  strpos( $tableName_str, $wpdb->prefix . 'pods_' ) === 0 ){
-						//array_push( $podsTb_arr, $table_str );	
-						$tbInfo_arr				 	 = $this->get_pods_tb_info_fn( $table_str );
-						$nameField_str				 = get_post_meta( $tbInfo_arr['id'], 'pod_index', true );
-
-					//print_r( $tbInfo_arr );
-						$nameLabel_str	=	'';
-						if( $nameField_str == '' ){
+					//if( !isset( $pods_tables[ $table_str ] ) ){
+						// only return pods tables
+						if(  strpos( $tableName_str, $wpdb->prefix . 'pods_' ) === 0 ){
 							
-							if( $tbInfo_arr['type'] == 'post_type' ){
-								$nameField_str = 'post_title';	
-							} else if( $tbInfo_arr['type'] == 'user' ){
-								$nameField_str = 'display_name';	
-							} else {
-								$nameField_str = 'sp_title';	
-							}
-						} else {
-							$query_str 		= $wpdb->prepare(
-															'SELECT ps_tb.post_title
-															 FROM `' . $wpdb->posts . '` AS ps_tb																		  
-															 WHERE ps_tb.`post_name` = %s AND ps_tb.`post_parent` = %d AND ps_tb.`post_type` = "_pods_field" LIMIT 0, 1', 
-															 array( 
-															 	$nameField_str, 
-															 	$tbInfo_arr['id'] 
-															 ) 
-															);
-							$items_arr 		= $wpdb->get_results( $query_str , ARRAY_A ); 	
+							//array_push( $podsTb_arr, $table_str );	
+							$tbInfo_arr				 	 = $this->get_pods_tb_info_fn( $table_str );
+							$nameField_str				 = get_post_meta( $tbInfo_arr['id'], 'pod_index', true );
 
-							if( $items_arr && count( $items_arr ) > 0 ){
-								$nameLabel_str	=	 $items_arr[0]['post_title'];
-							}							
-						}						
-						$podsTb_arr[ 'pod_' . $tbInfo_arr['id'] ] = array( 'name' => $table_str, 'pod' => $tbInfo_arr['name'], 'type' => $tbInfo_arr['type'], 'name_field'    => $nameField_str, 'name_label' => $nameLabel_str );
-					} else {
-						$podsTb_arr[ $table_str ] = array( 'name' => $table_str, 'pod' => '', 'type' => 'wp', 'name_field'    => '', 'name_label' => '' );	
-					}
+						//print_r( $tbInfo_arr );
+							$nameLabel_str	=	'';
+							if( $nameField_str == '' ){
+								
+								if( $tbInfo_arr['type'] == 'post_type' ){
+									$nameField_str = 'post_title';	
+								} else if( $tbInfo_arr['type'] == 'user' ){
+									$nameField_str = 'display_name';	
+								} else {
+									$nameField_str = 'sp_title';	
+								}
+							} else {
+								$query_str 		= $wpdb->prepare(
+																'SELECT ps_tb.post_title
+																 FROM `' . $wpdb->posts . '` AS ps_tb																		  
+																 WHERE ps_tb.`post_name` = %s AND ps_tb.`post_parent` = %d AND ps_tb.`post_type` = "_pods_field" LIMIT 0, 1', 
+																 array( 
+																 	$nameField_str, 
+																 	$tbInfo_arr['id'] 
+																 ) 
+																);
+								$items_arr 		= $wpdb->get_results( $query_str , ARRAY_A ); 	
+
+								if( $items_arr && count( $items_arr ) > 0 ){
+									$nameLabel_str	=	 $items_arr[0]['post_title'];
+								}							
+							}						
+							$podsTb_arr[ 'pod_' . $tbInfo_arr['id'] ] = array( 'name' => $table_str, 'pod' => $tbInfo_arr['name'], 'type' => $tbInfo_arr['type'], 'name_field'    => $nameField_str, 'name_label' => $nameLabel_str );
+							$podsTb_arr[ $table_str ] = $podsTb_arr[ 'pod_' . $tbInfo_arr['id'] ];
+						} else {
+							$podsTb_arr[ $table_str ] = array( 'name' => $table_str, 'pod' => '', 'type' => 'wp', 'name_field'    => '', 'name_label' => '' );	
+						}
+					//}
 				}
 				
 			}
 		}
+		//if( ! $allTables_bln ){
+			//set_transient( 'pprf_pods_tables', $podsTb_arr, 2000 ); 
+		//}
 		//wp_cache_set ( 'PPRF_ALL_TABLES', serialize( $podsTb_arr ) , 60*60*24 ); 
 		//$podsTb_arr = array_values( $podsTb_arr );
 		return $podsTb_arr;
@@ -192,7 +199,7 @@ class panda_pods_repeater_field_db {
 		return $tableInfo_arr;		
 	}
 	/**
-	 * update_columns_fn: check if a table column exists
+	 * update_columns: check if a table column exists
 	 * 
 	 * @param string $tb_str table name
 	 * @use $this->column_exist_fn() to check if a column exists

@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.3.2
-Stable tag: 1.4.5 
+Tested up to: 5.6
+Stable tag: 1.4.8 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -316,10 +316,26 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * fix: TypeError: Backbone.Marionette is undefined
 * fix: $(...).live is not a function error using jquery
 
-= 1.4.5 - 2ND November 2019 =
+= 1.4.5 - 2nd November 2019 =
 * add: Added some code to add the relationship fields if they are missing. Useful for migrating the repeater fields or create them by code.
 * fix: the $ not a function problem when clicking the Load button.
 * Change: Resize the window after running all JavaScripts.
+
+= 1.4.6 - 4th February 2020 =
+* fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
+* add: some styling for the load more div.
+* add: Integration with Simpods Area Field.
+* add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
+
+= 1.4.7 - 29th July 2020 =
+* fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.
+
+= 1.4.8 - 9th December 2020 =
+* add: Catch up with Simpods 3.0.0 on area field
+* add: Minified CSS and JavaScript files.
+* add: add a filter load_pprf_scripts_frontend to toggle loading PPRF scripts and styles at the front end.
+* add: added more frontend css.
+* fix: some JavaScript to catch up with WordPress 5.6 update
 
 == Upgrade Notice ==
 
@@ -457,3 +473,19 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * Add: Added some code to add the relationship fields if they are missing. Useful for migrating the repeater fields or create them by code.
 * Fix: the $ not a function problem when clicking the Load button.
 * Change: Resize the window after running all JavaScripts.
+
+= 1.4.6 =
+* Fix: Fixed the problem that the trash, save and edit buttons had to be clicked twice on mobiles to work.
+* Add: some styling for the load more div.
+* Add: Integration with Simpods Area Field.
+* Add: Remove all tags from label outputs for security purpose and limit the label characters to 80. If a label contains images, videos, audio, shortcodes display relevant icons.
+
+= 1.4.7 =
+* Fix: Fixed the problem that the database class was not included in the pandarf_items_fn function.
+
+= 1.4.8 =
+* add: Catch up with Simpods 3.0.0 on area field
+* add: Minified CSS and JavaScript files.
+* add: add a filter load_pprf_scripts_frontend to toggle loading PPRF scripts and styles at the front end.
+* add: added more frontend css.
+* fix: some JavaScript to catch up with WordPress 5.6 update

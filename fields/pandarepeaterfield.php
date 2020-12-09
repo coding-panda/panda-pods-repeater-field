@@ -203,7 +203,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 
 			//If reassigning allowed
 			if( $reassign_bln ){
-				$sameChildFs_arr	=	pprf_same_child_tb_fields_fn( $parentTb_pod, $ctb_str );
+				$same_child_fields	=	pprf_same_child_tb_fields_fn( $parentTb_pod, $ctb_str );
 				
 
 				//$all_rows = $parentTb_pod->data(); 
@@ -224,7 +224,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					$parents_str	.=	'</label>';
 			    	$parents_str	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('field: ', 'panda-pods-repeater-field' ) . '</strong>';
 			    	$parents_str	.=	'<select name="pprf_field pprf-left mgt5" id="pprf-field-sel"  class="pprf-in-iframe-sel">';		    	
-			        foreach( $sameChildFs_arr as $ck_str => $cField_arr ){
+			        foreach( $same_child_fields as $ck_str => $cField_arr ){
 			        	$selected_str	=	'';
 			        	if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
 			        		$selected_str	=	'selected = "selected"';
@@ -263,41 +263,44 @@ echo '</div>';
 ?>
 <script type="text/javascript">
 
-var pprf_loadedResized_bln = false;
-
+var pprf_loaded_resized 	= false;
+var pprf_bottom_wrap_height = jQuery('html body #pprf-bottom-wrap').height() || 0;
 // height before each click, 60 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
+var pprf_orgHei_int = jQuery('html body #pprf-form').height() + pprf_bottom_wrap_height + 60;
 // height on load, 40 is for the padding top and bottom
-var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + jQuery('html body #pprf-bottom-wrap').height() + 60;
-function pprf_resize_fn( hei_int ) { 
+var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + pprf_bottom_wrap_height + 60;
+function pprf_resize_fn( new_height ) { 
 	
-	if( typeof hei_int == 'undefined' ){
-		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  jQuery('html body #pprf-bottom-wrap').height() + 60;
+	pprf_bottom_wrap_height = jQuery('html body #pprf-bottom-wrap').height() || 0;
+	if( typeof new_height == 'undefined' ){
+		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  pprf_bottom_wrap_height + 60;
+		
 	} else {
-		pprf_orgHei_int = hei_int;
-	}
+		pprf_orgHei_int = new_height;
+		
+	}	
 
 	pprf_update_parent_fn();
-	//parent.pprfParentHei_int;
+	//parent.pprfParentheight;
 }
 
 function pprf_update_parent_fn() { 
 
-	var hei_int = pprf_orgHei_int;
+	var height = pprf_orgHei_int;
 	if( jQuery('.media-modal').length != 0 ){
-		hei_int = jQuery('.media-modal').height() + pprf_orgHei_int;	
+		height = jQuery('.media-modal').height() + pprf_orgHei_int;	
 	}
 	
 	if( jQuery('#ui-datepicker-div').length != 0 && jQuery('#ui-datepicker-div').css('display') == 'block' ){
-		hei_int += jQuery('#ui-datepicker-div').height();
+		height += jQuery('#ui-datepicker-div').height();
 	} else {
 		if( jQuery('#ui-colorpicker-div').length != 0 && jQuery('#ui-colorpicker-div').css('display') == 'block' ){
-			hei_int += jQuery('#ui-colorpicker-div').height();
+			height += jQuery('#ui-colorpicker-div').height();
 		}		
 	}
 	
-	if( typeof parent.pprf_updateIframeSize_fn == 'function' ){
-		parent.pprf_updateIframeSize_fn('<?php echo esc_attr( $iframeID_int ); ?>', hei_int);	
+	if( typeof parent.pprf_updateIframeSize_fn == 'function' ){ 
+		parent.pprf_updateIframeSize_fn('<?php echo esc_attr( $iframeID_int ); ?>', height);	
 	}
 	<?php
 	if( $piframeID_int != '' ){
@@ -308,7 +311,7 @@ function pprf_update_parent_fn() {
 	<?php
 	}
 	?>
-	pprf_loadedResized_bln = false;
+	pprf_loaded_resized = false;
 }
    
 jQuery(document).ready( function($) {
@@ -355,18 +358,15 @@ jQuery(document).ready( function($) {
 	$( '.click-to-expand, .click-to-expand-arrow' ).on( 'click', function(){
 		
 		// if the iframe has not been resized		
-		//if( pprf_loadedResized_bln == false ){
+		//if( pprf_loaded_resized == false ){
 			pprf_resize_fn();
 			
-			pprf_loadedResized_bln = true;
+			pprf_loaded_resized = true;
 		//}
 	})
 	$( '.click-to-close, .click-to-close-arrow' ).on( 'click', function(){				
-		// if the iframe has not been resized		
-		//if( pprf_loadedResized_bln == true ){
-			pprf_resize_fn( 150 );
-			pprf_loadedResized_bln = false;
-		//}
+		pprf_resize_fn( 150 );
+		pprf_loaded_resized = false;
 	})
 
 	
@@ -407,9 +407,9 @@ jQuery(document).ready( function($) {
 	/**
 	 * after running all javascript, resize the window 
 	 */
-	$(window).load(function(){
+	//$(window).load(function(){
 		pprf_resize_fn();
-	} );
+	//} );
 })  		 
 </script>
 <script type="text/javascript">
