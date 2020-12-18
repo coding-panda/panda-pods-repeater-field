@@ -22,7 +22,7 @@ if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_
 	wp_head();
 }
 
-
+$_GET = array_map('wp_strip_all_tags', $_GET);
 ?>
 
 <?php

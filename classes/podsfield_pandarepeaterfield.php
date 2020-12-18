@@ -546,16 +546,17 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				// remove anything after /wp-admin/, otherwise, it will load a missing page				
 				//$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 
-				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
+				//$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
+				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">
 				if( is_admin( ) ){
 					// remove anything after /wp-admin/, otherwise, it will load a missing page				
 					$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 				} else {
-					$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';			
+					//$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';
+					$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">			
 				}		
 				$src_str 	  	= $adminUrl_str . '?page=panda-pods-repeater-field&';
-				
-				//$src_str   = PANDA_PODS_REPEATER_URL . 'fields/pandarepeaterfield.php?';
+								
 				$bg_str		  	= 'pprf-purple-bg';
 
 				$trash_int  	= 0;
