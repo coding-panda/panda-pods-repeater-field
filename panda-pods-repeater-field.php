@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.6' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.9' );
 
  
  

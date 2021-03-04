@@ -611,7 +611,8 @@ jQuery(document).ready( function($) {
 			var leave_bln = confirm( strs_obj.Ignore_changes );
 			if ( leave_bln == true){
 				pprfChanged_bln	=	false;
-				$( this ).click();
+				//$( this ).click();
+				$( this ).trigger('click');
 			} 
 			if ( leave_bln == false){
 				return false;

@@ -397,7 +397,8 @@ jQuery(document).ready( function($) {
 	
 	?>	
 	// saved, so don't popup the confirm box to ask if to ignore changes
-	 $('.pods-submit-button').click( function (){		
+	// $('.pods-submit-button').click( function (){		
+	$( document ).on('click', '.pods-submit-button', function (){			
 		parent.pprfChanged_bln	=	false;		
 	 })	
 	$('.pods-field-input').on('click keyup change', function(){	 
