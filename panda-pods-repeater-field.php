@@ -744,8 +744,8 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 		$parent_pod =	pods( $pPost_obj->post_name );
 		foreach( $parent_pod->fields as $k_str => $v_arr ){
 			if( is_array( $v_arr ) ){
-				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' ) ) {
-					//echo '<pre>';
+				if( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' && $filter_arr['parent_pod_field_id'] == $v_arr['id'] ) {
+					
 					if( isset( $v_arr['options']['pandarepeaterfield_enable_trash'] ) && $v_arr['options']['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
 						$where_str .= ' AND `pandarf_trash` != 1';
 					
@@ -760,8 +760,7 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 							$atts_arr['order'] = $v_arr['options']['pandarepeaterfield_order'];		
 						}
 					}						
-								
-					//echo '</pre>';					
+					break;											
 				}
 
 			}
@@ -847,6 +846,10 @@ echo '</pre>';	*/
 	//echo '</pre>';	
 		
 	return 	$items_arr;
+}
+
+function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
+	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false )
 }
 /**
  * pandarf_insert_fn insert data to panda repeater field table
