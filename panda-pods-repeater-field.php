@@ -849,7 +849,7 @@ echo '</pre>';	*/
 }
 
 function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
-	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false )
+	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false );
 }
 /**
  * pandarf_insert_fn insert data to panda repeater field table
