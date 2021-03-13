@@ -638,6 +638,12 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 
 }
 /**
+ * Alias of pandarf_items_fn
+ */ 
+function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
+	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false );
+}
+/**
  * pandarf_items_fn fetch child pod data
  *
  * @param array  $fields_arr search repeater field table array( 
@@ -848,9 +854,6 @@ echo '</pre>';	*/
 	return 	$items_arr;
 }
 
-function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
-	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false );
-}
 /**
  * pandarf_insert_fn insert data to panda repeater field table
  * 

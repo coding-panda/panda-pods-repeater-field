@@ -1218,44 +1218,44 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * save tables
 	 * @param integer $type_int 0: table_num 1 : pod_table 2 : table
 	 */
-	 function pods_tables_fn( $type_int = 0 ){
+	 function pods_tables_fn( $type_index = 0 ){
 		 
 		global $wpdb, $current_user;
 
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
-			$db_cla      = new panda_pods_repeater_field_db();
-			$tables_arr  = $db_cla->get_tables_fn();
-			define( 'PPRF_ALL_TABLES', serialize( $tables_arr ) );	
+			$pprf_db      = new panda_pods_repeater_field_db();
+			$tables  = $pprf_db->get_tables_fn();
+			define( 'PPRF_ALL_TABLES', serialize( $tables ) );	
 			
 		} else {
-			$tables_arr  = unserialize( PPRF_ALL_TABLES );			
+			$tables  = unserialize( PPRF_ALL_TABLES );			
 		}
-		$podsTbs_arr = array();
-		if( is_array( $tables_arr ) ){
-			foreach( $tables_arr as $tb_str => $tbv_arr ){
+		$pod_tables = array();
+		if( is_array( $tables ) ){
+			foreach( $tables as $table_key => $table_data ){
 
-				if( $tbv_arr['type'] != 'wp' ){
-					//$tb_str 				= substr( $tb_str, 5 );
-					if( $type_int == 0 ){
-						$podsTbs_arr[ $tb_str ] = $tbv_arr['pod'];						
+				if( $table_data['type'] != 'wp' ){
+					//$table_key 				= substr( $table_key, 5 );
+					if( $type_index == 0 ){
+						$pod_tables[ $table_key ] = $table_data['pod'];						
 					} 
-					if( $type_int == 1 ){
-						$podsTbs_arr[ 'pod_' . $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					if( $type_index == 1 ){
+						$pod_tables[ 'pod_' . $table_data['pod'] ] = $table_data['pod'];						
 					}
-					if( $type_int == 2 ){
-						$podsTbs_arr[ $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					if( $type_index == 2 ){
+						$pod_tables[ $table_data['pod'] ] = $table_data['pod'];						
 					}					
 				}				
 			}
 		}
-		
-		self::$tbs_arr = $tables_arr;
+
+		self::$tbs_arr = $tables;
 			
 		if( ! defined( 'PPRF_PODS_TABLES' )   ){				
-			define( 'PPRF_PODS_TABLES', serialize( $podsTbs_arr ) );	
+			define( 'PPRF_PODS_TABLES', serialize( $pod_tables ) );	
 		} 	
-	//	print_fn( $podsTbs_arr);
-		return $podsTbs_arr;			 
+	//	print_fn( $pod_tables);
+		return $pod_tables;			 
 	 }
 
 	/**
