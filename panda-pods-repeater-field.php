@@ -216,7 +216,7 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function admin_enqueue_scripts() {
-		global $pprfStrs_arr;
+		global $pprf_l10n;
 		/**
 		 * All admin styles goes here
 		 */
@@ -250,7 +250,7 @@ class Panda_Pods_Repeater_Field {
 		wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
 			'strs_obj', 
-			$pprfStrs_arr
+			$pprf_l10n
 		);			
 		$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 		wp_localize_script( 
@@ -577,9 +577,9 @@ function panda_repeater_admin_notice_pods_min_version_fail() {
 
 }
 
-add_action( 'wp_loaded', 'pprf_translate_fn' );
+add_action( 'wp_loaded', 'pprf_translate' );
 
-function pprf_translate_fn(){
+function pprf_translate(){
 	// translation 
 	$strings = array(
 		'be_restored' 		=> esc_html__( 'It will be restored.', 'panda-pods-repeater-field' ),
@@ -588,7 +588,7 @@ function pprf_translate_fn(){
 		'you_sure' 			=> esc_html__( 'Are you sure?', 'panda-pods-repeater-field' ),
 		'Ignore_changes' 	=> esc_html__( 'It seems like you have made some changes in a repeater field. Ignore the changes?', 'panda-pods-repeater-field' ),
 	);
-	$GLOBALS['pprfStrs_arr'] = $strings;
+	$GLOBALS['pprf_l10n'] = $strings;
 }
 /**
  * pandarf_pods_fn extension of pods( $table, $params )
@@ -1138,7 +1138,7 @@ if( !is_admin() ){
  * @since 1.0.0
  */
 function pprf_enqueue_scripts() {
-	global $pprfStrs_arr;
+	global $pprf_l10n;
 	/**
 	 * All styles goes here
 	 */
@@ -1164,7 +1164,7 @@ function pprf_enqueue_scripts() {
 	wp_localize_script( 
 		'panda-pods-repeater-scripts', 
 		'strs_obj', 
-		$pprfStrs_arr
+		$pprf_l10n
 	);
 
 	// prepare ajax
@@ -1189,6 +1189,7 @@ function pprf_enqueue_scripts() {
 		'PANDA_PODS_REPEATER_URL', 
 		 PANDA_PODS_REPEATER_URL
 	);	
+
 	/**
 	 * Example for setting up text strings from Javascript files for localization
 	 *
