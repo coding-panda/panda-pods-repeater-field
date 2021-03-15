@@ -341,6 +341,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * change: use index.php for pandarepeaterfield.php.
 * change: changed click() to trigger('click').
 * change: Reassign can also work for parent table with meta storage type.
+* change: caught up with the change of wp_localize_script in WordPress 5.7
 * add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
 * fix: A bug in the order query.
 
@@ -502,5 +503,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * change: use index.php for pandarepeaterfield.php.
 * change: changed click() to trigger('click').
 * change: Reassign can also work for parent table with meta storage type.
+* change: caught up with the change of wp_localize_script in WordPress 5.7
 * add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
 * fix: A bug in the order query.

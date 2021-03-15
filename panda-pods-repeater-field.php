@@ -252,16 +252,16 @@ class Panda_Pods_Repeater_Field {
 			'strs_obj', 
 			$pprf_l10n
 		);			
-		$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
+		$admin_url =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 		wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
 			'PANDA_PODS_REPEATER_PAGE_URL', 
-			$adminUrl_str . '?page=panda-pods-repeater-field&'
+			array( $admin_url . '?page=panda-pods-repeater-field&' )
 		);		
 		wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
 			'PANDA_PODS_REPEATER_URL', 
-			 PANDA_PODS_REPEATER_URL
+			array( PANDA_PODS_REPEATER_URL )
 		);			
 	/*	wp_localize_script( 
 			'panda-pods-repeater-admin-scripts', 
@@ -1178,16 +1178,16 @@ function pprf_enqueue_scripts() {
 	);	
 	//$adminUrl_str =  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 	//$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
-	$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">				
+	$admin_url 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">				
 	wp_localize_script( 
 		'panda-pods-repeater-scripts', 
 		'PANDA_PODS_REPEATER_PAGE_URL', 
-		$adminUrl_str . '?page=panda-pods-repeater-field&'
+		array( $admin_url . '?page=panda-pods-repeater-field&' )
 	);		
 	wp_localize_script( 
 		'panda-pods-repeater-scripts', 
 		'PANDA_PODS_REPEATER_URL', 
-		 PANDA_PODS_REPEATER_URL
+		array( PANDA_PODS_REPEATER_URL )
 	);	
 
 	/**

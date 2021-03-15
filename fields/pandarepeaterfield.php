@@ -92,21 +92,6 @@ if( !$allow_bln ){
 	echo '</div>';
 }
 
-
-//admin_enqueue_scripts
-//add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
-function embeded_fields_enqueue_fn(){
-	//echo dirname( __FILE__ ) . '/admin.php';
-	/*wp_enqueue_style( 'wp-mediaelement' );
-	wp_enqueue_script( 'wp-mediaelement' );
-	wp_localize_script( 'mediaelement', '_wpmejsSettings', array(
-		'pluginPath' => includes_url( '../../../../wp-admin/js/mediaelement/', 'relative' ),
-		'pauseOtherPlayers' => ''
-	) );	*/
-
-}
-
-
 //include_once( ABSPATH . 'wp-admin/admin-header.php' );
 
 global $current_user;
