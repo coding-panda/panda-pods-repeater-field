@@ -22,7 +22,7 @@ if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_
 	wp_head();
 }
 
-
+$_GET = array_map('wp_strip_all_tags', $_GET);
 ?>
 
 <?php
@@ -39,7 +39,7 @@ if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_us
 	
 }
 global $current_user;
-$parentTb_pod = false; 
+$parent_pod = false; 
 if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
                 
     //check it is an Advanced Content Type or normal post type
@@ -53,19 +53,19 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 	        $condit_arr =     array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
 	    }
 
-		$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); 
+		$parent_pod 	= pods( $parentTb_str, $condit_arr ); 
 		if( ! $allow_bln ){
 			//get current field 
-			foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
-				if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
+			foreach( $parent_pod->fields as $k => $child_fields ){
+				if( $child_fields['id'] == $_GET['poditemid']	&& $child_fields['type'] == 'pandarepeaterfield' ){
 			
-					if( isset( $cField_arr['options']['pandarepeaterfield_public_access'] ) && $cField_arr['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
+					if( isset( $child_fields['options']['pandarepeaterfield_public_access'] ) && $child_fields['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
 						$allow_bln = true;
 					} else {
-						// $cField_arr['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
+						// $child_fields['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
 						if( is_user_logged_in() ){
 							foreach( $current_user->roles as $role_str ){ // the user role can access
-								$ok_ukn	=	get_post_meta( $cField_arr['id'], $role_str, true );
+								$ok_ukn	=	get_post_meta( $child_fields['id'], $role_str, true );
 								if( $ok_ukn ){
 									$allow_bln = true;
 									break;
@@ -91,21 +91,6 @@ if( !$allow_bln ){
 	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
 	echo '</div>';
 }
-
-
-//admin_enqueue_scripts
-//add_action( 'admin_enqueue_scripts', 'embeded_fields_enqueue_fn' );
-function embeded_fields_enqueue_fn(){
-	//echo dirname( __FILE__ ) . '/admin.php';
-	/*wp_enqueue_style( 'wp-mediaelement' );
-	wp_enqueue_script( 'wp-mediaelement' );
-	wp_localize_script( 'mediaelement', '_wpmejsSettings', array(
-		'pluginPath' => includes_url( '../../../../wp-admin/js/mediaelement/', 'relative' ),
-		'pauseOtherPlayers' => ''
-	) );	*/
-
-}
-
 
 //include_once( ABSPATH . 'wp-admin/admin-header.php' );
 
@@ -158,92 +143,87 @@ html {
 
 <?php
 echo '<div id="pprf-form" class="pprf-wid-' . esc_attr( $wid_str ) . '">';
-$get_arr = isset( $_GET )? $_GET : array();
-do_action('pandarf_item_top', $get_arr );
+$get_data = isset( $_GET )? $_GET : array();
+do_action('pandarf_item_top', $get_data );
 
 if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_' . $_GET['tb'], PodsField_Pandarepeaterfield::$actTbs_arr ) ) {
 	
-	$tb_str  = PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['tb'] ];
+	$table_name  = PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['tb'] ];
 
 	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) ){		
-		$pod_cla = pods( $tb_str, absint( $_GET['itemid'] ) );
+		$pod_cla = pods( $table_name, absint( $_GET['itemid'] ) );
 	} else {
-		$pod_cla = pods( $tb_str );
+		$pod_cla = pods( $table_name );
 	}
 	
 	// Output a form with all fields
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 
-	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) && isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) && array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$actTbs_arr ) ) {
-		//$parentTb_str	=	PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['podid'] ] ;
+	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) && isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ) { //&& array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$actTbs_arr ) 
 
-		//check it is an Advanced Content Type or normal post type
-		//$parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
 
-		if( $parentTb_pod ){
+		if( $parent_pod ){
 		   /* $condit_arr	=	array();
 			//normal post type fetch all published and draft posts
 			if( $parent_arr['type'] == 'post_type' ){
 				$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
 			}
 
-			$parentTb_pod 	= pods( $parentTb_str, $condit_arr ); */
+			$parent_pod 	= pods( $parentTb_str, $condit_arr ); */
 			
-			$reassign_bln	= false;
+			$reassignable	= false;
 			//get current field 
-			foreach( $parentTb_pod->fields as $ck_str => $cField_arr ){
-				if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
-					$ctb_str	=	$cField_arr['options']['pandarepeaterfield_table'];		
-					if( isset( $cField_arr['options']['pandarepeaterfield_allow_reassign'] ) && $cField_arr['options']['pandarepeaterfield_allow_reassign'] == 1 ){
-						$reassign_bln	= true;
+			foreach( $parent_pod->fields as $k => $child_fields ){
+				if( $child_fields['id'] == $_GET['poditemid']	&& $child_fields['type'] == 'pandarepeaterfield' ){
+					$child_table_name	=	$child_fields['options']['pandarepeaterfield_table'];		
+					if( isset( $child_fields['options']['pandarepeaterfield_allow_reassign'] ) && $child_fields['options']['pandarepeaterfield_allow_reassign'] == 1 ){
+						$reassignable	= true;
 					}
 					break;
 				}
 			}
 
 			//If reassigning allowed
-			if( $reassign_bln ){
-				$same_child_fields	=	pprf_same_child_tb_fields_fn( $parentTb_pod, $ctb_str );
-				
-
-				//$all_rows = $parentTb_pod->data(); 
-				$parents_str	= '';
-			    if ( 0 < $parentTb_pod->total() ) { 
-			    	$parents_str	=	'<div class="pprf-left mgt10 mgb15 w100" id="pprf-bottom-wrap">';
-			    	$parents_str	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('Assign to parent: ', 'panda-pods-repeater-field' ) . '</strong>';
-			    	$parents_str	.=	'<select name="pprf_parent_items pprf-left mgt5" id="pprf-parent-items-sel" class="pprf-in-iframe-sel">';		    	
-			        while ( $parentTb_pod->fetch() ) { 		
+			if( $reassignable ){
+				$same_child_fields	=	pprf_same_child_tb_fields_fn( $parent_pod, $child_table_name );				
+				//$all_rows = $parent_pod->data(); 
+				$parents_html	= '';
+			    if ( 0 < $parent_pod->total() ) { 
+			    	$parents_html	=	'<div class="pprf-left mgt10 mgb15 w100" id="pprf-bottom-wrap">';
+			    	$parents_html	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('Assign to parent: ', 'panda-pods-repeater-field' ) . '</strong>';
+			    	$parents_html	.=	'<select name="pprf_parent_items pprf-left mgt5" id="pprf-parent-items-sel" class="pprf-in-iframe-sel">';		    	
+			        while ( $parent_pod->fetch() ) { 		
 			        	$selected_str	=	'';
-			        	if( $parentTb_pod->display( 'id' ) == $_GET['postid'] ){
+			        	if( $parent_pod->display( 'id' ) == $_GET['postid'] ){
 			        		$selected_str	=	'selected = "selected"';
 			        	}
-			        	$parents_str	.=	'<option ' . $selected_str . ' value="' . esc_attr( $parentTb_pod->display( 'id' ) ) . '">' . esc_attr( $parentTb_pod->display( 'name' ) ) . '</option>'; 
+			        	$parents_html	.=	'<option ' . $selected_str . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . '</option>'; 
 			        	
 					}
-					$parents_str	.=	'</select>';
-					$parents_str	.=	'</label>';
-			    	$parents_str	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('field: ', 'panda-pods-repeater-field' ) . '</strong>';
-			    	$parents_str	.=	'<select name="pprf_field pprf-left mgt5" id="pprf-field-sel"  class="pprf-in-iframe-sel">';		    	
-			        foreach( $same_child_fields as $ck_str => $cField_arr ){
+					$parents_html	.=	'</select>';
+					$parents_html	.=	'</label>';
+			    	$parents_html	.=	'<label class="pprf-left"><strong class="mgr10 mgt5">' . esc_html__('field: ', 'panda-pods-repeater-field' ) . '</strong>';
+			    	$parents_html	.=	'<select name="pprf_field pprf-left mgt5" id="pprf-field-sel"  class="pprf-in-iframe-sel">';		    	
+			        foreach( $same_child_fields as $k => $child_fields ){
 			        	$selected_str	=	'';
-			        	if( $cField_arr['id'] == $_GET['poditemid']	&& $cField_arr['type'] == 'pandarepeaterfield' ){
+			        	if( $child_fields['id'] == $_GET['poditemid']	&& $child_fields['type'] == 'pandarepeaterfield' ){
 			        		$selected_str	=	'selected = "selected"';
 			        	}
-			        	$parents_str	.=	'<option ' . $selected_str . ' value="' . esc_attr( $cField_arr['id'] ) . '">' . esc_attr( $cField_arr['label'] ) . '</option>'; 
+			        	$parents_html	.=	'<option ' . $selected_str . ' value="' . esc_attr( $child_fields['id'] ) . '">' . esc_attr( $child_fields['label'] ) . '</option>'; 
 			        	
 					}
-					$parents_str	.=	'</select>';
-					$parents_str	.=	'</label>';				
-					$parents_str	.=	'<label class="pprf-left">';
-					$parents_str	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
+					$parents_html	.=	'</select>';
+					$parents_html	.=	'</label>';				
+					$parents_html	.=	'<label class="pprf-left">';
+					$parents_html	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
 
-					$parents_str	.=	'<div id="pprf-reassign-loader" class="hidden pprf-left">	
+					$parents_html	.=	'<div id="pprf-reassign-loader" class="hidden pprf-left">	
 											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="pdt10"/>
 										 </div>	';		
-					$parents_str	.=	'</label>';									 	
-					$parents_str	.=	'</div>';
+					$parents_html	.=	'</label>';									 	
+					$parents_html	.=	'</div>';
 				}
-				echo $parents_str;
+				echo $parents_html;
 
 			}
 		}
@@ -372,8 +352,8 @@ jQuery(document).ready( function($) {
 	
 	<?php
 	if( isset( $_GET ) && count( $_GET ) > 0 ){
-		foreach( $_GET as $k_str => $v_ukn ){
-			$_GET[ $k_str ]	= esc_attr( $v_ukn );
+		foreach( $_GET as $key => $value ){
+			$_GET[ $key ]	= esc_attr( $value );
 		}
 	}
 	// if successfully added a new one
@@ -397,7 +377,8 @@ jQuery(document).ready( function($) {
 	
 	?>	
 	// saved, so don't popup the confirm box to ask if to ignore changes
-	 $('.pods-submit-button').click( function (){		
+	// $('.pods-submit-button').click( function (){		
+	$( document ).on('click', '.pods-submit-button', function (){			
 		parent.pprfChanged_bln	=	false;		
 	 })	
 	$('.pods-field-input').on('click keyup change', function(){	 

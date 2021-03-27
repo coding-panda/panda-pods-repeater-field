@@ -253,11 +253,13 @@ body #wpwrap {
 }
 
 #pprf-form select.pprf-in-iframe-sel {
-  height: 27px;
+  height: 24px;
   margin-right: 10px;
   margin-bottom: 5px;
-  padding: 0;
+  padding: 0 5px;
   font-size: 14px;
+  min-width: 50px;
+  max-height: 24px;
 }
 
 #pprf-form {

@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.6
-Stable tag: 1.4.8 
+Tested up to: 5.7.0
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -337,6 +337,15 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: added more frontend css.
 * fix: some JavaScript to catch up with WordPress 5.6 update
 
+= 1.4.9 - 7th March 2021 =
+* change: use index.php for pandarepeaterfield.php.
+* change: changed click() to trigger('click').
+* change: Reassign can also work for parent table with meta storage type.
+* change: caught up with the change of wp_localize_script in WordPress 5.7
+* add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
+* fix: A bug in the order query.
+
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -489,3 +498,11 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * add: add a filter load_pprf_scripts_frontend to toggle loading PPRF scripts and styles at the front end.
 * add: added more frontend css.
 * fix: some JavaScript to catch up with WordPress 5.6 update
+
+= 1.4.9 =
+* change: use index.php for pandarepeaterfield.php.
+* change: changed click() to trigger('click').
+* change: Reassign can also work for parent table with meta storage type.
+* change: caught up with the change of wp_localize_script in WordPress 5.7
+* add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
+* fix: A bug in the order query.

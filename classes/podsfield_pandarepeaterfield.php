@@ -369,10 +369,17 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			echo apply_filters( 'pprf_load_panda_repeater_allow_input_msg', __('You do not have permission to edit this item.', 'panda-pods-repeater-field' ) ) ;
 		} else {		
 		
-			$db_cla 	     = new panda_pods_repeater_field_db();
+			$db_cla 	    = new panda_pods_repeater_field_db();
 		
-			$options 		 = (array) $options;
+			$options 		= (array) $options;
+			$parent_pod_id 	= 0;
 			
+			if( version_compare( PODS_VERSION, '2.8.0' ) >= 0 ){ // from 2.8. pod_id doesn't exist anymore			
+				$parent_pod_id = $options['parent'];
+			} else {
+				$parent_pod_id = $options['pod_id'];		
+			}
+
 			$form_field_type = PodsForm::$field_type;
 			
 			$savedtb_str = trim( $options[ self::$typeTb_str ] );
@@ -423,7 +430,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$where_str   =    '   `pandarf_parent_pod_id`  = %d
 							   	  AND `pandarf_parent_post_id` = %d
 							   	  AND `pandarf_pod_field_id`   = %d '; 		
-				$search_arr  = 	array( $options['pod_id'], $id, $options['id'] );			  	
+				$search_arr  = 	array( $parent_pod_id, $id, $options['id'] );			  	
 
 				$limit_str	=	'';
 				$limit_bln	=	false;
@@ -531,7 +538,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				if( isset( $_GET ) && isset( $_GET['iframe_id'] ) ){
 					$pIframeID_str = $_GET['iframe_id'];
 				}
-				$query_str = '&podid=' . esc_attr( $options['pod_id'] ) . '&tb=' . esc_attr( $savedtb_int ) . '&poditemid=' . esc_attr( $options['id'] ) ;
+				$query_str = '&podid=' . esc_attr( $parent_pod_id ) . '&tb=' . esc_attr( $savedtb_int ) . '&poditemid=' . esc_attr( $options['id'] ) ;
 				$prfID_str = 'panda-repeater-fields-' . esc_attr( $savedtb_int ) . '-' . esc_attr( $options['id'] ) ;
 				// if trash is enabled
 				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
@@ -546,16 +553,17 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				// remove anything after /wp-admin/, otherwise, it will load a missing page				
 				//$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 
-				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
+				//$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';	
+				$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">
 				if( is_admin( ) ){
 					// remove anything after /wp-admin/, otherwise, it will load a missing page				
 					$adminUrl_str 	=  substr( admin_url(), 0, strrpos( admin_url(), '/wp-admin/' ) + 10 );
 				} else {
-					$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';			
+					//$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/pandarepeaterfield.php';
+					$adminUrl_str 	= PANDA_PODS_REPEATER_URL .	'fields/'; // since 1.4.9, we have index.php to avoid being stopped by <FilesMatch "\.(?i:php)$">			
 				}		
 				$src_str 	  	= $adminUrl_str . '?page=panda-pods-repeater-field&';
-				
-				//$src_str   = PANDA_PODS_REPEATER_URL . 'fields/pandarepeaterfield.php?';
+								
 				$bg_str		  	= 'pprf-purple-bg';
 
 				$trash_int  	= 0;
@@ -572,8 +580,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				//echo 	'<div class="pprf-redorder-list-wrap">';
 				echo 		'<ul class="pprf-redorder-list ' . esc_attr( $options['pandarepeaterfield_order_by'] ) . '">';
 				//$loaded_str	=	'';
-				$options['id']		=	esc_attr( $options['id'] );
-				$options['pod_id']	=	esc_attr( $options['pod_id'] );			
+				$options['id']	=	esc_attr( $options['id'] );
+				$parent_pod_id	=	esc_attr( $parent_pod_id );			
 
 				$child_pod 		= new pods( $options['pandarepeaterfield_table'] );
 
@@ -662,13 +670,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						echo 	'<div class="pprf-row pprf-left ">
 									<div class="w100 pprf-left" id="pprf-row-brief-' . $ids_str . '">
 										<div class="pprf-left pd8 pprf-left-col ' . esc_attr( $bg_str ) . '">' . $label_str . '</div>
-										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
+										<div class="button pprf-right-col center pprf-trash-btn ' . $traBtn_str . '" data-podid="' . $parent_pod_id . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
 											<span class="dashicons dashicons-trash pdt6 mgb0 "></span>
 											<div id="panda-repeater-trash-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 loading pprf-left"/>
 											</div>
 										</div>		
-										<div class="button pprf-right-col center pprf-save-btn" data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
+										<div class="button pprf-right-col center pprf-save-btn" data-podid="' . $parent_pod_id . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '"  data-itemid="' . $row_obj['id'] . '"  data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
 											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon  mgt8 mgb2"/>	
 											<div id="panda-repeater-save-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
 												<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>										
@@ -721,7 +729,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						<div class="button pprf-right-col center pprf-trash-btn" data-target="' . esc_attr( $traBtn_str ) . '" >
 						</div>									
 
-						<div class="button pprf-right-col center pprf-save-btn pprf-save-new-btn alignright " data-podid="' . $options['pod_id'] . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
+						<div class="button pprf-right-col center pprf-save-btn pprf-save-new-btn alignright " data-podid="' . $parent_pod_id . '"  data-postid="' . $id . '"  data-tb="' . $savedtb_int . '" data-userid="' . $current_user->ID . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-target="' . $ids_str . '" >
 							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/save-icon-tran.png' ) . '" class="pprf-save-icon  mgt8 mgb2"/>	
 							<div id="panda-repeater-save-' . $ids_str . '-loader" class="pprf-left hidden mgl5">
 								<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left"/>										
@@ -756,7 +764,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							<input name="panda-repeater-amount" id="panda-repeater-amount-' . $ids_str . '" value="' . esc_attr( intval( $options['pandarepeaterfield_initial_amount'] ) ) . '" class="pprf-left pprf-input mgr5" type="number" step="1" min="1"  autocomplete="off"/> 
 							<label class="pprf-left pdt2 mgr5" for="panda-repeater-start-from">' . esc_html__('new items from item', 'panda-pods-repeater-field' ) . '</label>
 							<input name="panda-repeater-start-from" id="panda-repeater-start-from-' . $ids_str . '" value="' . esc_attr( intval( $options['pandarepeaterfield_initial_amount'] ) ) . '" class="pprf-left pprf-input mgr5"  type="number" step="1" min="0" autocomplete="off" title="' . esc_attr__('Start from 0', 'panda-pods-repeater-field' ) . '"/>  
-							<div id="panda-repeater-load-more-button-' . $ids_str . '" class="pprf-left pprf-load-more-btn mgr5" data-target="' . $ids_str . '" data-podid="' . $options['pod_id'] . '"  data-postid="' . esc_attr( $id ) . '"  data-tb="' . esc_attr( $savedtb_int ) . '" data-userid="' . esc_attr( $current_user->ID ) . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-cptitle="' . esc_attr( get_the_title( $options['id'] ) ) . '" data-enable-trash="' . esc_attr( $options['pandarepeaterfield_enable_trash'] ) . '" data-order="' . esc_attr( $options['pandarepeaterfield_order'] ) . '" data-order-by="' . esc_attr( $options['pandarepeaterfield_order_by'] ) . '" />' . esc_html__('Load', 'panda-pods-repeater-field' ) . '</div>
+							<div id="panda-repeater-load-more-button-' . $ids_str . '" class="pprf-left pprf-load-more-btn mgr5" data-target="' . $ids_str . '" data-podid="' . $parent_pod_id . '"  data-postid="' . esc_attr( $id ) . '"  data-tb="' . esc_attr( $savedtb_int ) . '" data-userid="' . esc_attr( $current_user->ID ) . '"  data-iframe_id="panda-repeater-edit-' . $ids_str . '"  data-poditemid="' . $options['id'] . '" data-cptitle="' . esc_attr( get_the_title( $options['id'] ) ) . '" data-enable-trash="' . esc_attr( $options['pandarepeaterfield_enable_trash'] ) . '" data-order="' . esc_attr( $options['pandarepeaterfield_order'] ) . '" data-order-by="' . esc_attr( $options['pandarepeaterfield_order_by'] ) . '" />' . esc_html__('Load', 'panda-pods-repeater-field' ) . '</div>
 							<label class="pprf-left pdt2 mgr5">' . esc_html__(' | Total items:', 'panda-pods-repeater-field' ) . ' ' . esc_html( $count_int ) . '</label>
 							<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="mgl8 pprf-left pprf-ajax-img mgt13 mgr5" style="display:none;"/>
 							<div class="pprf-load-more-report"></div>
@@ -981,24 +989,24 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 *
 	 * @since 1.0.0
 	 */	
-	public function pods_post_save_fn( $pieces_arr, $isNew_bln, $id_int ) {
+	public function pods_post_save_fn( $pieces, $is_new_item, $id_int ) {
 		
 		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
 		
-		/*if( isset( $pieces_arr['params'] ) ){
+		/*if( isset( $pieces['params'] ) ){
 			// for pods 2.6
-			$pieces_arr['params'] = $pieces_arr['params'];
-			$loc_arr = explode( '?', $pieces_arr['params']->location );
+			$pieces['params'] = $pieces['params'];
+			$loc_arr = explode( '?', $pieces['params']->location );
 		} else {
 			// for pods 2.6.1
-			$pieces_arr['params'] = $pieces_arr['params'];
-			$loc_arr = explode( '?', $pieces_arr['params']->location );			
+			$pieces['params'] = $pieces['params'];
+			$loc_arr = explode( '?', $pieces['params']->location );			
 		}*/
 		
-		$cItemID_int  = $id_int;
+		//$cItemID_int  = $id_int;
 		$pdTb_str     = '';
 		$query_arr	  = array();
 		if( isset( $_SERVER['HTTP_REFERER'] ) ){
@@ -1051,21 +1059,21 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						array_push( $panCats_arr, intval( $query_arr['podid'] ) . '.' . $query_arr['postid'] . '.' . intval( $query_arr['poditemid'] ) ) ;
 						$panCats_arr	= array_unique( $panCats_arr );*/
 						$values_arr 	= array();			  
-						//$update_str 	= '`pandarf_categories` = %s';
+						//$update_query 	= '`pandarf_categories` = %s';
 						//array_push( $values_arr, maybe_serialize( $panCats_arr ) );
-						$update_str     = ' `pandarf_parent_pod_id` = %d';
+						$update_query     = ' `pandarf_parent_pod_id` = %d';
 						array_push( $values_arr, $query_arr['podid'] );
-						$update_str    .= ', `pandarf_parent_post_id` = %s';
+						$update_query    .= ', `pandarf_parent_post_id` = %s';
 						array_push( $values_arr, $query_arr['postid'] );
-						$update_str    .= ', `pandarf_pod_field_id` = %d';
+						$update_query    .= ', `pandarf_pod_field_id` = %d';
 						array_push( $values_arr, $query_arr['poditemid'] );																				
-						$update_str    .= ', `pandarf_modified` = %s';
+						$update_query    .= ', `pandarf_modified` = %s';
 						array_push( $values_arr, $now_str );
-						$update_str    .= ', `pandarf_modified_author` = %d';																
+						$update_query    .= ', `pandarf_modified_author` = %d';																
 						array_push( $values_arr, $current_user->ID );
 		
 						//order
-						if( $isNew_bln ){
+						if( $is_new_item ){
 							pprf_updated_tables( $table_str, 'remove' );
 							if( pprf_updated_tables( $table_str ) == false ){
 								$db_cla->update_columns_fn( $pdTb_str );
@@ -1074,25 +1082,25 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							$query_str  	= $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM `' . $table_str . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = "%s" AND `pandarf_pod_field_id` = %d' , array( $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );	
 							
 							$order_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
-							$update_str    .= ', `pandarf_order` = %d';
+							$update_query    .= ', `pandarf_order` = %d';
 							array_push( $values_arr, ( $order_arr[0]['last_order'] + 1 ) );					
 						}
 						
 										
 						// if first time update
 						if( $item_arr[0]['pandarf_created'] == '' || $item_arr[0]['pandarf_created'] == '0000-00-00 00:00:00' ){
-							$update_str    .= ', `pandarf_created` = %s';
+							$update_query    .= ', `pandarf_created` = %s';
 							array_push( $values_arr, $now_str );
 						}
 						if( $item_arr[0]['pandarf_author'] == '' || $item_arr[0]['pandarf_author'] == 0 ){				
-							$update_str    .= ', `pandarf_author` = %d';																
+							$update_query    .= ', `pandarf_author` = %d';																
 							array_push( $values_arr, $current_user->ID );	
 						}
 						array_push( $values_arr, $id_int );				
 						//if( count( $values_arr ) > 0 ){
-							$query_str  	= $wpdb->prepare( 'UPDATE  `' . $table_str . '` SET ' . $update_str . ' WHERE id = %d' , $values_arr );
+							$query_str  	= $wpdb->prepare( 'UPDATE  `' . $table_str . '` SET ' . $update_query . ' WHERE id = %d' , $values_arr );
 						//} else {
-						//	$query_str  	= 'UPDATE  `' . $table_str . '` SET ' . $update_str . ' WHERE id = "' . $id_int . '";';
+						//	$query_str  	= 'UPDATE  `' . $table_str . '` SET ' . $update_query . ' WHERE id = "' . $id_int . '";';
 						//}
 						//echo $query_str;
 						$items_bln  	= $wpdb->query( $query_str, ARRAY_A );
@@ -1135,19 +1143,26 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 		}
 		// find the panda field related tables
-		$ppTbs_arr   = array();
+		$related_tables   = array();
 		if( count( $query_arr ) > 0 ){
-			$ppTbs_arr   = array(
-								'parent' => $tables_arr['pod_' . $query_arr['podid'] ],
-								'child'  => $tables_arr['pod_' . $query_arr['tb'] ],							
-								);
+			$related_tables   = array(
+								'parent' => '',
+								'child'  => '',							
+								);			
+			if( isset( $tables_arr['pod_' . $query_arr['podid'] ] ) ){
+				$related_tables['parent'] = $tables_arr['pod_' . $query_arr['podid'] ];
+			}
+			if( isset( $tables_arr['pod_' . $query_arr['tb'] ] ) ){
+				$related_tables['child'] = $tables_arr['pod_' . $query_arr['tb'] ];
+			}
+
 		}
 		
-		$pieces_arr  = apply_filters( 'pprf_filter_pods_post_save_fn', $pieces_arr, $isNew_bln, $id_int, $query_arr, $ppTbs_arr );
+		$pieces  = apply_filters( 'pprf_filter_pods_post_save_fn', $pieces, $is_new_item, $id_int, $query_arr, $related_tables );
 		
-		do_action( 'pprf_action_pods_post_save_fn', $pieces_arr, $isNew_bln, $id_int, $query_arr, $ppTbs_arr );		
+		do_action( 'pprf_action_pods_post_save_fn', $pieces, $is_new_item, $id_int, $query_arr, $related_tables );		
 		
-		return $pieces_arr;
+		return $pieces;
 		
 	} 
 	/**
@@ -1210,44 +1225,44 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * save tables
 	 * @param integer $type_int 0: table_num 1 : pod_table 2 : table
 	 */
-	 function pods_tables_fn( $type_int = 0 ){
+	 function pods_tables_fn( $type_index = 0 ){
 		 
 		global $wpdb, $current_user;
 
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
-			$db_cla      = new panda_pods_repeater_field_db();
-			$tables_arr  = $db_cla->get_tables_fn();
-			define( 'PPRF_ALL_TABLES', serialize( $tables_arr ) );	
+			$pprf_db      = new panda_pods_repeater_field_db();
+			$tables  = $pprf_db->get_tables_fn();
+			define( 'PPRF_ALL_TABLES', serialize( $tables ) );	
 			
 		} else {
-			$tables_arr  = unserialize( PPRF_ALL_TABLES );			
+			$tables  = unserialize( PPRF_ALL_TABLES );			
 		}
-		$podsTbs_arr = array();
-		if( is_array( $tables_arr ) ){
-			foreach( $tables_arr as $tb_str => $tbv_arr ){
+		$pod_tables = array();
+		if( is_array( $tables ) ){
+			foreach( $tables as $table_key => $table_data ){
 
-				if( $tbv_arr['type'] != 'wp' ){
-					//$tb_str 				= substr( $tb_str, 5 );
-					if( $type_int == 0 ){
-						$podsTbs_arr[ $tb_str ] = $tbv_arr['pod'];						
+				if( $table_data['type'] != 'wp' ){
+					//$table_key 				= substr( $table_key, 5 );
+					if( $type_index == 0 ){
+						$pod_tables[ $table_key ] = $table_data['pod'];						
 					} 
-					if( $type_int == 1 ){
-						$podsTbs_arr[ 'pod_' . $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					if( $type_index == 1 ){
+						$pod_tables[ 'pod_' . $table_data['pod'] ] = $table_data['pod'];						
 					}
-					if( $type_int == 2 ){
-						$podsTbs_arr[ $tbv_arr['pod'] ] = $tbv_arr['pod'];						
+					if( $type_index == 2 ){
+						$pod_tables[ $table_data['pod'] ] = $table_data['pod'];						
 					}					
 				}				
 			}
 		}
-		
-		self::$tbs_arr = $tables_arr;
+
+		self::$tbs_arr = $tables;
 			
 		if( ! defined( 'PPRF_PODS_TABLES' )   ){				
-			define( 'PPRF_PODS_TABLES', serialize( $podsTbs_arr ) );	
+			define( 'PPRF_PODS_TABLES', serialize( $pod_tables ) );	
 		} 	
-	//	print_fn( $podsTbs_arr);
-		return $podsTbs_arr;			 
+	//	print_fn( $pod_tables);
+		return $pod_tables;			 
 	 }
 
 	/**
