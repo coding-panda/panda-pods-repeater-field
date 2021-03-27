@@ -989,24 +989,24 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 *
 	 * @since 1.0.0
 	 */	
-	public function pods_post_save_fn( $pieces_arr, $isNew_bln, $id_int ) {
+	public function pods_post_save_fn( $pieces, $is_new_item, $id_int ) {
 		
 		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
 		$tables_arr  = $db_cla->get_tables_fn();
 		
-		/*if( isset( $pieces_arr['params'] ) ){
+		/*if( isset( $pieces['params'] ) ){
 			// for pods 2.6
-			$pieces_arr['params'] = $pieces_arr['params'];
-			$loc_arr = explode( '?', $pieces_arr['params']->location );
+			$pieces['params'] = $pieces['params'];
+			$loc_arr = explode( '?', $pieces['params']->location );
 		} else {
 			// for pods 2.6.1
-			$pieces_arr['params'] = $pieces_arr['params'];
-			$loc_arr = explode( '?', $pieces_arr['params']->location );			
+			$pieces['params'] = $pieces['params'];
+			$loc_arr = explode( '?', $pieces['params']->location );			
 		}*/
 		
-		$cItemID_int  = $id_int;
+		//$cItemID_int  = $id_int;
 		$pdTb_str     = '';
 		$query_arr	  = array();
 		if( isset( $_SERVER['HTTP_REFERER'] ) ){
@@ -1059,21 +1059,21 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						array_push( $panCats_arr, intval( $query_arr['podid'] ) . '.' . $query_arr['postid'] . '.' . intval( $query_arr['poditemid'] ) ) ;
 						$panCats_arr	= array_unique( $panCats_arr );*/
 						$values_arr 	= array();			  
-						//$update_str 	= '`pandarf_categories` = %s';
+						//$update_query 	= '`pandarf_categories` = %s';
 						//array_push( $values_arr, maybe_serialize( $panCats_arr ) );
-						$update_str     = ' `pandarf_parent_pod_id` = %d';
+						$update_query     = ' `pandarf_parent_pod_id` = %d';
 						array_push( $values_arr, $query_arr['podid'] );
-						$update_str    .= ', `pandarf_parent_post_id` = %s';
+						$update_query    .= ', `pandarf_parent_post_id` = %s';
 						array_push( $values_arr, $query_arr['postid'] );
-						$update_str    .= ', `pandarf_pod_field_id` = %d';
+						$update_query    .= ', `pandarf_pod_field_id` = %d';
 						array_push( $values_arr, $query_arr['poditemid'] );																				
-						$update_str    .= ', `pandarf_modified` = %s';
+						$update_query    .= ', `pandarf_modified` = %s';
 						array_push( $values_arr, $now_str );
-						$update_str    .= ', `pandarf_modified_author` = %d';																
+						$update_query    .= ', `pandarf_modified_author` = %d';																
 						array_push( $values_arr, $current_user->ID );
 		
 						//order
-						if( $isNew_bln ){
+						if( $is_new_item ){
 							pprf_updated_tables( $table_str, 'remove' );
 							if( pprf_updated_tables( $table_str ) == false ){
 								$db_cla->update_columns_fn( $pdTb_str );
@@ -1082,25 +1082,25 @@ class PodsField_Pandarepeaterfield extends PodsField {
 							$query_str  	= $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM `' . $table_str . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = "%s" AND `pandarf_pod_field_id` = %d' , array( $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );	
 							
 							$order_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
-							$update_str    .= ', `pandarf_order` = %d';
+							$update_query    .= ', `pandarf_order` = %d';
 							array_push( $values_arr, ( $order_arr[0]['last_order'] + 1 ) );					
 						}
 						
 										
 						// if first time update
 						if( $item_arr[0]['pandarf_created'] == '' || $item_arr[0]['pandarf_created'] == '0000-00-00 00:00:00' ){
-							$update_str    .= ', `pandarf_created` = %s';
+							$update_query    .= ', `pandarf_created` = %s';
 							array_push( $values_arr, $now_str );
 						}
 						if( $item_arr[0]['pandarf_author'] == '' || $item_arr[0]['pandarf_author'] == 0 ){				
-							$update_str    .= ', `pandarf_author` = %d';																
+							$update_query    .= ', `pandarf_author` = %d';																
 							array_push( $values_arr, $current_user->ID );	
 						}
 						array_push( $values_arr, $id_int );				
 						//if( count( $values_arr ) > 0 ){
-							$query_str  	= $wpdb->prepare( 'UPDATE  `' . $table_str . '` SET ' . $update_str . ' WHERE id = %d' , $values_arr );
+							$query_str  	= $wpdb->prepare( 'UPDATE  `' . $table_str . '` SET ' . $update_query . ' WHERE id = %d' , $values_arr );
 						//} else {
-						//	$query_str  	= 'UPDATE  `' . $table_str . '` SET ' . $update_str . ' WHERE id = "' . $id_int . '";';
+						//	$query_str  	= 'UPDATE  `' . $table_str . '` SET ' . $update_query . ' WHERE id = "' . $id_int . '";';
 						//}
 						//echo $query_str;
 						$items_bln  	= $wpdb->query( $query_str, ARRAY_A );
@@ -1143,19 +1143,26 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 		}
 		// find the panda field related tables
-		$ppTbs_arr   = array();
+		$related_tables   = array();
 		if( count( $query_arr ) > 0 ){
-			$ppTbs_arr   = array(
-								'parent' => $tables_arr['pod_' . $query_arr['podid'] ],
-								'child'  => $tables_arr['pod_' . $query_arr['tb'] ],							
-								);
+			$related_tables   = array(
+								'parent' => '',
+								'child'  => '',							
+								);			
+			if( isset( $tables_arr['pod_' . $query_arr['podid'] ] ) ){
+				$related_tables['parent'] = $tables_arr['pod_' . $query_arr['podid'] ];
+			}
+			if( isset( $tables_arr['pod_' . $query_arr['tb'] ] ) ){
+				$related_tables['child'] = $tables_arr['pod_' . $query_arr['tb'] ];
+			}
+
 		}
 		
-		$pieces_arr  = apply_filters( 'pprf_filter_pods_post_save_fn', $pieces_arr, $isNew_bln, $id_int, $query_arr, $ppTbs_arr );
+		$pieces  = apply_filters( 'pprf_filter_pods_post_save_fn', $pieces, $is_new_item, $id_int, $query_arr, $related_tables );
 		
-		do_action( 'pprf_action_pods_post_save_fn', $pieces_arr, $isNew_bln, $id_int, $query_arr, $ppTbs_arr );		
+		do_action( 'pprf_action_pods_post_save_fn', $pieces, $is_new_item, $id_int, $query_arr, $related_tables );		
 		
-		return $pieces_arr;
+		return $pieces;
 		
 	} 
 	/**
