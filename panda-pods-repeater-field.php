@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.4.9
+Version: 1.4.10
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.9' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.10' );
 
  
  
@@ -46,8 +46,11 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function __construct() {		
-		
-		$files_arr   = array(
+		// Return false if Pods Framework is not available
+		if( ! class_exists('PodsField' ) ){
+			return false;
+		}		
+		$files   = array(
 						'panda_pods_repeater_field_db',  
 						'podsfield_pandarepeaterfield', 
 						'panda_pods_repeater_field_ajax',
@@ -63,11 +66,11 @@ class Panda_Pods_Repeater_Field {
 
 		$class_bln   = true;
 		
-		for( $i = 0; $i < count( $files_arr ); $i ++ ){
-			$file_str = dirname(__FILE__) . '/classes/' . $files_arr[ $i ] . '.php';			
+		for( $i = 0; $i < count( $files ); $i ++ ){
+			$file_str = dirname(__FILE__) . '/classes/' . $files[ $i ] . '.php';			
 			
 			if( file_exists( $file_str ) ) {
-				$claName_str = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files_arr[ $i ] ) ) ) ) ;			
+				$claName_str = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files[ $i ] ) ) ) ) ;			
 				include_once $file_str;		
 				
 				if( !class_exists( $claName_str ) )	{
@@ -80,22 +83,22 @@ class Panda_Pods_Repeater_Field {
 		//print_r( PodsForm::field_types() );
 		if( $class_bln ) {	
 			// create an instance to store pods adavance custom tables
-			$tableAsRepeater_cla    = new podsfield_pandarepeaterfield();	
+			$panda_repeater_field   = new podsfield_pandarepeaterfield();	
 			// ajax
-			$pprfAjax_cla 			= new Panda_Pods_Repeater_Field_Ajax();
+			$repeater_field_ajax 	= new Panda_Pods_Repeater_Field_Ajax();
 			//add_action('admin_menu',  array( $ssefProfile_cla, 'add_admin_menu_fn' ), 15);	
 							
 			foreach( PodsField_Pandarepeaterfield::$actTbs_arr as $tb_str => $tbn_str ){
 				// after pod saved
-				add_action('pods_api_post_save_pod_item_' . $tbn_str , array( $tableAsRepeater_cla, 'pods_post_save_fn' ), 10, 3);
-				add_action('pods_api_post_delete_pod_item_' . $tbn_str , array( $tableAsRepeater_cla, 'pods_post_delete_fn' ), 10, 3);
+				add_action('pods_api_post_save_pod_item_' . $tbn_str , array( $panda_repeater_field, 'pods_post_save_fn' ), 10, 3);
+				add_action('pods_api_post_delete_pod_item_' . $tbn_str , array( $panda_repeater_field, 'pods_post_delete_fn' ), 10, 3);
 			}
-			add_action( 'pods_admin_ui_setup_edit_fields', array( $tableAsRepeater_cla, 'field_table_fields_fn' ), 10, 2 );
+			add_action( 'pods_admin_ui_setup_edit_fields', array( $panda_repeater_field, 'field_table_fields_fn' ), 10, 2 );
 			// check table fields when update pod editor
-			//add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod_fn' ), 10, 3 );			
+			//add_action( 'save_post', array( $panda_repeater_field, 'update_child_pod_fn' ), 10, 3 );			
 				
 		}
-		$this->instances();
+		//$this->instances();
 		/**
 		 * Plugin Setup
 		 */
@@ -393,7 +396,9 @@ class Panda_Pods_Repeater_Field {
 		//print_r( $output );
 		 return $output; 	
 	}
-
+	/**
+	 * @deprecated
+	 */ 
 	private function instances(){
 		global $wpdb, $current_user;
 		
@@ -416,7 +421,6 @@ class Panda_Pods_Repeater_Field {
 /**
  * Initialize class, if Pods is active.
  *
- * @depreciated
  * @since 1.0.0
  */
 add_action( 'plugins_loaded', 'panda_repeater_safe_activate');
@@ -454,7 +458,7 @@ function pprf_main_page_fn(){
 	/* don't need Emoji and smiley js */
 	//remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	//remove_action( 'wp_print_styles', 'print_emoji_styles' );		
-	add_action('admin_menu', 'pprf_remove_admin_menu_items_fn');
+	//add_action('admin_menu', 'pprf_remove_admin_menu_items_fn');
 
 	include_once( PANDA_PODS_REPEATER_DIR . 'fields/pandarepeaterfield.php');
 	//die( );

@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 5.7.0
-Stable tag: 1.4.9
+Stable tag: 1.4.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -345,6 +345,8 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
 * fix: A bug in the order query.
 
+= 1.4.10 - 30th March 2021 =
+* add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.
 
 == Upgrade Notice ==
 
@@ -506,3 +508,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * change: caught up with the change of wp_localize_script in WordPress 5.7
 * add: Pods 2.8 use parent intead of pod_id. This verson catches up with this change.
 * fix: A bug in the order query.
+
+= 1.4.10 =
+* add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.

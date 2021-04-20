@@ -280,7 +280,7 @@ class panda_pods_repeater_field_db {
 								'columns'	=>	array(),
 								'label'		=>	'',
 								);
-		$adminCols_arr	=	array(); // if apply admin columns is picked, use admin columns instead of name
+		$admin_columns	=	array(); // if apply admin columns is picked, use admin columns instead of name
 		$parent_pod 	=	new pods( $parentTb_str );
 		//echo PODS_VERSION . ' - ' . $parentTb_str . ' | ' . $childTb_str . ' | ' . $fieldID_int . ' | ' . $rowID_int;
 		//print_r($parent_pod);
@@ -294,27 +294,27 @@ class panda_pods_repeater_field_db {
 						
 						if( $child_pod ){
 						
-							$adminCols_arr 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );					
+							$admin_columns 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );					
 						}
 					}
 					break;
 				}
 			}
 		}
-		if( count( $adminCols_arr ) > 0 ){
+		if( count( $admin_columns ) > 0 ){
 			$return_arr['valid']	=	true;
-			$return_arr['columns']	=	$adminCols_arr;
+			$return_arr['columns']	=	$admin_columns;
 			$label_str				=	'';
 			if( $rowID_int !== 0 && is_numeric( $rowID_int ) ){
 				$id_bln	=	false;
-				foreach( $adminCols_arr as $adminCol_str ){
-					if( strtolower( $adminCol_str ) == 'id' ){
+				foreach( $admin_columns as $admin_column_name ){
+					if( strtolower( $admin_column_name ) == 'id' ){
 						$id_bln	=	true;
 						continue;
 					}					
-					$colVal_ukn	=	pods_field( $childTb_str, $rowID_int, $adminCol_str );
-					if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
-						$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
+					$column_value	=	pods_field( $childTb_str, $rowID_int, $admin_column_name );
+					if( is_string( $column_value ) || is_numeric( $column_value ) ){
+						$label_str .= '<strong>' . esc_html( $child_pod->fields[ $admin_column_name ]['label'] ) . ':</strong> ' . esc_html( $column_value ) . ' ' ;
 					}				
 				}	
 				if( $id_bln ){

@@ -585,9 +585,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 				$child_pod 		= new pods( $options['pandarepeaterfield_table'] );
 
-				$adminCols_arr		=	array(); // if apply admin columns is picked, use admin columns instead of name
+				$admin_columns		=	array(); // if apply admin columns is picked, use admin columns instead of name
 				if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){					
-					$adminCols_arr 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );
+					$admin_columns 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );
 				}				
 									
 				if ( is_array( $rows_arr ) ) {
@@ -635,23 +635,67 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						if( isset(  $options['pandarepeaterfield_apply_admin_columns'] ) && $options['pandarepeaterfield_apply_admin_columns'] ){
 							//echo '<pre>';
 							$id_bln	=	false;
-							foreach( $adminCols_arr as $adminCol_str ){
-								if( strtolower( $adminCol_str ) == 'id' ){
+							foreach( $admin_columns as $admin_column_name ){
+								if( strtolower( $admin_column_name ) == 'id' ){
 									$id_bln	=	true;
 									continue;
 								}
-								$colVal_ukn	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $adminCol_str ); 
+								$column_value	=	pods_field( $options['pandarepeaterfield_table'], $row_obj['id'], $admin_column_name ); 
+								
 								// integration with Simpods MVC Area Field
-								if( isset( $child_pod->fields[ $adminCol_str ] ) ){ 
-									if( $child_pod->fields[ $adminCol_str ]['type'] == 'pick' &&  $child_pod->fields[ $adminCol_str ]['pick_object'] == 'user' ){
-										$colVal_ukn = $colVal_ukn['display_name'];
+								if( isset( $child_pod->fields[ $admin_column_name ] ) ){ 
+									if( $child_pod->fields[ $admin_column_name ]['type'] == 'pick' ){
+										if( $child_pod->fields[ $admin_column_name ]['pick_object'] == 'user' ){
+											$column_value = $column_value['display_name'];
+										} else {
+											// If it is custom relationship, display the labels
+											if( $child_pod->fields[ $admin_column_name ]['pick_object'] == 'custom-simple' && '' !== trim( $child_pod->fields[ $admin_column_name ]['options']['pick_custom'] ) ){
+												$pick_customs =	explode( PHP_EOL, $child_pod->fields[ $admin_column_name ]['options']['pick_custom'] );
+	
+												if( $child_pod->fields[ $admin_column_name ]['options']['pick_format_type'] == 'single' ){
+													foreach ( $pick_customs as $pick_custom ) {
+														if( 0 === strpos( $pick_custom, $column_value . '|' ) ){
+															$pick_custom_details = explode( '|', $pick_custom );
+															$column_value = $pick_custom_details[1];
+															break;
+														}
+													}
+												} else {
+													
+													$first_column_value = $column_value;
+													if( is_array( $column_value ) ){									
+														foreach ( $column_value as $column_value_item ) {
+															$column_value_item_found = false;
+															foreach ( $pick_customs as $pick_custom ) {
+																if( 0 === strpos( $pick_custom, $column_value_item . '|' ) ){
+																	$pick_custom_details = explode( '|', $pick_custom );
+																	$first_column_value = $pick_custom_details[1];
+																	$column_value_item_found = true;
+																	break;
+																}
+															}	
+															if( $column_value_item_found ){
+																break;
+															}														
+														}
+														
+														if( count( $column_value ) > 1 ){ // more than one, add three dots
+															$column_value = $first_column_value . '...';
+														} else {
+															$column_value = $first_column_value;
+														}
+													}
+												}
+											
+											}
+										}
 									}
-									if( $child_pod->fields[ $adminCol_str ]['type'] == 'simpodsareafield' ){
-										$colVal_ukn		= $this->simpods_area_field_value( $child_pod->fields[ $adminCol_str ], $colVal_ukn );
+									if( $child_pod->fields[ $admin_column_name ]['type'] == 'simpodsareafield' ){
+										$column_value		= $this->simpods_area_field_value( $child_pod->fields[ $admin_column_name ], $column_value );
 									}
 								}									
-								if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
-									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $colVal_ukn ) ), 0, 80 ) . pprf_check_media_in_content( $colVal_ukn )  ;
+								if( is_string( $column_value ) || is_numeric( $column_value ) ){
+									$label_str .= '<strong>' . esc_html( $child_pod->fields[ $admin_column_name ]['label'] ) . ':</strong> ' . substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $column_value ) ), 0, 80 ) . pprf_check_media_in_content( $column_value )  ;
 								}							
 							}
 
