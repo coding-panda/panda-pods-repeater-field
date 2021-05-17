@@ -347,6 +347,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 
 = 1.4.10 - 30th March 2021 =
 * add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.
+* fix: A bug when using PHP 8
 
 == Upgrade Notice ==
 
@@ -511,3 +512,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.10 =
 * add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.
+* fix: A bug when using PHP 8

@@ -732,8 +732,8 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 	}	
 			
 	$limit_str   = '';
-	if( $atts_arr['limit'] != '' ){
-		$limit_str = 'LIMIT ' . esc_sql( $atts_arr['start'] ) . ', ' . esc_sql( $atts_arr['limit'] ) . '';
+	if( ! empty( $atts_arr['limit'] ) ){
+		$limit_str = 'LIMIT ' . esc_sql( intval( $atts_arr['start'] ) ) . ', ' . esc_sql( intval( $atts_arr['limit'] ) ) . '';
 	}
 
 		
