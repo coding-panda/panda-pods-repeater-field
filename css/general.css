@@ -1508,4 +1508,12 @@ select.pprf-in-iframe-sel {
   padding: 0;
 }
 
+#pprf-form .pods-form-ui-row-name-id {
+  display: none;
+}
+
+#pprf-form label {
+  font-weight: bold;
+}
+
 /*# sourceMappingURL=general.css.map */

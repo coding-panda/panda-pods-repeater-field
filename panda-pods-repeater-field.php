@@ -620,8 +620,8 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 		include_once $file_str;		
 		
 		$db_cla 	 = new panda_pods_repeater_field_db();	
-		$tbInfo_arr	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
-		$tbabbr_str  = $tbInfo_arr['type'] == 'pod'? 't' : 'd';	
+		$table_info	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
+		$tbabbr_str  = $table_info['type'] == 'pod'? 't' : 'd';	
 
 		$where_str   = '   `' . $tbabbr_str . '`.`pandarf_parent_pod_id`  = ' . intval( $search_arr['pod_id'] ) . '
 					   AND `' . $tbabbr_str . '`.`pandarf_parent_post_id` = "' . intval( $search_arr['post_id'] ) . '"
@@ -1209,7 +1209,7 @@ function pprf_enqueue_scripts() {
  * check pod type
  */
 
-function pprf_pod_details_fn( $pod_int ){
+function pprf_pod_details( $pod_int ){
 	global $wpdb;	
 	$query_str	=	$wpdb->prepare(
 								'SELECT *, pm_tb.`meta_value` AS type FROM `' . $wpdb->prefix . 'posts` AS ps_tb 
@@ -1222,6 +1222,12 @@ function pprf_pod_details_fn( $pod_int ){
 		$parent_arr	=	$parent_arr[0];
 	}
 	return $parent_arr;
+}
+/**
+ * backward compatibility
+ */ 
+function pprf_pod_details_fn( $pod_int ){
+	return pprf_pod_details( $pod_int );
 }
 /*function pprf_family_tree_fn( $atts_arr ){
 
@@ -1255,8 +1261,8 @@ function pprf_same_child_tb_fields_fn( $pod_cla, $ctb_str = '' ){
 	return $return_arr;
 }
 // load language
-add_action( 'plugins_loaded', 'pprf_localization_setup_fn' );
-function pprf_localization_setup_fn() {
+add_action( 'plugins_loaded', 'pprf_localization_setup' );
+function pprf_localization_setup() {
 	load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );	
 }
 /**

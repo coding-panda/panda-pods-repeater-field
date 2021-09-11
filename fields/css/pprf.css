@@ -57,10 +57,10 @@ html.wp-toolbar {
 }
 
 .pods-form-front .pods-field-input select {
-  padding: 4px 10px;
-  border-radius: 5px;
-  height: 31px;
-  margin-top: 2px !important;
+  /* padding: 4px 10px;
+    border-radius: 5px;
+	height: 31px;	
+	margin-top: 2px !important;*/
 }
 
 .pods-form-front .pods-field-label {
@@ -236,16 +236,17 @@ body #wpwrap {
   border-radius: 5px;
   cursor: pointer;
   background: #F0F5FF;
+  font-size: 14px;
+  font-weight: normal;
+  color: #000;
 }
 
 #pprf-form input[type="submit"]:hover {
   background: #F1F1F1;
 }
 
-#pprf-form input[type="submit"] {
-  font-size: 14px;
-  font-weight: normal;
-  color: #000;
+#pprf-form .pods-form-ui-row-name-id {
+  display: none;
 }
 
 .pprf-btn {

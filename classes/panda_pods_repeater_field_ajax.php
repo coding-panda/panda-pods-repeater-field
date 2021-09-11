@@ -10,14 +10,14 @@ if ( preg_match('#'.basename(__FILE__).'#', $_SERVER['PHP_SELF']) ) { die('You a
 class Panda_Pods_Repeater_Field_Ajax {
 
 	function __construct() {
-		$this->define_pprf_all_tables_fn();
-		$this->actions_fn();
+		$this->define_pprf_all_tables();
+		$this->actions();
 		//$this->filters_fn();	
 		//$this->enqueue_fn();			
 		
 	}
 
-    protected function actions_fn(){			
+    protected function actions(){			
 		// login user only, for everyone, use wp_ajax_nopriv_ example: add_action( 'wp_ajax_function-name', 			array( $this, 'function-name') );				
 		//if( is_user_logged_in() && is_admin() ){
 			add_action( 'wp_ajax_admin_pprf_load_newly_added_fn', 		array( $this, 'admin_pprf_load_newly_added_fn') );	
@@ -52,7 +52,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		
 	}	
 
-	public function define_pprf_all_tables_fn(){
+	public function define_pprf_all_tables(){
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
 			$db_cla      = new panda_pods_repeater_field_db();
 			$tables_arr  = $db_cla->get_tables_fn();
@@ -165,7 +165,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 				$where_arr		= array();
 			    $join_str		= 	'';        
 				//check it is an Advanced Content Type or normal post type
-			    $pDetails_arr	=	pprf_pod_details_fn( $_POST['cpodid'] );
+			    $pDetails_arr	=	pprf_pod_details( $_POST['cpodid'] );
 			    			            
 			    if( $pDetails_arr ){
 				    //normal post type fetch all published and draft posts
@@ -380,9 +380,9 @@ class Panda_Pods_Repeater_Field_Ajax {
 										   $search_arr 
 										);	
 		
-		$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
+		$entries   	= $wpdb->get_results( $query_str, ARRAY_A );	
 
-		wp_send_json_success( $rows_arr );
+		wp_send_json_success( $entries );
 		//die();
 	}
 	public function admin_pprf_load_more_fn(){

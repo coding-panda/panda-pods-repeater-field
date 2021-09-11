@@ -374,8 +374,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			$options 		= (array) $options;
 			$parent_pod_id 	= 0;
 			
-			if( version_compare( PODS_VERSION, '2.8.0' ) >= 0 ){ // from 2.8. pod_id doesn't exist anymore			
-				$parent_pod_id = $options['parent'];
+			if( version_compare( PODS_VERSION, '2.8.0' ) >= 0 || 2.8 <= floatval( substr( PODS_VERSION, 0, 3 ) ) ){ // from 2.8. pod_id doesn't exist anymore			
+				$parent_pod_id = $options['parent']; 
 			} else {
 				$parent_pod_id = $options['pod_id'];		
 			}
@@ -424,7 +424,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				return;
 			}			
 			if( $tb_str != ''  ){
-				$tbInfo_arr	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
+				$table_info	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
 				
 				// load items for the current post only using regular expression
 				$where_str   =    '   `pandarf_parent_pod_id`  = %d
@@ -523,7 +523,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			
 				//$db_cla->get_admin_columns_fn( 'comic', 'comic_item', 261, 133 );
 				//echo $query_str;
-				$rows_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
+				$entries   	= $wpdb->get_results( $query_str, ARRAY_A );	
+
 				$count_int		= 0;	
 				if( !$limit_bln ){	
 					$rowsCount_arr 	= $wpdb->get_results( $countQ_str, ARRAY_A );	
@@ -590,8 +591,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$admin_columns 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );
 				}				
 									
-				if ( is_array( $rows_arr ) ) {
-					foreach( $rows_arr as $i => $row_obj ) { 	
+				if ( is_array( $entries ) ) {
+					foreach( $entries as $i => $row_obj ) { 	
 						$bg_str 	 	= $i % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
 						$trashed_str 	= 'pprf-not-trashed';
 						$traBtn_str  	= 'pprf-btn-not-trashed';
@@ -763,7 +764,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				
 				$fullUrl_str 	= esc_attr( $src_str . 'piframe_id=' . $pIframeID_str . '&iframe_id=panda-repeater-add-new-' . $ids_str . '' . $query_str . '&postid=' . $token_str );
 				$hidden_str		= '';
-				if( $limit_bln && count( $rows_arr ) == $options['pandarepeaterfield_entry_limit'] ){
+				if( $limit_bln && count( $entries ) == $options['pandarepeaterfield_entry_limit'] ){
 					$hidden_str	=	'hidden';	
 				}				
 				$addNew_str		= 
