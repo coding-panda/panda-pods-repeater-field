@@ -273,7 +273,7 @@ class panda_pods_repeater_field_db {
 	 * @param int $rowID_int the child table row id
 	 * @return array if it valid
 	 */
-	public function get_admin_columns_fn( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
+	public function get_admin_columns( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
 		//require_once ABSPATH . '/wp-content/plugins/pods/init.php';
 		$return_arr		=	array(
 								'valid'		=>	false,
@@ -327,5 +327,9 @@ class panda_pods_repeater_field_db {
 		//print_r($return_arr);
 		return $return_arr;
 
+	}
+
+	public function get_admin_columns_fn( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
+		return $this->get_admin_columns( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int ) ;
 	}
 }
