@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 5.8.1
-Stable tag: 1.4.10
+Stable tag: 1.4.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,7 +65,8 @@ $showQuery_bln
 If set to true, it will print out the sql command. For debugging purpose. Default to false.
 
 An example of basic usage. IDs from the Screenshots section:
-pandarf_items_fn( array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274 ) );
+get_pandarf_items( array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274 ) );
+or pandarf_items_fn before v1.4.11
 
 It will return the items attached to the post from Comic Contents.
 
@@ -349,6 +350,9 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.
 * fix: A bug when using PHP 8
 
+= 1.4.11 - 21th October 2021 =
+* change: Caught up with the changes in Pods 2.8
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -513,3 +517,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.4.10 =
 * add: When displaying labels with admin columns, if it is a simple relationship, display labels instead of values.
 * fix: A bug when using PHP 8
+
+= 1.4.11 =
+* change: Caught up with the changes in Pods 2.8
