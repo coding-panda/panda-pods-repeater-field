@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.4.9
+Version: 1.4.11
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.4.9' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.4.10' );
 
  
  
@@ -46,8 +46,11 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function __construct() {		
-		
-		$files_arr   = array(
+		// Return false if Pods Framework is not available
+		if( ! class_exists('PodsField' ) ){
+			return false;
+		}		
+		$files   = array(
 						'panda_pods_repeater_field_db',  
 						'podsfield_pandarepeaterfield', 
 						'panda_pods_repeater_field_ajax',
@@ -63,11 +66,11 @@ class Panda_Pods_Repeater_Field {
 
 		$class_bln   = true;
 		
-		for( $i = 0; $i < count( $files_arr ); $i ++ ){
-			$file_str = dirname(__FILE__) . '/classes/' . $files_arr[ $i ] . '.php';			
+		for( $i = 0; $i < count( $files ); $i ++ ){
+			$file_str = dirname(__FILE__) . '/classes/' . $files[ $i ] . '.php';			
 			
 			if( file_exists( $file_str ) ) {
-				$claName_str = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files_arr[ $i ] ) ) ) ) ;			
+				$claName_str = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files[ $i ] ) ) ) ) ;			
 				include_once $file_str;		
 				
 				if( !class_exists( $claName_str ) )	{
@@ -80,22 +83,22 @@ class Panda_Pods_Repeater_Field {
 		//print_r( PodsForm::field_types() );
 		if( $class_bln ) {	
 			// create an instance to store pods adavance custom tables
-			$tableAsRepeater_cla    = new podsfield_pandarepeaterfield();	
+			$panda_repeater_field   = new podsfield_pandarepeaterfield();	
 			// ajax
-			$pprfAjax_cla 			= new Panda_Pods_Repeater_Field_Ajax();
+			$repeater_field_ajax 	= new Panda_Pods_Repeater_Field_Ajax();
 			//add_action('admin_menu',  array( $ssefProfile_cla, 'add_admin_menu_fn' ), 15);	
 							
 			foreach( PodsField_Pandarepeaterfield::$actTbs_arr as $tb_str => $tbn_str ){
 				// after pod saved
-				add_action('pods_api_post_save_pod_item_' . $tbn_str , array( $tableAsRepeater_cla, 'pods_post_save_fn' ), 10, 3);
-				add_action('pods_api_post_delete_pod_item_' . $tbn_str , array( $tableAsRepeater_cla, 'pods_post_delete_fn' ), 10, 3);
+				add_action('pods_api_post_save_pod_item_' . $tbn_str , array( $panda_repeater_field, 'pods_post_save_fn' ), 10, 3);
+				add_action('pods_api_post_delete_pod_item_' . $tbn_str , array( $panda_repeater_field, 'pods_post_delete_fn' ), 10, 3);
 			}
-			add_action( 'pods_admin_ui_setup_edit_fields', array( $tableAsRepeater_cla, 'field_table_fields_fn' ), 10, 2 );
+			add_action( 'pods_admin_ui_setup_edit_fields', array( $panda_repeater_field, 'field_table_fields_fn' ), 10, 2 );
 			// check table fields when update pod editor
-			//add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod_fn' ), 10, 3 );			
+			//add_action( 'save_post', array( $panda_repeater_field, 'update_child_pod_fn' ), 10, 3 );			
 				
 		}
-		$this->instances();
+		//$this->instances();
 		/**
 		 * Plugin Setup
 		 */
@@ -393,7 +396,9 @@ class Panda_Pods_Repeater_Field {
 		//print_r( $output );
 		 return $output; 	
 	}
-
+	/**
+	 * @deprecated
+	 */ 
 	private function instances(){
 		global $wpdb, $current_user;
 		
@@ -416,7 +421,6 @@ class Panda_Pods_Repeater_Field {
 /**
  * Initialize class, if Pods is active.
  *
- * @depreciated
  * @since 1.0.0
  */
 add_action( 'plugins_loaded', 'panda_repeater_safe_activate');
@@ -454,7 +458,7 @@ function pprf_main_page_fn(){
 	/* don't need Emoji and smiley js */
 	//remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	//remove_action( 'wp_print_styles', 'print_emoji_styles' );		
-	add_action('admin_menu', 'pprf_remove_admin_menu_items_fn');
+	//add_action('admin_menu', 'pprf_remove_admin_menu_items_fn');
 
 	include_once( PANDA_PODS_REPEATER_DIR . 'fields/pandarepeaterfield.php');
 	//die( );
@@ -616,8 +620,8 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 		include_once $file_str;		
 		
 		$db_cla 	 = new panda_pods_repeater_field_db();	
-		$tbInfo_arr	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
-		$tbabbr_str  = $tbInfo_arr['type'] == 'pod'? 't' : 'd';	
+		$table_info	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
+		$tbabbr_str  = $table_info['type'] == 'pod'? 't' : 'd';	
 
 		$where_str   = '   `' . $tbabbr_str . '`.`pandarf_parent_pod_id`  = ' . intval( $search_arr['pod_id'] ) . '
 					   AND `' . $tbabbr_str . '`.`pandarf_parent_post_id` = "' . intval( $search_arr['post_id'] ) . '"
@@ -637,16 +641,11 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 	}
 
 }
+
 /**
- * Alias of pandarf_items_fn
- */ 
-function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
-	pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false );
-}
-/**
- * pandarf_items_fn fetch child pod data
+ * fetch child pod data
  *
- * @param array  $fields_arr search repeater field table array( 
+ * @param array  $fields search repeater field table array( 
 																'id'              			  => '',		
 																'name'               		  => '', //the common name field used by pods						 
 																'child_pod_name'              => '', //repeater table name		
@@ -666,11 +665,11 @@ function get_pandarf_items( $fields_arr = array(), $atts_arr = array(), $showQue
 															  )																  
  * @return array $items_arr;
  */
-function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuery_bln = false ){
+function get_pandarf_items( $fields = array(), $atts_arr = array(), $showQuery_bln = false ){
 
 	global $wpdb;
 
-	$filter_arr 	=  array(
+	$filters 	=  array(
 		'id'              			  => '',		
 		'name'               		  => '',	
 		'child_pod_name'              => '',		
@@ -678,9 +677,9 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 		'parent_pod_post_id'          => '',		
 		'parent_pod_field_id'         => '',
 	);		
-	$filter_arr = wp_parse_args( $fields_arr, $filter_arr );		
+	$filters = wp_parse_args( $fields, $filters );		
 		
-	$_atts_arr  = array(
+	$defaults  = array(
  		  'where'				=> '',	
 		  'order' 				=> 'ASC',
 		  'order_by'			=> 'pandarf_order',
@@ -690,46 +689,46 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 		  'count_only'			=> false,
 		  'full_child_pod_name'	=> false,
 	);		
-	$atts_arr  = wp_parse_args( $atts_arr, $_atts_arr );						
+	$atts_arr  = wp_parse_args( $atts_arr, $defaults );						
 
 	$para_arr  = array();
 	$where_str = '';
-	if( is_numeric( $filter_arr['id'] ) ){
+	if( is_numeric( $filters['id'] ) ){
 		$where_str .= ' AND `id` = %d';
-		array_push( $para_arr, $filter_arr['id'] );					
+		array_push( $para_arr, $filters['id'] );					
 	}																
-	if( $filter_arr['name'] != '' ){
-		if( is_numeric( $filter_arr['name'] ) ){		
+	if( $filters['name'] != '' ){
+		if( is_numeric( $filters['name'] ) ){		
 			// if putting a dot at the end of an number, like 24., strpos will return false so it is treated as an integer
-			$dsf_str 	= strpos( $filter_arr['name'], '.' ) !== false ? '%f' : '%d';		
+			$dsf_str 	= strpos( $filters['name'], '.' ) !== false ? '%f' : '%d';		
 		} else {
 			$dsf_str	= '%s';	
 		}
 		$where_str .= ' AND `name` = ' . $dsf_str . '';
-		array_push( $para_arr, $filter_arr['name'] );					
+		array_push( $para_arr, $filters['name'] );					
 	}		
-	if( is_numeric( $filter_arr['parent_pod_id'] ) ){
+	if( is_numeric( $filters['parent_pod_id'] ) ){
 		$where_str .= ' AND `pandarf_parent_pod_id` = %d';
-		array_push( $para_arr, $filter_arr['parent_pod_id'] );					
+		array_push( $para_arr, $filters['parent_pod_id'] );					
 	}																
-	if( is_numeric( $filter_arr['parent_pod_post_id'] ) ){
+	if( is_numeric( $filters['parent_pod_post_id'] ) ){
 		$where_str .= ' AND `pandarf_parent_post_id` = %d';
-		array_push( $para_arr, $filter_arr['parent_pod_post_id'] );					
+		array_push( $para_arr, $filters['parent_pod_post_id'] );					
 	}	
-	if( is_numeric( $filter_arr['parent_pod_field_id'] ) ){
+	if( is_numeric( $filters['parent_pod_field_id'] ) ){
 		$where_str .= ' AND `pandarf_pod_field_id` = %d';
-		array_push( $para_arr, $filter_arr['parent_pod_field_id'] );					
+		array_push( $para_arr, $filters['parent_pod_field_id'] );					
 	}		
 
 	//exit( $where_str  );		
-	$groupby_str = '';
+	$group_by = '';
 	if( $atts_arr['group_by'] != '' ){
-		$groupby_str  =	'GROUP BY( ' . esc_sql( $atts_arr['group_by'] ) . ' )';	
+		$group_by  =	'GROUP BY( ' . esc_sql( $atts_arr['group_by'] ) . ' )';	
 	}	
 			
 	$limit_str   = '';
-	if( $atts_arr['limit'] != '' ){
-		$limit_str = 'LIMIT ' . esc_sql( $atts_arr['start'] ) . ', ' . esc_sql( $atts_arr['limit'] ) . '';
+	if( ! empty( $atts_arr['limit'] ) ){
+		$limit_str = 'LIMIT ' . esc_sql( intval( $atts_arr['start'] ) ) . ', ' . esc_sql( intval( $atts_arr['limit'] ) ) . '';
 	}
 
 		
@@ -740,30 +739,34 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 	}
 
 	$where_str	.= ' ' . $atts_arr['where'] . ' ';		
-	$table_str 	 = esc_sql( $filter_arr['child_pod_name'] );		
+	$table_str 	 = esc_sql( $filters['child_pod_name'] );		
 	if( $atts_arr['full_child_pod_name'] == false ){				
 		$table_str 	 	= $wpdb->prefix . 'pods_' . $table_str;		
 	} 
 
-	$pPost_obj	=	get_post( $filter_arr['parent_pod_id'] );
+	$pPost_obj	=	get_post( $filters['parent_pod_id'] );
 	if( $pPost_obj ){
 		$parent_pod =	pods( $pPost_obj->post_name );
-		foreach( $parent_pod->fields as $k_str => $v_arr ){
-			if( is_array( $v_arr ) ){
-				if( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' && $filter_arr['parent_pod_field_id'] == $v_arr['id'] ) {
+		foreach( $parent_pod->fields as $k_str => $field ){ 
+
+			if( is_array( $field ) ){ 
+				$field = (object)$field ; // so it works in before and after pods 2.8
+			}
+			if( is_object( $field ) ){ 
+				if( isset( $field->type ) && $field->type == 'pandarepeaterfield' && $filters['parent_pod_field_id'] == $field->id ) {
 					
-					if( isset( $v_arr['options']['pandarepeaterfield_enable_trash'] ) && $v_arr['options']['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
+					if( isset( $field->options['pandarepeaterfield_enable_trash'] ) && $field->options['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
 						$where_str .= ' AND `pandarf_trash` != 1';
 					
 					}
-					if( isset( $v_arr['options']['pandarepeaterfield_order_by'] ) && !empty( $v_arr['options']['pandarepeaterfield_order_by'] ) ){ // different order field
-						if( $atts_arr['order_by'] == 'pandarf_order' && !empty( $v_arr['options']['pandarepeaterfield_order_by'] ) ){ // if not changed by the filter, load the saved one
-							$atts_arr['order_by'] = $v_arr['options']['pandarepeaterfield_order_by'] ;					
+					if( isset( $field->options['pandarepeaterfield_order_by'] ) && !empty( $field->options['pandarepeaterfield_order_by'] ) ){ // different order field
+						if( $atts_arr['order_by'] == 'pandarf_order' && !empty( $field->options['pandarepeaterfield_order_by'] ) ){ // if not changed by the filter, load the saved one
+							$atts_arr['order_by'] = $field->options['pandarepeaterfield_order_by'] ;					
 						}
 					}		
-					if( isset( $v_arr['options']['pandarepeaterfield_order'] )  && !empty( $v_arr['options']['pandarepeaterfield_order'] ) ){ // different order field
+					if( isset( $field->options['pandarepeaterfield_order'] )  && !empty( $field->options['pandarepeaterfield_order'] ) ){ // different order field
 						if( $atts_arr['order'] == 'ASC' ){ // if not changed by the filter, load the saved one
-							$atts_arr['order'] = $v_arr['options']['pandarepeaterfield_order'];		
+							$atts_arr['order'] = $field->options['pandarepeaterfield_order'];		
 						}
 					}						
 					break;											
@@ -791,73 +794,75 @@ function pandarf_items_fn( $fields_arr = array(), $atts_arr = array(), $showQuer
 	}	
 	// find out the file type
 	$join_str	=	'';
-	$child_pod	= 	pods( $filter_arr['child_pod_name'] );
+	$child_pod	= 	pods( $filters['child_pod_name'] );
 /*echo '<pre>';
 	print_r( $child_pod );
 	//echo $child_pod;
 
 echo '</pre>';	*/
 
-	if( pprf_updated_tables(  $filter_arr['child_pod_name'] ) == false ){
+	if( pprf_updated_tables(  $filters['child_pod_name'] ) == false ){
 		$file_str = dirname(__FILE__) . '/classes/panda_pods_repeater_field_db.php';					
 		if( file_exists( $file_str ) ) {		
 			include_once $file_str;	
 			$db_cla 	 = new panda_pods_repeater_field_db();	
-			$db_cla->update_columns_fn(  $filter_arr['child_pod_name'] );
+			$db_cla->update_columns_fn(  $filters['child_pod_name'] );
 		}	
 	}
 
 	if( is_object( $child_pod ) && $atts_arr['count_only'] == false ){
 		$i 	= 	0;
-		foreach( $child_pod->fields as $k_str => $v_arr ){
-			if( is_array( $v_arr ) ){
-/*				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pandarepeaterfield' ) ) {
-					//echo '<pre>';
-					if( $v_arr['options']['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
-						$where_str .= ' AND `pandarf_trash` != 1';
-					//	echo $where_str;
-					}
-					//echo '</pre>';					
-				}*/
+		foreach( $child_pod->fields as $k_str => $field ){ 
+			if( is_array( $field ) ){
+				$field = (object)$field ;
+			}
+			if( is_object( $field ) ){ 
+
 				$relatePick_arr	 = array('user', 'post_type', 'pod', 'media');
-				if( ( isset( $v_arr['type'] ) && $v_arr['type'] == 'file' ) || ( isset( $v_arr['type'] ) && $v_arr['type'] == 'pick' && in_array( $v_arr['pick_object'], $relatePick_arr ) ) ){
+				if( ( isset( $field->type ) && $field->type == 'file' ) || ( isset( $field->type ) && $field->type == 'pick' && in_array( $field->pick_object, $relatePick_arr ) ) ){
 
 					$fields_str .= ',(
 									SELECT GROUP_CONCAT( psl' . $i .  '_tb.related_item_id ORDER BY psl' . $i .  '_tb.weight ASC SEPARATOR "," )
 									FROM `' . $wpdb->prefix . 'podsrel` AS psl' . $i .  '_tb
 									WHERE psl' . $i .  '_tb.pod_id = "' . $child_pod->pod_id . '" 
-									AND psl' . $i .  '_tb.field_id = "' . $v_arr['id'] . '" 
+									AND psl' . $i .  '_tb.field_id = "' . $field->id . '" 
 									AND psl' . $i .  '_tb.item_id = pod_tb.id
 									GROUP BY psl' . $i .  '_tb.item_id									
 									) AS ' . $k_str;
 
 					$i++;				
 				}			
-			}
+			}  
 		}
 	}	
 	if( count( $para_arr ) > 0 ){
-		$query_str = $wpdb->prepare( 'SELECT ' . $fields_str . ' FROM `' . $table_str . '` AS pod_tb ' . $join_str . ' WHERE 1=1 ' . $where_str . ' ' . $groupby_str . ' ' . $order_str . ' ' . $limit_str , $para_arr );
+		$query = $wpdb->prepare( 'SELECT ' . $fields_str . ' FROM `' . $table_str . '` AS pod_tb ' . $join_str . ' WHERE 1=1 ' . $where_str . ' ' . $group_by . ' ' . $order_str . ' ' . $limit_str , $para_arr );
 	} else {
-		$query_str = 'SELECT ' . $fields_str . ' FROM `' . $table_str . '` AS pod_tb ' . $join_str . '  WHERE 1=1 ' . $where_str . ' ' . $groupby_str . ' ' . $order_str . ' ' . $limit_str;
+		$query = 'SELECT ' . $fields_str . ' FROM `' . $table_str . '` AS pod_tb ' . $join_str . '  WHERE 1=1 ' . $where_str . ' ' . $group_by . ' ' . $order_str . ' ' . $limit_str;
 	}
 	//echo $query_str;
 	if( $showQuery_bln ){
-		echo $query_str;
+		echo $query;
 	}
 	
-	$items_arr = $wpdb->get_results( $query_str , ARRAY_A );
+	$items = $wpdb->get_results( $query , ARRAY_A );
 	//echo '<pre>';
 	//print_r( $items_arr );
 	//echo '</pre>';	
 		
-	return 	$items_arr;
+	return 	$items;
 }
-
+/**
+ * Alias of get_pandarf_items
+ */ 
+function pandarf_items_fn( $fields = array(), $attrs = array(), $show_query = false ){
+	
+	return get_pandarf_items( $fields, $attrs, $show_query );
+}
 /**
  * pandarf_insert_fn insert data to panda repeater field table
  * 
- * @param array  $fields_arr extra fields other than panda repeater fields to insert array( 'field_name' => '', 'field_name' => '' ... )
+ * @param array  $fields extra fields other than panda repeater fields to insert array( 'field_name' => '', 'field_name' => '' ... )
  * @param array  $atts_arr search repeater field table array( 
 																'child_pod_name'              => '', repeater table name		
 																'parent_pod_id'               => '', main table pod id		
@@ -866,13 +871,13 @@ echo '</pre>';	*/
 																'user_id' 					  => 0, The author id
 																'full_child_pod_name'		  => false, //if child_pod_name is a full table name, $wpdb->prefix and pods_ won't be added to the table name
 															  )	
- * @return boolean $done_bln;
+ * @return boolean $done;
  */
-function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bln = false ){
+function pandarf_insert_fn( $fields = array(), $atts_arr = array(), $show_bln = false ){
 
 	global $wpdb, $current_user;		
 
-	$_atts_arr 	= array(
+	$defaults 	= array(
 		'child_pod_name'              => '',		
 		'parent_pod_id'               => '',		
 		'parent_pod_post_id'          => '',		
@@ -881,7 +886,7 @@ function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bl
 		'full_child_pod_name'		  => false,
 	);		
 
-	$atts_arr  		= wp_parse_args( $atts_arr, $_atts_arr );				
+	$atts_arr  		= wp_parse_args( $atts_arr, $defaults );				
 
 	$now_str		= date('Y-m-d H:i:s');	
 	$table_str 	 	= esc_sql( $atts_arr['child_pod_name'] );		
@@ -911,9 +916,9 @@ function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bl
 	// insert
 	$values_arr   	= array();
 	$keys_arr	  	= array();
-	$fields_arr   	= array_merge( $fields_arr, $pafields_arr );
+	$fields   	= array_merge( $fields, $pafields_arr );
 	$vals_arr 		= array();	 
-	foreach( $fields_arr as $k_str => $v_str ){
+	foreach( $fields as $k_str => $v_str ){
 		array_push( $keys_arr, '`' . esc_sql( $k_str ) . '`' );	
 		if( is_numeric( $v_str ) ){
 			// if putting a dot at the end of an number, like 24., strpos will return false so it is treated as an integer
@@ -940,8 +945,8 @@ function pandarf_insert_fn( $fields_arr = array(), $atts_arr = array(), $show_bl
 	if( $show_bln ){
 		echo $query_str ;
 	}	
-	$done_bln 	    = $wpdb->query( $query_str );	
-	if( $done_bln ){
+	$done 	    = $wpdb->query( $query_str );	
+	if( $done ){
 		return $wpdb->insert_id; 
 	} 
 	return false; 
@@ -965,16 +970,16 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 	$repeater_arr = is_pandarf_fn( $params_arr->name, $pods_obj->pod_id );	
 	//echo $pods_obj->id() .  ' ' . $pods_obj->id;
 	if( $repeater_arr ){
-		$savedtb_str	=	$pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'];
+		$saved_table	=	$pods_obj->fields[ $params_arr->name ]['options']['pandarepeaterfield_table'];
 		$items_arr		=	array();
-		$cPod_arr		=	explode( '_',  $savedtb_str );
+		$cPod_arr		=	explode( '_',  $saved_table );
 		if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){
 			// find the repeater table pod name
 			$query_str = $wpdb->prepare( 'SELECT `post_name` FROM `' . $wpdb->posts . '` WHERE `ID` = %d LIMIT 0, 1', array( $cPod_arr[ 1 ] ) ) ;
 			
 			$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
 		} else {
-			$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+			$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $saved_table ) ) ;
 							
 			$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
 
@@ -984,15 +989,15 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 			
 
 			$attrs_arr	= apply_filters( 'pandarf_pods_field_attrs', array(), $value_ukn, $row_arr, $params_arr, $pods_obj  );
-			$fields_arr = array( 
+			$fields = array( 
 								'child_pod_name' 		=> $items_arr[0]['post_name'] , 
 								'parent_pod_id' 		=> $repeater_arr['post_parent'], 
 								'parent_pod_post_id' 	=> $pods_obj->id(),
 								'parent_pod_field_id' 	=> $repeater_arr['ID']
 								);
-			$fields_arr	= apply_filters( 'pandarf_pods_field_fields', $fields_arr, $value_ukn, $row_arr, $params_arr, $pods_obj  );
-			$data_arr	= pandarf_items_fn( 
-											$fields_arr ,
+			$fields	= apply_filters( 'pandarf_pods_field_fields', $fields, $value_ukn, $row_arr, $params_arr, $pods_obj  );
+			$data_arr	= get_pandarf_items( 
+											$fields ,
 											$attrs_arr,
 											0
 										  );	
@@ -1027,7 +1032,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 	print_r( $pods_obj->pod_id );
 	echo '</pre>';	*/
 	$pandarf_arr = array();
-	if( count( $data_arr ) > 0 ){
+	if( is_array( $data_arr ) && count( $data_arr ) > 0 ){
 		foreach( $data_arr[0] as $k_str => $v_ukn ){
 			$repeater_arr = is_pandarf_fn( $k_str,  $pods_obj->pod_id );
 			if( $repeater_arr ) {
@@ -1041,9 +1046,9 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 		// go through each repeater field and attach data
 		foreach( $pandarf_arr as $k_str => $v_ukn ){
 			if( $pods_obj && isset( $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] )){
-				$savedtb_str	=	$pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'];
+				$saved_table	=	$pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'];
 				$items_arr		=	array();
-				$cPod_arr		=	explode( '_',  $savedtb_str );
+				$cPod_arr		=	explode( '_',  $saved_table );
 				// if saved as pod_num, version < 1.2.0
 				if( count( $cPod_arr ) == 2 && $cPod_arr[0] == 'pod' && is_numeric( $cPod_arr[1] ) ){
 					// find the repeater table pod name
@@ -1051,7 +1056,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 					
 					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
 				} else {
-					$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $savedtb_str ) ) ;
+					$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $saved_table ) ) ;
 									
 					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
 
@@ -1059,14 +1064,14 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 				if( count( $items_arr ) == 1 ){
 					for( $i = 0; $i < count( $data_arr ); $i ++ ){
 						$attrs_arr	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parentPod_str  );
-						$fields_arr	= array( 
+						$fields	= array( 
 											'child_pod_name' 		=> $items_arr[0]['post_name'] , 
 											'parent_pod_id' 		=> $pandarf_arr[ $k_str ]['post_parent'], 
 											'parent_pod_post_id' 	=> $data_arr[ $i ]['id'], 
 											'parent_pod_field_id' 	=> $pandarf_arr[ $k_str ]['ID']
 											) ;
-						$cData_arr	= pandarf_items_fn( 
-														$fields_arr,
+						$cData_arr	= 	get_pandarf_items( 
+														$fields,
 														$attrs_arr,
 														0
 													  );	
@@ -1086,36 +1091,51 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 }
 /**
  * Is a panda pods repeater field?
- * @param string $fieldName_str pods field name	 
- * @param integer $parentID_int parent post id	 
+ * @param string $field_name pods field name	 
+ * @param integer $parent_id parent post id	 
  */
-function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
+function is_pandarf( $field_name, $parent_id = 0 ){
 	global $wpdb;
 
-	$para_arr 	=	array( $fieldName_str );
-	$where_str	=	'';
-	if( is_numeric( $parentID_int ) && $parentID_int != 0 ){
-		$where_str	=	' AND ps_tb.`post_parent` =  %d';
-		array_push( $para_arr, $parentID_int );
-	}
+	$field_name = esc_sql( $field_name );
+	$parent_id 	= intval( $parent_id );
+	$key 		= $field_name . '_' . $parent_id;
 	
-	$query_str 	= $wpdb->prepare( 'SELECT ps_tb.ID, ps_tb.post_name, ps_tb.post_title, ps_tb.post_author, ps_tb.post_parent 
+	if ( ! $pandarf_field = wp_cache_get( $key, 'pandarf_fields' ) ) {
+		
+		$params 	=	array( $field_name );
+		$where		=	'';
+		if( is_numeric( $parent_id ) && $parent_id != 0 ){
+			$where	=	' AND ps_tb.`post_parent` =  %d';
+			array_push( $params, $parent_id );
+		}
+		
+		$query 	= $wpdb->prepare( 'SELECT ps_tb.ID, ps_tb.post_name, ps_tb.post_title, ps_tb.post_author, ps_tb.post_parent 
 
-									 FROM `' . $wpdb->posts . '` AS ps_tb
+										 FROM `' . $wpdb->posts . '` AS ps_tb
 
-									 INNER JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type" AND pm_tb.`meta_value` = "pandarepeaterfield"				  
-									 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" ' . $where_str . ' LIMIT 0, 1' , $para_arr );		
-	//if( 'simpods_normal_contents' == $fieldName_str ){
-	//	echo $query_str;
-	//}
-	
-	$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
-	if( count( $items_arr ) ){
-		return $items_arr[0];
+										 INNER JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type" AND pm_tb.`meta_value` = "pandarepeaterfield"				  
+										 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" ' . $where . ' LIMIT 0, 1' , $params );		
+		//if( 'simpods_normal_contents' == $field_name ){
+		//	echo $query_str;
+		//}
+		
+		$items = $wpdb->get_results( $query, ARRAY_A );
+		$pandarf_field = false;	
+		if( ! empty( $items ) ){ 
+			
+			$pandarf_field = $items[0];
+		} 
+				
+		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
 	} 
-	return false;
+	return $pandarf_field;
 	
 }				
+
+function is_pandarf_fn( $field_name, $parent_id = 0 ){
+	return is_pandarf( $field_name, $parent_id );
+}
 if( !is_admin() ){
 	add_action( 'after_setup_theme', 'load_pprf_frontend_scripts' );
 	/**
@@ -1205,7 +1225,7 @@ function pprf_enqueue_scripts() {
  * check pod type
  */
 
-function pprf_pod_details_fn( $pod_int ){
+function pprf_pod_details( $pod_int ){
 	global $wpdb;	
 	$query_str	=	$wpdb->prepare(
 								'SELECT *, pm_tb.`meta_value` AS type FROM `' . $wpdb->prefix . 'posts` AS ps_tb 
@@ -1219,17 +1239,23 @@ function pprf_pod_details_fn( $pod_int ){
 	}
 	return $parent_arr;
 }
+/**
+ * backward compatibility
+ */ 
+function pprf_pod_details_fn( $pod_int ){
+	return pprf_pod_details( $pod_int );
+}
 /*function pprf_family_tree_fn( $atts_arr ){
 
 	global $wpdb;		
 
-	$_atts_arr 	= array(		
+	$defaults 	= array(		
 		'parent_pod_id'               => '',		
 		'parent_pod_post_id'          => '',		
 		'parent_pod_field_id'         => '',		
 	);		
 
-	$atts_arr  		= wp_parse_args( $atts_arr, $_atts_arr );	
+	$atts_arr  		= wp_parse_args( $atts_arr, $defaults );	
 }*/
 /**
  * get the repeater fields using the same same table in the pod
@@ -1251,8 +1277,8 @@ function pprf_same_child_tb_fields_fn( $pod_cla, $ctb_str = '' ){
 	return $return_arr;
 }
 // load language
-add_action( 'plugins_loaded', 'pprf_localization_setup_fn' );
-function pprf_localization_setup_fn() {
+add_action( 'plugins_loaded', 'pprf_localization_setup' );
+function pprf_localization_setup() {
 	load_plugin_textdomain( 'panda-pods-repeater-field', false, basename( dirname( __FILE__ ) ) . '/languages' );	
 }
 /**

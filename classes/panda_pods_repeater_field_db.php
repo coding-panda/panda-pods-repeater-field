@@ -108,16 +108,16 @@ class panda_pods_repeater_field_db {
 						if(  strpos( $tableName_str, $wpdb->prefix . 'pods_' ) === 0 ){
 							
 							//array_push( $podsTb_arr, $table_str );	
-							$tbInfo_arr				 	 = $this->get_pods_tb_info_fn( $table_str );
-							$nameField_str				 = get_post_meta( $tbInfo_arr['id'], 'pod_index', true );
+							$table_info				 	 = $this->get_pods_tb_info_fn( $table_str );
+							$nameField_str				 = get_post_meta( $table_info['id'], 'pod_index', true );
 
-						//print_r( $tbInfo_arr );
+						//print_r( $table_info );
 							$nameLabel_str	=	'';
 							if( $nameField_str == '' ){
 								
-								if( $tbInfo_arr['type'] == 'post_type' ){
+								if( $table_info['type'] == 'post_type' ){
 									$nameField_str = 'post_title';	
-								} else if( $tbInfo_arr['type'] == 'user' ){
+								} else if( $table_info['type'] == 'user' ){
 									$nameField_str = 'display_name';	
 								} else {
 									$nameField_str = 'sp_title';	
@@ -129,7 +129,7 @@ class panda_pods_repeater_field_db {
 																 WHERE ps_tb.`post_name` = %s AND ps_tb.`post_parent` = %d AND ps_tb.`post_type` = "_pods_field" LIMIT 0, 1', 
 																 array( 
 																 	$nameField_str, 
-																 	$tbInfo_arr['id'] 
+																 	$table_info['id'] 
 																 ) 
 																);
 								$items_arr 		= $wpdb->get_results( $query_str , ARRAY_A ); 	
@@ -138,8 +138,8 @@ class panda_pods_repeater_field_db {
 									$nameLabel_str	=	 $items_arr[0]['post_title'];
 								}							
 							}						
-							$podsTb_arr[ 'pod_' . $tbInfo_arr['id'] ] = array( 'name' => $table_str, 'pod' => $tbInfo_arr['name'], 'type' => $tbInfo_arr['type'], 'name_field'    => $nameField_str, 'name_label' => $nameLabel_str );
-							$podsTb_arr[ $table_str ] = $podsTb_arr[ 'pod_' . $tbInfo_arr['id'] ];
+							$podsTb_arr[ 'pod_' . $table_info['id'] ] = array( 'name' => $table_str, 'pod' => $table_info['name'], 'type' => $table_info['type'], 'name_field'    => $nameField_str, 'name_label' => $nameLabel_str );
+							$podsTb_arr[ $table_str ] = $podsTb_arr[ 'pod_' . $table_info['id'] ];
 						} else {
 							$podsTb_arr[ $table_str ] = array( 'name' => $table_str, 'pod' => '', 'type' => 'wp', 'name_field'    => '', 'name_label' => '' );	
 						}
@@ -273,14 +273,14 @@ class panda_pods_repeater_field_db {
 	 * @param int $rowID_int the child table row id
 	 * @return array if it valid
 	 */
-	public function get_admin_columns_fn( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
+	public function get_admin_columns( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
 		//require_once ABSPATH . '/wp-content/plugins/pods/init.php';
 		$return_arr		=	array(
 								'valid'		=>	false,
 								'columns'	=>	array(),
 								'label'		=>	'',
 								);
-		$adminCols_arr	=	array(); // if apply admin columns is picked, use admin columns instead of name
+		$admin_columns	=	array(); // if apply admin columns is picked, use admin columns instead of name
 		$parent_pod 	=	new pods( $parentTb_str );
 		//echo PODS_VERSION . ' - ' . $parentTb_str . ' | ' . $childTb_str . ' | ' . $fieldID_int . ' | ' . $rowID_int;
 		//print_r($parent_pod);
@@ -294,27 +294,27 @@ class panda_pods_repeater_field_db {
 						
 						if( $child_pod ){
 						
-							$adminCols_arr 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );					
+							$admin_columns 	= (array) pods_v( 'ui_fields_manage', $child_pod->pod_data['options'] );					
 						}
 					}
 					break;
 				}
 			}
 		}
-		if( count( $adminCols_arr ) > 0 ){
+		if( count( $admin_columns ) > 0 ){
 			$return_arr['valid']	=	true;
-			$return_arr['columns']	=	$adminCols_arr;
+			$return_arr['columns']	=	$admin_columns;
 			$label_str				=	'';
 			if( $rowID_int !== 0 && is_numeric( $rowID_int ) ){
 				$id_bln	=	false;
-				foreach( $adminCols_arr as $adminCol_str ){
-					if( strtolower( $adminCol_str ) == 'id' ){
+				foreach( $admin_columns as $admin_column_name ){
+					if( strtolower( $admin_column_name ) == 'id' ){
 						$id_bln	=	true;
 						continue;
 					}					
-					$colVal_ukn	=	pods_field( $childTb_str, $rowID_int, $adminCol_str );
-					if( is_string( $colVal_ukn ) || is_numeric( $colVal_ukn ) ){
-						$label_str .= '<strong>' . esc_html( $child_pod->fields[ $adminCol_str ]['label'] ) . ':</strong> ' . esc_html( $colVal_ukn ) . ' ' ;
+					$column_value	=	pods_field( $childTb_str, $rowID_int, $admin_column_name );
+					if( is_string( $column_value ) || is_numeric( $column_value ) ){
+						$label_str .= '<strong>' . esc_html( $child_pod->fields[ $admin_column_name ]['label'] ) . ':</strong> ' . esc_html( $column_value ) . ' ' ;
 					}				
 				}	
 				if( $id_bln ){
@@ -327,5 +327,9 @@ class panda_pods_repeater_field_db {
 		//print_r($return_arr);
 		return $return_arr;
 
+	}
+
+	public function get_admin_columns_fn( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int = 0 ){
+		return $this->get_admin_columns( $parentTb_str, $childTb_str, $fieldID_int, $rowID_int ) ;
 	}
 }

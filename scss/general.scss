@@ -4,7 +4,7 @@
 
 	margin:-5px;
 
-}
+} 
 
 .mgt1-1em{
 
@@ -260,3 +260,15 @@ padding: 0;
                 padding: 0;
 }
  
+#pprf-form{ 
+	.pods-form-ui-row-name-id{
+		display:none;
+	}
+	label{
+		font-weight:bold;
+
+	}
+	.pods-field__container{
+		margin: 10px 0 0;
+	}
+} 

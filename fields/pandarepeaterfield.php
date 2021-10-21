@@ -43,7 +43,7 @@ $parent_pod = false;
 if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
                 
     //check it is an Advanced Content Type or normal post type
-    $parent_arr	=	pprf_pod_details_fn( $_GET['podid'] );
+    $parent_arr	=	pprf_pod_details( $_GET['podid'] );
                     
     if( $parent_arr ){
         $parentTb_str   =	$parent_arr['post_name'] ;
