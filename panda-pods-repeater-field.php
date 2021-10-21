@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.4.10
+Version: 1.4.11
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -853,7 +853,7 @@ echo '</pre>';	*/
 	return 	$items;
 }
 /**
- * Alias of pandarf_items_fn
+ * Alias of get_pandarf_items
  */ 
 function pandarf_items_fn( $fields = array(), $attrs = array(), $show_query = false ){
 	
@@ -996,7 +996,7 @@ function pandarf_pods_field_fn( $value_ukn, $row_arr, $params_arr, $pods_obj ){
 								'parent_pod_field_id' 	=> $repeater_arr['ID']
 								);
 			$fields	= apply_filters( 'pandarf_pods_field_fields', $fields, $value_ukn, $row_arr, $params_arr, $pods_obj  );
-			$data_arr	= pandarf_items_fn( 
+			$data_arr	= get_pandarf_items( 
 											$fields ,
 											$attrs_arr,
 											0
@@ -1070,7 +1070,7 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 											'parent_pod_post_id' 	=> $data_arr[ $i ]['id'], 
 											'parent_pod_field_id' 	=> $pandarf_arr[ $k_str ]['ID']
 											) ;
-						$cData_arr	= pandarf_items_fn( 
+						$cData_arr	= 	get_pandarf_items( 
 														$fields,
 														$attrs_arr,
 														0
@@ -1091,36 +1091,51 @@ function pandarf_data_fn( $data_arr, $parentPod_str ){
 }
 /**
  * Is a panda pods repeater field?
- * @param string $fieldName_str pods field name	 
- * @param integer $parentID_int parent post id	 
+ * @param string $field_name pods field name	 
+ * @param integer $parent_id parent post id	 
  */
-function is_pandarf_fn( $fieldName_str, $parentID_int = 0 ){
+function is_pandarf( $field_name, $parent_id = 0 ){
 	global $wpdb;
 
-	$para_arr 	=	array( $fieldName_str );
-	$where_str	=	'';
-	if( is_numeric( $parentID_int ) && $parentID_int != 0 ){
-		$where_str	=	' AND ps_tb.`post_parent` =  %d';
-		array_push( $para_arr, $parentID_int );
-	}
+	$field_name = esc_sql( $field_name );
+	$parent_id 	= intval( $parent_id );
+	$key 		= $field_name . '_' . $parent_id;
 	
-	$query_str 	= $wpdb->prepare( 'SELECT ps_tb.ID, ps_tb.post_name, ps_tb.post_title, ps_tb.post_author, ps_tb.post_parent 
+	if ( ! $pandarf_field = wp_cache_get( $key, 'pandarf_fields' ) ) {
+		
+		$params 	=	array( $field_name );
+		$where		=	'';
+		if( is_numeric( $parent_id ) && $parent_id != 0 ){
+			$where	=	' AND ps_tb.`post_parent` =  %d';
+			array_push( $params, $parent_id );
+		}
+		
+		$query 	= $wpdb->prepare( 'SELECT ps_tb.ID, ps_tb.post_name, ps_tb.post_title, ps_tb.post_author, ps_tb.post_parent 
 
-									 FROM `' . $wpdb->posts . '` AS ps_tb
+										 FROM `' . $wpdb->posts . '` AS ps_tb
 
-									 INNER JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type" AND pm_tb.`meta_value` = "pandarepeaterfield"				  
-									 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" ' . $where_str . ' LIMIT 0, 1' , $para_arr );		
-	//if( 'simpods_normal_contents' == $fieldName_str ){
-	//	echo $query_str;
-	//}
-	
-	$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
-	if( count( $items_arr ) ){
-		return $items_arr[0];
+										 INNER JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type" AND pm_tb.`meta_value` = "pandarepeaterfield"				  
+										 WHERE ps_tb.`post_type` = "_pods_field" AND ps_tb.`post_name` = "%s" ' . $where . ' LIMIT 0, 1' , $params );		
+		//if( 'simpods_normal_contents' == $field_name ){
+		//	echo $query_str;
+		//}
+		
+		$items = $wpdb->get_results( $query, ARRAY_A );
+		$pandarf_field = false;	
+		if( ! empty( $items ) ){ 
+			
+			$pandarf_field = $items[0];
+		} 
+				
+		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
 	} 
-	return false;
+	return $pandarf_field;
 	
 }				
+
+function is_pandarf_fn( $field_name, $parent_id = 0 ){
+	return is_pandarf( $field_name, $parent_id );
+}
 if( !is_admin() ){
 	add_action( 'after_setup_theme', 'load_pprf_frontend_scripts' );
 	/**
