@@ -271,4 +271,14 @@ padding: 0;
 	.pods-field__container{
 		margin: 10px 0 0;
 	}
+	.pods-field-option {
+		.pods-dfv-container {
+	    	max-width: calc( 100% - 1px );
+		}
+	}
+	.pods-form-ui-row-type-pick {
+		.pods-form-ui-field select{
+			max-width: 100%;
+		}
+	}
 } 
