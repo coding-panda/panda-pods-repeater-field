@@ -84,9 +84,10 @@ class panda_pods_repeater_field_db {
 	public function get_tables_fn( $allTables_bln = false )	{
 		global $wpdb;
 
-		$podsTb_arr    = array();
+		$podsTb_arr = array();
 		
 		$tables_arr = get_option( 'simpods_all_tables', array() ); // integrated with Simpods MVC
+
 
 		if( empty( $tables_arr ) || ! is_array( $tables_arr ) ){
 			$sql_str       = 'SHOW TABLES LIKE "%"';
