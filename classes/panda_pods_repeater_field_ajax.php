@@ -55,7 +55,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	public function define_pprf_all_tables(){
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
 			$db_cla      = new panda_pods_repeater_field_db();
-			$tables_arr  = $db_cla->get_tables_fn();
+			$tables_arr  = $db_cla->get_tables();
 			define( 'PPRF_ALL_TABLES', maybe_serialize( $tables_arr ) );	
 		} 
 	}

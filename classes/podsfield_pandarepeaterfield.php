@@ -1039,7 +1039,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		global $wpdb, $current_user;
 
 		$db_cla      = new panda_pods_repeater_field_db();
-		$tables_arr  = $db_cla->get_tables_fn();
+		$tables_arr  = $db_cla->get_tables();
 		
 		/*if( isset( $pieces['params'] ) ){
 			// for pods 2.6
@@ -1276,7 +1276,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 		if( ! defined( 'PPRF_ALL_TABLES' ) ){				
 			$pprf_db = new panda_pods_repeater_field_db();
-			$tables  = $pprf_db->get_tables_fn();
+			$tables  = $pprf_db->get_tables();
 			define( 'PPRF_ALL_TABLES', serialize( $tables ) );	
 
 		} else {
