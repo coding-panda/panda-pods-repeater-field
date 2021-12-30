@@ -21,25 +21,25 @@ class Panda_Pods_Repeater_Field_Ajax {
 		// login user only, for everyone, use wp_ajax_nopriv_ example: add_action( 'wp_ajax_function-name', 			array( $this, 'function-name') );				
 		//if( is_user_logged_in() && is_admin() ){
 			add_action( 'wp_ajax_admin_pprf_load_newly_added_fn', 		array( $this, 'admin_pprf_load_newly_added_fn') );	
-			add_action( 'wp_ajax_admin_pprf_delete_item_fn', 			array( $this, 'admin_pprf_delete_item_fn') );	
+			add_action( 'wp_ajax_admin_pprf_delete_item', 			array( $this, 'admin_pprf_delete_item') );	
 			add_action( 'wp_ajax_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
 			add_action( 'wp_ajax_admin_pprf_load_more_fn', 				array( $this, 'admin_pprf_load_more_fn') );				
-			add_action( 'wp_ajax_admin_pprf_reassign_fn', 				array( $this, 'admin_pprf_reassign_fn') );				
+			add_action( 'wp_ajax_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );				
 						
 			// frontend
 
 			//add_action( 'wp_ajax_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
-			//add_action( 'wp_ajax_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
+			//add_action( 'wp_ajax_front_pprf_delete_item', 			array( $this, 'front_pprf_delete_item') );	
 			//add_action( 'wp_ajax_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );					
 		//}	
 
 		add_action( 'wp_ajax_nopriv_admin_pprf_load_newly_added_fn', 		array( $this, 'admin_pprf_load_newly_added_fn') );	
-		add_action( 'wp_ajax_nopriv_admin_pprf_delete_item_fn', 				array( $this, 'admin_pprf_delete_item_fn') );	
+		add_action( 'wp_ajax_nopriv_admin_pprf_delete_item', 				array( $this, 'admin_pprf_delete_item') );	
 		add_action( 'wp_ajax_nopriv_admin_pprf_update_order_fn', 			array( $this, 'admin_pprf_update_order_fn') );							
 		add_action( 'wp_ajax_nopriv_admin_pprf_load_more_fn', 				array( $this, 'admin_pprf_load_more_fn') );				
-		add_action( 'wp_ajax_nopriv_admin_pprf_reassign_fn', 				array( $this, 'admin_pprf_reassign_fn') );							
+		add_action( 'wp_ajax_nopriv_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );							
 /*		add_action( 'wp_ajax_nopriv_front_pprf_load_newly_added_fn', 		array( $this, 'front_pprf_load_newly_added_fn') );	
-		add_action( 'wp_ajax_nopriv_front_pprf_delete_item_fn', 			array( $this, 'front_pprf_delete_item_fn') );	
+		add_action( 'wp_ajax_nopriv_front_pprf_delete_item', 			array( $this, 'front_pprf_delete_item') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_update_order_fn', 			array( $this, 'front_pprf_update_order_fn') );		*/		
 
 	}
@@ -145,7 +145,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	/**
 	 * delete item
 	 */
-	public function pprf_delete_item_fn(){	
+	public function pprf_delete_item(){	
 
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 			$data_arr	=	array( 'security' => false );
@@ -235,18 +235,18 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		die();
 	}
-	public function admin_pprf_delete_item_fn(){
-		if( $_POST['action'] !== 'admin_pprf_delete_item_fn' ){
+	public function admin_pprf_delete_item(){
+		if( $_POST['action'] !== 'admin_pprf_delete_item' ){
 			die();
 		}			
-		$this->pprf_delete_item_fn();
+		$this->pprf_delete_item();
 		
 	}
-	public function front_pprf_delete_item_fn(){
-		if( $_POST['action'] !== 'front_pprf_delete_item_fn' ){
+	public function front_pprf_delete_item(){
+		if( $_POST['action'] !== 'front_pprf_delete_item' ){
 			die();
 		}			
-		$this->pprf_delete_item_fn();
+		$this->pprf_delete_item();
 		
 	}	
 	/**
@@ -393,12 +393,12 @@ class Panda_Pods_Repeater_Field_Ajax {
 		$this->pprf_load_more_fn();
 	}	
 
-	public function admin_pprf_reassign_fn(){
+	public function admin_pprf_reassign(){
 		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
 			$data_arr	=	array( 'security' => false, 'updated' => false  );
 		    wp_send_json_error( $data_arr );
 		} 		
-		if( $_POST['action'] != 'admin_pprf_reassign_fn' ){
+		if( $_POST['action'] != 'admin_pprf_reassign' ){
 			$data_arr	=	array( 'security' => true, 'updated' => false  );
 		    wp_send_json_error( $data_arr );			
 		}

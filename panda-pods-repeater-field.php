@@ -620,7 +620,7 @@ function pandarf_pods_fn( $tb_str, $search_arr = array( 'pod_id' => '', 'post_id
 		include_once $file_str;		
 		
 		$db_cla 	 = new panda_pods_repeater_field_db();	
-		$table_info	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
+		$table_info	 = $db_cla->get_pods_tb_info( 'pods_' . $tb_str );
 		$tbabbr_str  = $table_info['type'] == 'pod'? 't' : 'd';	
 
 		$where_str   = '   `' . $tbabbr_str . '`.`pandarf_parent_pod_id`  = ' . intval( $search_arr['pod_id'] ) . '

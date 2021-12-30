@@ -246,17 +246,17 @@ echo '</div>';
 var pprf_loaded_resized 	= false;
 var pprf_bottom_wrap_height = jQuery('html body #pprf-bottom-wrap').height() || 0;
 // height before each click, 60 is for the padding top and bottom
-var pprf_orgHei_int = jQuery('html body #pprf-form').height() + pprf_bottom_wrap_height + 60;
+var pprf_original_height = jQuery('html body #pprf-form').height() + pprf_bottom_wrap_height + 60;
 // height on load, 40 is for the padding top and bottom
 var pprf_test_orgHei_int      = jQuery('html body #pprf-form').height() + pprf_bottom_wrap_height + 60;
-function pprf_resize_fn( new_height ) { 
+function pprf_resize_window( new_height ) { 
 	
 	pprf_bottom_wrap_height = jQuery('html body #pprf-bottom-wrap').height() || 0;
 	if( typeof new_height == 'undefined' ){
-		pprf_orgHei_int = jQuery('html body #pprf-form').height() +  pprf_bottom_wrap_height + 60;
+		pprf_original_height = jQuery('html body #pprf-form').height() +  pprf_bottom_wrap_height + 60;
 		
 	} else {
-		pprf_orgHei_int = new_height;
+		pprf_original_height = new_height;
 		
 	}	
 
@@ -266,9 +266,9 @@ function pprf_resize_fn( new_height ) {
 
 function pprf_update_parent_fn() { 
 
-	var height = pprf_orgHei_int;
+	var height = pprf_original_height;
 	if( jQuery('.media-modal').length != 0 ){
-		height = jQuery('.media-modal').height() + pprf_orgHei_int;	
+		height = jQuery('.media-modal').height() + pprf_original_height;	
 	}
 	
 	if( jQuery('#ui-datepicker-div').length != 0 && jQuery('#ui-datepicker-div').css('display') == 'block' ){
@@ -279,14 +279,14 @@ function pprf_update_parent_fn() {
 		}		
 	}
 	
-	if( typeof parent.pprf_updateIframeSize_fn == 'function' ){ 
-		parent.pprf_updateIframeSize_fn('<?php echo esc_attr( $iframeID_int ); ?>', height);	
+	if( typeof parent.pprf_update_iframe_size == 'function' ){ 
+		parent.pprf_update_iframe_size('<?php echo esc_attr( $iframeID_int ); ?>', height);	
 	}
 	<?php
 	if( $piframeID_int != '' ){
 	?>
 	//call the resize function in the parent iframe, nested iframe only
-	//parent.pprf_resize_fn();
+	//parent.pprf_resize_window();
 	
 	<?php
 	}
@@ -301,7 +301,7 @@ jQuery(document).ready( function($) {
 	?>
 	$('#pprf-reassign-btn').on('click', function(){
 		var data_obj = {
-			action 		: 	'admin_pprf_reassign_fn',		
+			action 		: 	'admin_pprf_reassign',		
 			security 	: 	ajax_script.nonce,
 			podid 		:  	'<?php echo esc_js( $_GET['podid'] ); ?>',			
 			cpodid		:   '<?php echo esc_js( $_GET['tb'] ); ?>',			
@@ -317,7 +317,7 @@ jQuery(document).ready( function($) {
 			function( response_obj ){				
 				$('#pprf-reassign-loader').addClass('hidden');
 				if( response_obj['success'] == true && response_obj['data']['updated'] ){					
-					parent.pprf_reassign_fn( data_obj['cpodid'], data_obj['curPItemid'], data_obj['itemid'] );
+					parent.pprf_reassign( data_obj['cpodid'], data_obj['curPItemid'], data_obj['itemid'] );
 				}
 			}
 		);	
@@ -332,20 +332,20 @@ jQuery(document).ready( function($) {
 	$('#adminmenuback, #adminmenuwrap, #wpadminbar, #wpfooter, #screen-meta-links, #screen-meta').remove();
 
 	$('.pods-form-ui-field-type-pick').on('change', function(){				
-		pprf_resize_fn( );		
+		pprf_resize_window( );		
 	})
 	//$( this ).on( 'click, mouseenter, mouseout, mouseleave', function(){
 	$( '.click-to-expand, .click-to-expand-arrow' ).on( 'click', function(){
 		
 		// if the iframe has not been resized		
 		//if( pprf_loaded_resized == false ){
-			pprf_resize_fn();
+			pprf_resize_window();
 			
 			pprf_loaded_resized = true;
 		//}
 	})
 	$( '.click-to-close, .click-to-close-arrow' ).on( 'click', function(){				
-		pprf_resize_fn( 150 );
+		pprf_resize_window( 150 );
 		pprf_loaded_resized = false;
 	})
 
@@ -361,7 +361,7 @@ jQuery(document).ready( function($) {
 		global $wpdb;
 		$lastid = $wpdb->insert_id;
 	?>
-	parent.pprf_new_fn( <?php echo $_GET['podid'];?>, "<?php echo $_GET['postid'];?>", <?php echo $_GET['tb'];?>, <?php echo $current_user->ID;?>, '<?php echo $_GET['iframe_id']; ?>', <?php echo $_GET['poditemid']; ?>, '<?php echo esc_attr( get_the_title( $_GET['poditemid'] ) ); ?>' );
+	parent.pprf_new( <?php echo $_GET['podid'];?>, "<?php echo $_GET['postid'];?>", <?php echo $_GET['tb'];?>, <?php echo $current_user->ID;?>, '<?php echo $_GET['iframe_id']; ?>', <?php echo $_GET['poditemid']; ?>, '<?php echo esc_attr( get_the_title( $_GET['poditemid'] ) ); ?>' );
 	<?php	
 	}
 	// disable it until I am sure it is not needed
@@ -369,8 +369,8 @@ jQuery(document).ready( function($) {
 	?>
 	// tell the parent window to delete this item
 	$('.panda-repeater-field-delete-bn').on('click', function(){
-		parent.pprf_delete_item_fn( <?php echo $_GET['podid'];?>, "<?php echo $_GET['postid'];?>", <?php echo $_GET['tb'];?>, <?php echo $_GET['itemid'];?>, <?php echo $current_user->ID;?>, '<?php echo $_GET['iframe_id']; ?>', <?php echo $_GET['poditemid']; ?> );
-		pprf_resize_fn();
+		parent.pprf_delete_item( <?php echo $_GET['podid'];?>, "<?php echo $_GET['postid'];?>", <?php echo $_GET['tb'];?>, <?php echo $_GET['itemid'];?>, <?php echo $current_user->ID;?>, '<?php echo $_GET['iframe_id']; ?>', <?php echo $_GET['poditemid']; ?> );
+		pprf_resize_window();
 	});
 	<?php	
 	}
@@ -379,17 +379,17 @@ jQuery(document).ready( function($) {
 	// saved, so don't popup the confirm box to ask if to ignore changes
 	// $('.pods-submit-button').click( function (){		
 	$( document ).on('click', '.pods-submit-button', function (){			
-		parent.pprfChanged_bln	=	false;		
+		parent.pprf_is_changed	=	false;		
 	 })	
 	$('.pods-field-input').on('click keyup change', function(){	 
-		parent.pprfChanged_bln	=	true;		
+		parent.pprf_is_changed	=	true;		
 	});	 
 
 	/**
 	 * after running all javascript, resize the window 
 	 */
 	//$(window).load(function(){
-		pprf_resize_fn();
+		pprf_resize_window();
 	//} );
 })  		 
 </script>

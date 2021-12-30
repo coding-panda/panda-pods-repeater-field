@@ -121,7 +121,7 @@ class panda_pods_repeater_field_db {
 						if(  strpos( $table_name, $wpdb->prefix . 'pods_' ) === 0 ){
 							
 							//array_push( $pod_tables, $table_str );	
-							$table_info				= $this->get_pods_tb_info_fn( $table_str );
+							$table_info				= $this->get_pods_tb_info( $table_str );
 							$name_field				= get_post_meta( $table_info['id'], 'pod_index', true );
 
 						//print_r( $table_info );
@@ -167,9 +167,9 @@ class panda_pods_repeater_field_db {
 	}	
 
 	/**
-	 * get_pods_tb_info_fn: get pods table info 
+	 * get_pods_tb_info: get pods table info 
 	 */
-	public function get_pods_tb_info_fn( $tb_str ){
+	public function get_pods_tb_info( $tb_str ){
 		global $wpdb;
 		$theTb_str	=	$tb_str;
 		/*if( !isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && $_GET['page'] != 'pods' && $_GET['page'] != 'pods-add-new' ) ){ // don't return cached if on add/edit pods so new tables will be added

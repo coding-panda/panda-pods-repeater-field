@@ -245,7 +245,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * add: Now give alerts if changes not saved
 
 = 1.1.9 - 22nd October 2017 =
-* debug: Fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
+* debug: Fixed the problem that expanding and contrasting call the pprf_resize_window() too many times and sometimes the iframe was not ready.
 * add: Now items can be moved to trash and restored from trash
 
 = 1.2.0 - 17nd December 2017 =
@@ -413,7 +413,7 @@ Debug: Fixed the pods relationship fields ordering problem
 Add: Now give alerts if changes not saved
 
 = 1.1.9 =
-Debug: fixed the problem that expanding and contrasting call the pprf_resize_fn() too many times and sometimes the iframe was not ready.
+Debug: fixed the problem that expanding and contrasting call the pprf_resize_window() too many times and sometimes the iframe was not ready.
 Add: Now items can be moved to trash and restored from trash.
 
 = 1.2.0 =

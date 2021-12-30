@@ -424,7 +424,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				return;
 			}			
 			if( $tb_str != ''  ){
-				$table_info	 = $db_cla->get_pods_tb_info_fn( 'pods_' . $tb_str );
+				$table_info	 = $db_cla->get_pods_tb_info( 'pods_' . $tb_str );
 				
 				// load items for the current post only using regular expression
 				$where_str   =    '   `pandarf_parent_pod_id`  = %d
@@ -568,7 +568,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$bg_str		  	= 'pprf-purple-bg';
 
 				$trash_int  	= 0;
-				$notTrash_int  	= 0;
+				$not_trashed_count  	= 0;
 				$traBtn_str  	= 'pprf-btn-not-trashed';	
 				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
 					if( isset( $row_obj['pandarf_trash'] ) && $row_obj['pandarf_trash'] == 1 ){
@@ -607,8 +607,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 								$bg_str 	 	= 	$trash_int % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
 								
 							} else{
-								$notTrash_int ++;
-								$bg_str 	 	= 	$notTrash_int % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
+								$not_trashed_count ++;
+								$bg_str 	 	= 	$not_trashed_count % 2 == 0 ? 'pprf-purple-bg' : 'pprf-white-bg';
 							}
 						}
 						if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 0 ){
