@@ -13,29 +13,22 @@
 define( 'WP_USE_THEMES', false ); // get pass the http_host problem
 
 
-$isAdmin_bln	=	false;
+$is_admin	=	false;
 
 if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_GET['page'] == 'panda-pods-repeater-field' ){ // is_admin doesn't work for nested fields
-	$isAdmin_bln	=	true;	
+	$is_admin	=	true;	
 } else {
 	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
 	wp_head();
 }
 
 $_GET = array_map('wp_strip_all_tags', $_GET);
-?>
 
-<?php
-//show_admin_bar( false );
-/*$parentPath_str = '../';
-if ( is_multisite() ){
-	$parentPath_str = '../../';
-}*/
-$allow_bln = true;
+$is_allowed = true;
 
 if( !defined( 'PANDA_PODS_REPEATER_URL' ) || !is_user_logged_in() || !current_user_can('edit_posts')  ){
 	// action before the iframe
-	$allow_bln = false;
+	$is_allowed = false;
 	
 }
 global $current_user;
@@ -43,36 +36,35 @@ $parent_pod = false;
 if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
                 
     //check it is an Advanced Content Type or normal post type
-    $parent_arr	=	pprf_pod_details( $_GET['podid'] );
+    $parent_details	=	pprf_pod_details( $_GET['podid'] );
                     
-    if( $parent_arr ){
-        $parentTb_str   =	$parent_arr['post_name'] ;
-        $condit_arr    	=	array();
+    if( $parent_details ){
+        $parent_table   =	$parent_details['post_name'] ;
+        $conditions    	=	array();
 	    //normal post type fetch all published and draft posts
-	    if( $parent_arr['type'] == 'post_type' ){
-	        $condit_arr =     array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
+	    if( $parent_details['type'] == 'post_type' ){
+	        $conditions =     array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
 	    }
 
-		$parent_pod 	= pods( $parentTb_str, $condit_arr ); 
-		if( ! $allow_bln ){
+		$parent_pod 	= pods( $parent_table, $conditions ); 
+		if( ! $is_allowed ){
 			//get current field 
 			foreach( $parent_pod->fields as $k => $child_fields ){
 				if( $child_fields['id'] == $_GET['poditemid']	&& $child_fields['type'] == 'pandarepeaterfield' ){
 			
 					if( isset( $child_fields['options']['pandarepeaterfield_public_access'] ) && $child_fields['options']['pandarepeaterfield_public_access'] == 1 ){ // allowed for public access
-						$allow_bln = true;
+						$is_allowed = true;
 					} else {
 						// $child_fields['options']['pandarepeaterfield_role_access'] has no value. It is saved into the _postmeta
 						if( is_user_logged_in() ){
-							foreach( $current_user->roles as $role_str ){ // the user role can access
-								$ok_ukn	=	get_post_meta( $child_fields['id'], $role_str, true );
-								if( $ok_ukn ){
-									$allow_bln = true;
+							foreach( $current_user->roles as $role ){ // the user role can access
+								$ok	=	get_post_meta( $child_fields['id'], $role, true );
+								if( $ok ){
+									$is_allowed = true;
 									break;
 								}
 							}						
 						}
-						//if( get_post_meta()
 						
 					}
 
@@ -85,8 +77,8 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 }
 
 
-$allow_bln = apply_filters( 'pprf_load_panda_repeater_allow', $allow_bln, $_GET );
-if( !$allow_bln ){
+$is_allowed = apply_filters( 'pprf_load_panda_repeater_allow', $is_allowed, $_GET );
+if( !$is_allowed ){
 	echo '<div class="mg10">';
 	die( apply_filters( 'pprf_load_panda_repeater_allow_msg', esc_html__('You do not have permission to load this item.', 'panda-pods-repeater-field' ) ) );
 	echo '</div>';
@@ -99,10 +91,10 @@ global $current_user;
 //print_r( $_SERVER );
 ?>
 <?php 
-$iframeID_int  = isset( $_GET['iframe_id'] ) ? esc_attr( $_GET['iframe_id'] ) : ''; 
-$piframeID_int = isset( $_GET['piframe_id'] ) ?  esc_attr( $_GET['piframe_id'] ) : ''; 
-$wid_int	   = 25;
-$wid_str		= 'quater';
+$iframe_id  		= isset( $_GET['iframe_id'] ) ? esc_attr( $_GET['iframe_id'] ) : ''; 
+$parent_iframe_id 	= isset( $_GET['piframe_id'] ) ?  esc_attr( $_GET['piframe_id'] ) : ''; 
+$wid_int	   		= 25;
+$wid_str			= 'quater';
 if( isset( $_GET['poditemid'] ) && is_numeric( $_GET['poditemid'] ) ){
 	$wid_int  = get_post_meta( absint( $_GET['poditemid'] ), 'pandarepeaterfield_field_width' , true);
 	
@@ -146,9 +138,9 @@ echo '<div id="pprf-form" class="pprf-wid-' . esc_attr( $wid_str ) . '">';
 $get_data = isset( $_GET )? $_GET : array();
 do_action('pandarf_item_top', $get_data );
 
-if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_' . $_GET['tb'], PodsField_Pandarepeaterfield::$actTbs_arr ) ) {
+if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_' . $_GET['tb'], PodsField_Pandarepeaterfield::$act_tables ) ) {
 	
-	$table_name  = PodsField_Pandarepeaterfield::$actTbs_arr[ 'pod_' . $_GET['tb'] ];
+	$table_name  = PodsField_Pandarepeaterfield::$act_tables[ 'pod_' . $_GET['tb'] ];
 
 	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) ){		
 		$pod_cla = pods( $table_name, absint( $_GET['itemid'] ) );
@@ -159,17 +151,10 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 	// Output a form with all fields
 	echo $pod_cla->form( array(), 'Save ' . get_the_title( absint( $_GET['poditemid'] ) ) ); 
 
-	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) && isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ) { //&& array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$actTbs_arr ) 
+	if( isset( $_GET['itemid'] ) && is_numeric( $_GET['itemid'] ) && isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ) { //&& array_key_exists( 'pod_' . $_GET['podid'], PodsField_Pandarepeaterfield::$act_tables ) 
 
 
 		if( $parent_pod ){
-		   /* $condit_arr	=	array();
-			//normal post type fetch all published and draft posts
-			if( $parent_arr['type'] == 'post_type' ){
-				$condit_arr =	array( 'where' => 't.post_status = "publish" OR t.post_status = "draft"');
-			}
-
-			$parent_pod 	= pods( $parentTb_str, $condit_arr ); */
 			
 			$reassignable	= false;
 			//get current field 
@@ -185,7 +170,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 
 			//If reassigning allowed
 			if( $reassignable ){
-				$same_child_fields	=	pprf_same_child_tb_fields_fn( $parent_pod, $child_table_name );				
+				$same_child_fields	=	pprf_same_child_tb_fields( $parent_pod, $child_table_name );				
 				//$all_rows = $parent_pod->data(); 
 				$parents_html	= '';
 			    if ( 0 < $parent_pod->total() ) { 
@@ -260,11 +245,11 @@ function pprf_resize_window( new_height ) {
 		
 	}	
 
-	pprf_update_parent_fn();
+	pprf_update_parent();
 	//parent.pprfParentheight;
 }
 
-function pprf_update_parent_fn() { 
+function pprf_update_parent() { 
 
 	var height = pprf_original_height;
 	if( jQuery('.media-modal').length != 0 ){
@@ -280,10 +265,10 @@ function pprf_update_parent_fn() {
 	}
 	
 	if( typeof parent.pprf_update_iframe_size == 'function' ){ 
-		parent.pprf_update_iframe_size('<?php echo esc_attr( $iframeID_int ); ?>', height);	
+		parent.pprf_update_iframe_size('<?php echo esc_attr( $iframe_id ); ?>', height);	
 	}
 	<?php
-	if( $piframeID_int != '' ){
+	if( $parent_iframe_id != '' ){
 	?>
 	//call the resize function in the parent iframe, nested iframe only
 	//parent.pprf_resize_window();
@@ -400,6 +385,6 @@ if ( window == window.top ) {
 }
 </script>
 <?php
-if( !$isAdmin_bln ){
+if( !$is_admin ){
 	wp_footer();
 }

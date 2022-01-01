@@ -36,7 +36,7 @@ var pprf_parent_height = jQuery('html').height();
 function pprf_new( podid, postid, cpodid, authorid , iframeid, poditemid, parentName ){ 
 	if( jQuery.isNumeric( podid ) && jQuery.isNumeric( cpodid ) && jQuery.isNumeric( authorid ) && jQuery.isNumeric( poditemid ) ) {
 		
-		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_load_newly_added_fn', 'security' : ajax_script.nonce };
+		var para_obj  = { 'podid': podid, 'postid': postid, 'cpodid': cpodid, 'authorid': authorid, 'poditemid' : poditemid, 'action' : 'admin_pprf_load_newly_added', 'security' : ajax_script.nonce };
 	
 		var data_obj  = para_obj;
 		
@@ -261,8 +261,8 @@ function pprf_delete_item( podid, postid, cpodid, itemid, authorid , iframeid, p
 									
 								}						
 								// integrate with simpods js
-								if( typeof call_simpods_fn !== 'undefined' && jQuery.isFunction( call_simpods_fn ) ) {
-									call_simpods_fn( response_arr );
+								if( typeof call_simpods !== 'undefined' && jQuery.isFunction( call_simpods ) ) {
+									call_simpods( response_arr );
 								}
 							}
 							//document.getElementById( iframeid ).contentWindow.pprf_resize_window() ;
@@ -304,18 +304,18 @@ jQuery( document ).on('click', '.pprf-load-more-btn',	function( evt ){
 	jQuery( '#pprf-load-more-wrap-' + jQuery( this ).data('target') + ' .pprf-ajax-img').css('display', 'block');
 	
 
-	pprf_load_more_fn( jQuery( this).data('target'), jQuery( this ) );
+	pprf_load_more( jQuery( this).data('target'), jQuery( this ) );
 
 })	  
 
-function pprf_load_more_fn( target_str, ele_obj ){
+function pprf_load_more( target_str, ele_obj ){
 	var loaded_arr	=	new Array();
 	jQuery( '#panda-repeater-fields-' + target_str + ' .pprf-redorder-list li' ).each( function( idx_int ) {
 		loaded_arr[ idx_int ] = parseInt( jQuery( this ).data('id') );
 	});
 	
 	var data_obj = {
-		action 		: 	'admin_pprf_load_more_fn',
+		action 		: 	'admin_pprf_load_more',
 		loaded 		:	loaded_arr, 
 		security 	: 	ajax_script.nonce,
 		pod_id		: 	ele_obj.data('podid'),
@@ -443,7 +443,7 @@ jQuery(document).ready( function($) {
 		var the_order = $(this).sortable('toArray');
 
 		var data_obj = {
-			action:   'admin_pprf_update_order_fn',
+			action:   'admin_pprf_update_order',
 			order: 	  the_order, 
 			security : ajax_script.nonce
 		};

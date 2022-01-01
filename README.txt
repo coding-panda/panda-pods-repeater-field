@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.8.1
-Stable tag: 1.4.11
+Tested up to: 5.8.2
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,11 +33,11 @@ Please see the screenshots for instructions.
 = How to fetch data at the frontend =
 From Version 1.1.4, you can use pods_field(). e.g. in a single post template, pods_field( 'field_name' ) to fetch the data for the current page, otherwise use pods_field( 'pods_name', 'post_id', 'field_name' ) to fetch any data you want anywhere. To fetch data in the settings area, use pods_field( 'pods_name', false, 'field_name' ). To fetch data in the users area, use pods_field( 'user', 'user_id', 'field_name' ).
 
-You can use the filters: pandarf_pods_field_attrs( array(), $value_ukn, $row_arr, $params_arr, $pods_obj ) and pandarf_data_attrs( array(), $data_arr, $parentPod_str ) to alter the repeater data returned from pods_field().
+You can use the filters: pandarf_pods_field_attrs( array(), $value_ukn, $row_arr, $params_arr, $pods_obj ) and pandarf_data_attrs( array(), $data_arr, $parent_pod_name ) to alter the repeater data returned from pods_field().
 
 From Version 1.1.6, if the field type is "file", it will return the file ids, then use WordPress APIs like get_attached_file(), wp_get_attachment_image_src() etc to get the file details. Relation types of 'user', 'post type', 'pod' and 'media' will now return the saved ID.
 
-You can also use this API to fetch data: pandarf_items_fn( $fields_arr, $atts_arr, $showQuery_bln ). Please see the Screenshots section for how to find ids.
+You can also use this API to fetch data: pandarf_items_fn( $fields_arr, $attrs, $showQuery_bln ). Please see the Screenshots section for how to find ids.
 
 $fields_arr search repeater field table 
 array(
@@ -49,7 +49,7 @@ array(
 	'parent_pod_field_id' => '', // main table pod Panda Pod Repeater Field id
 )
 
-$atts_arr for some basic mySQL commands (Optional)
+$attrs for some basic mySQL commands (Optional)
 array(
 	'where' => '', // exter where, expected to be escaped
 	'order' => 'ASC', 
@@ -71,7 +71,7 @@ or pandarf_items_fn before v1.4.11
 It will return the items attached to the post from Comic Contents.
 
 = How to insert data at the frontend =
-You can use this API to insert data: pandarf_insert_fn( $fields_arr, $prf_arr, $showQuery_bln ). Please see the screenshots for how to find ids.
+You can use this API to insert data: pandarf_insert( $fields_arr, $prf_arr, $showQuery_bln ). Please see the screenshots for how to find ids.
 
 $fields_arr extra fields other than panda repeater fields to insert: 
 array( 
@@ -95,19 +95,19 @@ If set to true, it will print out the sql command. For debugging purpose. Defaul
 This API will return the wpdb inserted ID if successful, or false on failure. 
 
 An example of basic usage. IDs from the Screenshots section:
-$id_int = pandarf_insert_fn( array( 'name' => "hello panda" ), array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274, 'user_id' => $current_user->ID ) );
+$id_int = pandarf_insert( array( 'name' => "hello panda" ), array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274, 'user_id' => $current_user->ID ) );
 
 = How to allow the repeater field in a Pod from at the frontend =
 
 
-add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input_fn', 10, 7 ); 
+add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input', 10, 7 ); 
 
 /**
  * The repeater field is only for admin area. If you want it to be available for the frontend users, you can use this filter
  * Please note nested fields are treated as frontend even the parent field loaded in the admin. No soluction for now
  *
- * @param  boolean $allow_bln allow the input item to be displayed
- * @param  array   $inAdmin_bln is in the admin area
+ * @param  boolean $is_allowed allow the input item to be displayed
+ * @param  array   $in_admin is in the admin area
  * @param  string  $name
  * @param  mixed   $value
  * @param  array   $options
@@ -115,32 +115,32 @@ add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input_fn
  * @param  int     $id
  * @return boolean still allow or not
  */
-function pprf_allow_frontend_input_fn( $allow_bln, $inAdmin_bln, $name_str, $value_ukn, $options_arr, $pod_obj, $id_int  ){
+function pprf_allow_frontend_input( $is_allowed, $in_admin, $name_str, $value_ukn, $options_arr, $pod_obj, $id_int  ){
 	if( !is_admin() ){		
 		if( $pod_obj->pod == 'your_pod_slug' ){
-			$allow_bln	=	true;			
+			$is_allowed	=	true;			
 		}		
 	}
-	return  $allow_bln;
+	return  $is_allowed;
 }
 
-add_filter('pprf_load_panda_repeater_allow', 'pprf_allow_fn', 11, 2);
+add_filter('pprf_load_panda_repeater_allow', 'pprf_allow', 11, 2);
 
 /**
  * The repeater field is only for logged in users with edit_posts capability 
  * If you want it to be available for the frontend users, you can use this filter
  *
- * @param  boolean $allow_bln allow the form to be displayed
+ * @param  boolean $is_allowed allow the form to be displayed
  * @param  array   $get_arr variables from $_GET
  * @return boolean still allow or not
  */
-function pprf_allow_fn( $allow_bln, $get_arr ){
+function pprf_allow( $is_allowed, $get_arr ){
 	
 	$pod_obj	=	pods('your_pod_slug');		
 	if( $get_arr['podid'] == $pod_obj->pod_id ){
-		$allow_bln = true;
+		$is_allowed = true;
 	}
-	return  $allow_bln;
+	return  $is_allowed;
 
 }
 
@@ -200,12 +200,12 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 * debug: changed time from h:i:s to H:i:s 
 
 = 1.1.0 - 1st Dec 2016 =
-* add: add param - add_tb_prefix to API pandarf_items_fn() and pandarf_insert_fn so they can be used for all tables
-* add: add action pods_post_delete_fn() to pods_api_post_delete_pod_item
-* add: add action pprf_action_pods_post_delete_fn() to pods_post_delete_fn
-* add: add filter pprf_filter_pods_post_delete_fn() to pods_api_post_delete_pod_item
-* add: add action pprf_action_pods_post_save_fn() to pods_post_save_fn
-* add: add filter pprf_filter_pods_post_save_fn() to pods_api_post_delete_pod_item
+* add: add param - add_tb_prefix to API pandarf_items_fn() and pandarf_insert so they can be used for all tables
+* add: add action pods_post_delete() to pods_api_post_delete_pod_item
+* add: add action pprf_action_pods_post_delete() to pods_post_delete
+* add: add filter pprf_filter_pods_post_delete() to pods_api_post_delete_pod_item
+* add: add action pprf_action_pods_post_save() to pods_post_save
+* add: add filter pprf_filter_pods_post_save() to pods_api_post_delete_pod_item
 * add: auto-expanding when add and edit an item
 * add: improved interface
 
@@ -221,11 +221,11 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 = 1.1.3 - 13nd May 2017 =
 * add: a Save button on the bar
 * debug: fixed the problem when insert pandarf_order at the frontend, cast string as number 
-* debug: remove add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod_fn' ), 10, 3 ), not needed any more
+* debug: remove add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod' ), 10, 3 ), not needed any more
 
 = 1.1.4 - 29th June 2017 =
 * add: API to check if a field is a Panda Pods Repeater Field is_pandarf_fn( $fieldName_str )
-* add: API to fetch repeater data for a data row from a database table pandarf_data_fn( $data_arr, $parentPod_str  )
+* add: API to fetch repeater data for a data row from a database table pandarf_get_data( $data_arr, $parent_pod_name  )
 * add: Integrated with pods_field()
 
 = 1.1.5 - 09th July 2017 =
@@ -311,7 +311,7 @@ function pprf_allow_fn( $allow_bln, $get_arr ){
 
 = 1.4.3 - 22th June 2019  =
 * add: locked down the font size in the form so it won't be affected by the theme
-* change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api
+* change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field() to fix the problem in rest api
 
 = 1.4.4 - 22ND September 2019 =
 * fix: TypeError: Backbone.Marionette is undefined
@@ -368,12 +368,12 @@ Fixed the problem when order by pandarf_order at the frontend
 Changed time from h:i:s to H:i:s 
 
 = 1.1.0 =
-Add param - add_tb_prefix to API pandarf_items_fn() and pandarf_insert_fn so they can be used for all tables
-Add action pods_post_delete_fn() to pods_api_post_delete_pod_item
-Add action pprf_action_pods_post_delete_fn() to pods_post_delete_fn
-Add filter pprf_filter_pods_post_delete_fn() to pods_api_post_delete_pod_item
-Add action pprf_action_pods_post_save_fn() to pods_post_save_fn
-Add filter pprf_filter_pods_post_save_fn() to pods_api_post_delete_pod_item
+Add param - add_tb_prefix to API pandarf_items_fn() and pandarf_insert so they can be used for all tables
+Add action pods_post_delete() to pods_api_post_delete_pod_item
+Add action pprf_action_pods_post_delete() to pods_post_delete
+Add filter pprf_filter_pods_post_delete() to pods_api_post_delete_pod_item
+Add action pprf_action_pods_post_save() to pods_post_save
+Add filter pprf_filter_pods_post_save() to pods_api_post_delete_pod_item
 Add auto-expanding when add and edit an item
 Improve interface
 
@@ -389,11 +389,11 @@ Simplified re-order
 = 1.1.3 =
 A Save button on the bar
 Fixed the problem when insert pandarf_order at the frontend, cast string as number 
-Remove add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod_fn' ), 10, 3 ), not needed any more
+Remove add_action( 'save_post', array( $tableAsRepeater_cla, 'update_child_pod' ), 10, 3 ), not needed any more
 
 = 1.1.4 =
 Add: API to check if a field is a Panda Pods Repeater Field is_pandarf_fn( $fieldName_str )
-Add: API to fetch repeater data for a data row from a database table pandarf_data_fn( $data_arr, $parentPod_str  )
+Add: API to fetch repeater data for a data row from a database table pandarf_get_data( $data_arr, $parent_pod_name  )
 Add: Integrated with pods_field()
 
 = 1.1.5 =
@@ -479,7 +479,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.3 =
 * Add: locked down the font size in the form so it won't be affected by the theme
-* Change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field_fn() to fix the problem in rest api
+* Change: changed $pods_obj->id to $pods_obj->id() in pandarf_pods_field() to fix the problem in rest api
 
 = 1.4.4 =
 * Fix: TypeError: Backbone.Marionette is undefined
