@@ -353,6 +353,11 @@ function pprf_allow( $is_allowed, $get_arr ){
 = 1.4.11 - 21th October 2021 =
 * change: Caught up with the changes in Pods 2.8
 
+= 1.5.0 - 21th October 2021 =
+* change: Removed _fn afterfix in function names and update a lot of variable names to match WordPress coding standards.
+* fix: Fixed the problem when a pod_index exisits in the postmeta table but not used as a field in the pod table. 
+* add: use the cache of simpods_tables if available, to avoid the duplications of the query
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -520,3 +525,8 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.4.11 =
 * change: Caught up with the changes in Pods 2.8
+
+= 1.5.0 =
+* change: Removed _fn afterfix in function names and update a lot of variable names to match WordPress coding standards.
+* fix: Fixed the problem when a pod_index exisits in the postmeta table but not used as a field in the pod table. 
+* add: use the cache of simpods_tables if available, to avoid the duplications of the query

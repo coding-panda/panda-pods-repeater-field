@@ -471,12 +471,17 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$order_info	.=	esc_html__( '- ascending', 'panda-pods-repeater-field');
 				}
 
+				//name field may saved by not exists in the table, if not exist
+				$name_field_sql = '';
+				if( ! empty( self::$tables['pod_' . $saved_table_id ]['name_field'] ) && ! empty( self::$tables['pod_' . $saved_table_id ]['name_label'] ) ){
+					$name_field_sql = ', `' . self::$tables['pod_' . $saved_table_id ]['name_field'] . '` ';
+				}
 
 				if( count( $searches ) > 0 ) {
 					
 					$query  	= $wpdb->prepare( 'SELECT 
-														main_tb.*, 
-														`' . self::$tables['pod_' . $saved_table_id ]['name_field'] . '` 														
+														main_tb.* 
+														' . $name_field_sql . '														
 													   FROM `' . $wpdb->prefix . 'pods_' . $tb_str . '` AS main_tb
 													   ' . $join_sql  . '
 													   WHERE ' . $where_sql . ' 
@@ -496,7 +501,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				} else {
 					$query  	= 'SELECT 
 										main_tb.*, 
-										`' . self::$tables['pod_' . $saved_table_id ]['name_field'] . '`
+										 ' . $name_field_sql . '	
 									   	FROM `' . $wpdb->prefix . 'pods_' . $tb_str . '` 
 									   	' . $join_sql  . ' 
 									   	WHERE ' . $where_sql . ' 

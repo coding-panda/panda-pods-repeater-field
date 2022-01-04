@@ -141,14 +141,14 @@ class panda_pods_repeater_field_db {
 															 array( 
 															 	$name_field, 
 															 	$table_info['id'] 
-															 ) 
-															);
+															) 
+														);
 							
 							$items		= $wpdb->get_results( $query , ARRAY_A ); 	
 
 							if( $items && count( $items ) > 0 ){
-								$name_label	=	 $items[0]['post_title'];
-							}							
+								$name_label	= $items[0]['post_title'];
+							} 						
 						}						
 						$pod_tables[ 'pod_' . $table_info['id'] ] = array( 'name' => $table, 'pod' => $table_info['name'], 'type' => $table_info['type'], 'name_field'    => $name_field, 'name_label' => $name_label );
 						$pod_tables[ $table ] = $pod_tables[ 'pod_' . $table_info['id'] ];
@@ -160,7 +160,9 @@ class panda_pods_repeater_field_db {
 				
 			}
 		}
-
+		// echo '<pre>';
+		// print_r($pod_tables);
+		// echo '</pre>';
 		return $pod_tables;
 
 	}	
