@@ -1025,20 +1025,20 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 	
 	$pods_obj = pods( $parent_pod_name ) ;
 
-	$pandarf_arr = array();
+	$pprf_data = array();
 	if( is_array( $data_arr ) && count( $data_arr ) > 0 ){
 		foreach( $data_arr[0] as $k_str => $v_ukn ){
 			$repeaters = is_pandarf( $k_str,  $pods_obj->pod_id );
 			if( $repeaters ) {
-				$pandarf_arr[ $k_str ] = $repeaters;
+				$pprf_data[ $k_str ] = $repeaters;
 			}
 		}
 	}	
 	
-	if( count( $pandarf_arr ) > 0 ){
+	if( count( $pprf_data ) > 0 ){
 		
 		// go through each repeater field and attach data
-		foreach( $pandarf_arr as $k_str => $v_ukn ){
+		foreach( $pprf_data as $k_str => $v_ukn ){
 			if( $pods_obj && isset( $pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'] )){
 				$saved_table	=	$pods_obj->fields[ $k_str ]['options']['pandarepeaterfield_table'];
 				$items_arr		=	array();
@@ -1046,13 +1046,13 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 				// if saved as pod_num, version < 1.2.0
 				if( count( $child_pods ) == 2 && $child_pods[0] == 'pod' && is_numeric( $child_pods[1] ) ){
 					// find the repeater table pod name
-					$query_str = $wpdb->prepare( 'SELECT `post_name` FROM `' . $wpdb->posts . '` WHERE `ID` = %d LIMIT 0, 1', array( $child_pods[ 1 ] ) ) ;
+					$query = $wpdb->prepare( 'SELECT `post_name` FROM `' . $wpdb->posts . '` WHERE `ID` = %d LIMIT 0, 1', array( $child_pods[ 1 ] ) ) ;
 					
-					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );
+					$items_arr = $wpdb->get_results( $query, ARRAY_A );
 				} else {
-					$query_str = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $saved_table ) ) ;
+					$query = $wpdb->prepare( 'SELECT `ID`, `post_name` FROM `' . $wpdb->posts . '` WHERE `post_name` = "%s" AND `post_type` = "_pods_pod" LIMIT 0, 1', array( $saved_table ) ) ;
 									
-					$items_arr = $wpdb->get_results( $query_str, ARRAY_A );		
+					$items_arr = $wpdb->get_results( $query, ARRAY_A );		
 
 				}		
 				if( count( $items_arr ) == 1 ){
@@ -1060,20 +1060,20 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 						$attrs_arr	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parent_pod_name  );
 						$fields	= array( 
 											'child_pod_name' 		=> $items_arr[0]['post_name'] , 
-											'parent_pod_id' 		=> $pandarf_arr[ $k_str ]['post_parent'], 
+											'parent_pod_id' 		=> $pprf_data[ $k_str ]['post_parent'], 
 											'parent_pod_post_id' 	=> $data_arr[ $i ]['id'], 
-											'parent_pod_field_id' 	=> $pandarf_arr[ $k_str ]['ID']
+											'parent_pod_field_id' 	=> $pprf_data[ $k_str ]['ID']
 											) ;
-						$cData_arr	= 	get_pandarf_items( 
+						$child_data	= 	get_pandarf_items( 
 														$fields,
 														$attrs_arr,
 														0
 													  );	
 										  
 						// check if it is a repeater field, if yes, return data							  			
-						$cData_arr 	= pandarf_get_data( $cData_arr, $items_arr[0]['post_name'] );
+						$child_data 	= pandarf_get_data( $child_data, $items_arr[0]['post_name'] );
 						
-						$data_arr[ $i ][ $k_str ]	=	$cData_arr;			
+						$data_arr[ $i ][ $k_str ]	=	$child_data;			
 														  
 					}
 				}
@@ -1091,11 +1091,12 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 function is_pandarf( $field_name, $parent_id = 0 ){
 	global $wpdb;
 
-	$field_name = esc_sql( $field_name );
-	$parent_id 	= intval( $parent_id );
-	$key 		= $field_name . '_' . $parent_id;
+	$field_name 	= esc_sql( $field_name );
+	$parent_id 		= intval( $parent_id );
+	$key 			= $field_name . '_' . $parent_id;
+	$pandarf_field 	= wp_cache_get( $key, 'pandarf_fields' );
 	
-	if ( ! $pandarf_field = wp_cache_get( $key, 'pandarf_fields' ) ) {
+	if ( false === $pandarf_field ) {
 		
 		$params 	=	array( $field_name );
 		$where		=	'';
@@ -1115,13 +1116,13 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 		//}
 		
 		$items = $wpdb->get_results( $query, ARRAY_A );
-		$pandarf_field = false;	
+		$pandarf_field = 0;	// use 0 so it won't conflict with wp_cache_get() when it returns false.
 		if( ! empty( $items ) ){ 
 			
 			$pandarf_field = $items[0];
 		} 
 				
-		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
+		wp_cache_add( $key, $pandarf_field, 'pandarf_fields' );
 	} 
 	return $pandarf_field;
 	

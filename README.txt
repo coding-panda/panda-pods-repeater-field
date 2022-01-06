@@ -357,6 +357,8 @@ function pprf_allow( $is_allowed, $get_arr ){
 * change: Removed _fn afterfix in function names and update a lot of variable names to match WordPress coding standards.
 * fix: Fixed the problem when a pod_index exisits in the postmeta table but not used as a field in the pod table. 
 * add: use the cache of simpods_tables if available, to avoid the duplications of the query
+* add: use WordPress cache for checking if it is a panda pods repeater field
+* add: When a new entry is added, it will use the admin columns if required.
 
 == Upgrade Notice ==
 
@@ -530,3 +532,5 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * change: Removed _fn afterfix in function names and update a lot of variable names to match WordPress coding standards.
 * fix: Fixed the problem when a pod_index exisits in the postmeta table but not used as a field in the pod table. 
 * add: use the cache of simpods_tables if available, to avoid the duplications of the query
+* add: use WordPress cache for checking if it is a panda pods repeater field
+* add: When a new entry is added, it will use the admin columns if required.

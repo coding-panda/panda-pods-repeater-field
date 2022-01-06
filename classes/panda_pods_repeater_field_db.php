@@ -24,7 +24,7 @@ class panda_pods_repeater_field_db {
 	 *
 	 * @var string  $table_str targeted table
 	 * @var array   $data_arr  posted data, data to save in $_POST format	 
-	 * @var array   $where_arr locate the entries to update
+	 * @var array   $wheres locate the entries to update
 	 */
 	public function escape_sqls( $data_ukn ){
 		if( is_array( $data_ukn ) ){
@@ -52,7 +52,7 @@ class panda_pods_repeater_field_db {
 	 *
 	 * @var string  $table_str targeted table
 	 * @var array   $data_arr  posted data, data to save in $_POST format	 
-	 * @var array   $where_arr locate the entries to update
+	 * @var array   $wheres locate the entries to update
 	 */
 	public function escape_attrs( $data_ukn ){
 		if( is_array( $data_ukn ) ){
@@ -170,37 +170,42 @@ class panda_pods_repeater_field_db {
 	/**
 	 * get_pods_tb_info: get pods table info 
 	 */
-	public function get_pods_tb_info( $tb_str ){
+	public function get_pods_tb_info( $table ){
 		global $wpdb;
-		$the_table	=	$tb_str;
-	
-		$tbPrefix_str  = $wpdb->prefix;
+
+
 		// if prefix not found, add it to the target tb
-		if( strpos( $tb_str, $wpdb->prefix ) === 0 ){
-			$tb_str = substr( $tb_str, strlen( $wpdb->prefix ) );	
+		if( strpos( $table, $wpdb->prefix ) === 0 ){
+			$table = substr( $table, strlen( $wpdb->prefix ) );	
 		}	
 			
-		if( strpos( $tb_str, 'pods_' ) === 0 ){
-			$tb_str = substr( $tb_str, 5 );	
+		if( strpos( $table, 'pods_' ) === 0 ){
+			$table = substr( $table, 5 );	
 		}	
-		$table_info = wp_cache_get( $tb_str, 'simpods_pods_tables_info' ); 	// integrated with Simpods	
-		if( false !== $table_info ){			
-			return $table_info;		
-		}	
-		$query 		= $wpdb->prepare('SELECT ps_tb.*, pm_tb.`meta_value` AS type
-										 FROM `' . $wpdb->posts . '` AS ps_tb
-										 LEFT JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"					  
-										 WHERE ps_tb.`post_name` = "%s" AND ps_tb.`post_type` = "_pods_pod" LIMIT 0, 1', array( $tb_str ) );
-		$items_arr 		= $wpdb->get_results( $query , ARRAY_A ); 		
-		
-		$table_data  = array( 'id' => 0, 'name' => '', 'type' => '' );
-		if( count( $items_arr ) > 0 ){
-			$table_data['id']   = $items_arr[0]['ID']; 	
-			$table_data['name'] = $items_arr[0]['post_name']; 	
-			$table_data['type'] = $items_arr[0]['type'] == ''? 'pod' : $items_arr[0]['type'] ; 				
+
+		$table_data = wp_cache_get( $table, 'pprf_table_data' );
+
+		if ( false === $table_data ) {
+			$table_info = wp_cache_get( $table, 'simpods_pods_tables_info' ); 	// integrated with Simpods	
+			if( false !== $table_info ){			
+				return $table_info;		
+			}	
+			$query 		= $wpdb->prepare('SELECT ps_tb.*, pm_tb.`meta_value` AS type
+											 FROM `' . $wpdb->posts . '` AS ps_tb
+											 LEFT JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"					  
+											 WHERE ps_tb.`post_name` = "%s" AND ps_tb.`post_type` = "_pods_pod" LIMIT 0, 1', array( $table ) );
+			$items_arr 		= $wpdb->get_results( $query , ARRAY_A ); 		
+			
+			$table_data  = array( 'id' => 0, 'name' => '', 'type' => '' );
+			if( count( $items_arr ) > 0 ){
+				$table_data['id']   = $items_arr[0]['ID']; 	
+				$table_data['name'] = $items_arr[0]['post_name']; 	
+				$table_data['type'] = $items_arr[0]['type'] == ''? 'pod' : $items_arr[0]['type'] ; 				
+			}
+
+			wp_cache_add( $table, $table_data, 'pprf_table_data' );
+
 		}
-		
-		//wp_cache_set ( 'PPRF_' . $the_table, serialize( $table_data ) , 60*60*24 ); 
 		return $table_data;		
 	}
 	/**
@@ -229,38 +234,38 @@ class panda_pods_repeater_field_db {
 	/**
 	 * check_column_existence: check if a table column exists
 	 * 
-	 * @param string $tb_str table name
-	 * @param string $column_str table name	 
+	 * @param string $table table name
+	 * @param string $column table name	 
 	 */
-	public function check_column_existence( $tb_str, $column_str ){
+	public function check_column_existence( $table, $column ){
 		global $wpdb;
 		
-		$result_bln = $wpdb->query( 'SHOW COLUMNS FROM `' . $wpdb->prefix . esc_sql( $tb_str ). '` LIKE "' . esc_sql( $column_str ). '"' );	
+		$result = $wpdb->query( 'SHOW COLUMNS FROM `' . $wpdb->prefix . esc_sql( $table ). '` LIKE "' . esc_sql( $column ). '"' );	
 		
 		// option _transient_pods_field_catitem_testsss
-		return $result_bln;		
+		return $result;		
 	}	
 	/**
 	 * getFields_fn function: get field names of a table
 	 *
-	 * @var string  $table_str targeted table	 
+	 * @var string  $table targeted table	 
 	 */
-	public function get_fields( $table_str, $prefixMe_bln = true , $show_bln = false ){
+	public function get_fields( $table, $add_prefix = true , $shown = false ){
 		global $wpdb;
 		
-		$table_str  = esc_sql( stripslashes( $table_str ) );
+		$table  = esc_sql( stripslashes( $table ) );
 
-		if( $prefixMe_bln && stripos( $table_str, $wpdb->prefix ) !== 0 ){
-			$table_str = $wpdb->prefix . $table_str;
+		if( $add_prefix && stripos( $table, $wpdb->prefix ) !== 0 ){
+			$table = $wpdb->prefix . $table;
 		}				
 		
-		$query_str  = 'SHOW FIELDS FROM `' . $table_str . '`';
-		if( $show_bln ){
-			echo $query_str ;
+		$query  = 'SHOW FIELDS FROM `' . $table . '`';
+		if( $shown ){
+			echo $query ;
 		}		
-		$items_arr  = $wpdb->get_results( $query_str , ARRAY_A );
+		$items  = $wpdb->get_results( $query , ARRAY_A );
 		
-		return $items_arr;
+		return $items;
 	}	
 
 	/**
