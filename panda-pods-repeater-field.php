@@ -1101,7 +1101,7 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 	$parent_id 	= intval( $parent_id );
 	$key 		= $field_name . '_' . $parent_id;
 	
-	if ( ! $pandarf_field = wp_cache_get( $key, 'pandarf_fields' ) ) {
+	if ( false === ( $pandarf_field = wp_cache_get( $key, 'pandarf_fields' ) ) ) {
 		
 		$params 	=	array( $field_name );
 		$where		=	'';
@@ -1127,9 +1127,9 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 			$pandarf_field = $items[0];
 		} 
 				
-		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
+		wp_cache_set( $key, (int) $pandarf_field, 'pandarf_fields' );
 	} 
-	return $pandarf_field;
+	return (bool) $pandarf_field;
 	
 }				
 
