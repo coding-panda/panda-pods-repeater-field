@@ -1087,6 +1087,8 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
  * Is a panda pods repeater field?
  * @param string $field_name pods field name	 
  * @param integer $parent_id parent post id	 
+ * 
+ * @return false|array $pandarf_field;
  */
 function is_pandarf( $field_name, $parent_id = 0 ){
 	global $wpdb;
@@ -1122,7 +1124,7 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 			$pandarf_field = $items[0];
 		} 
 				
-		wp_cache_add( $key, $pandarf_field, 'pandarf_fields' );
+		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
 	} 
 	return $pandarf_field;
 	

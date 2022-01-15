@@ -851,7 +851,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		}
 
 		if( $is_id ){
-			$label_html = '<strong>ID:</strong> ' . esc_html( $row_obj['id'] ) . ' ' . $label_html;
+			$label_html = '<strong>ID:</strong> ' . esc_html( $item_id ) . ' ' . $label_html;
 		}
 		return $label_html;
 	}

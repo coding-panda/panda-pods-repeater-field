@@ -232,6 +232,12 @@ class panda_pods_repeater_field_db {
 
 	}	
 	/**
+	 * backward compatibility
+	 */ 
+	public function update_columns_fn( $table ){
+		$this->update_columns( $table );
+	}	
+	/**
 	 * check_column_existence: check if a table column exists
 	 * 
 	 * @param string $table table name
