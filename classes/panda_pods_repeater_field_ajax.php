@@ -67,24 +67,35 @@ class Panda_Pods_Repeater_Field_Ajax {
 		
 		if( isset( $_POST['podid'] ) && is_numeric( $_POST['podid'] ) && isset( $_POST['cpodid'] ) && is_numeric( $_POST['cpodid'] ) && isset( $_POST['postid'] )  && isset( $_POST['authorid'] ) && is_numeric( $_POST['authorid'] ) && isset( $_POST['poditemid'] ) && is_numeric( $_POST['poditemid'] ) ){
 			// update panda keys
-			if( array_key_exists( 'pod_' . $_POST['cpodid'], $tables ) ){
-				// get the parent field 
-				$parent_pod_name = $tables['pod_' . $_POST['podid'] ]['pod'];		
 
-				$parent_pod 	= pods( $parent_pod_name );
-				$field_options 	= array();
-				foreach ( $parent_pod->fields as $key => $value_data ) {
-					
-					if ( $value_data['id'] == $_POST['poditemid'] ) {
-						// get the conditions
-						$field_options = $value_data['options'] ;
-						break;
+			if( array_key_exists( 'pod_' . $_POST['cpodid'], $tables ) ){
+				$field_options 		= array();
+				$parent_pod_name 	= '';
+				// get the parent field 
+				if( array_key_exists( 'pod_' . $_POST['podid'], $tables ) ){ // custom settings don't have a parent table.
+					$parent_pod_name = $tables['pod_' . $_POST['podid'] ]['pod'];							
+				} else {
+					$parent_post = get_post( $_POST['podid'], ARRAY_A );
+					if( ! empty( $parent_post ) && '_pods_pod' == $parent_post['post_type'] ){
+						$parent_pod_name = $parent_post['post_name'];
 					}
+				}
+				if( '' != $parent_pod_name ){
+					$parent_pod 	= pods( $parent_pod_name );
+					
+					foreach ( $parent_pod->fields as $key => $value_data ) {
+						
+						if ( $value_data['id'] == $_POST['poditemid'] ) {
+							// get the conditions
+							$field_options = $value_data['options'] ;
+							break;
+						}
+					}				
 				}
 				
 				$apply_admin_columns = false;
 				if( isset(  $field_options['pandarepeaterfield_apply_admin_columns'] ) && $field_options['pandarepeaterfield_apply_admin_columns'] ){		
-					$apply_admin_columns = true;
+					$apply_admin_columns = true; 
 				}	
 
 				$panda_repeater_field = new PodsField_Pandarepeaterfield();
@@ -93,14 +104,18 @@ class Panda_Pods_Repeater_Field_Ajax {
 				$child_pod_name = $tables['pod_' . $_POST['cpodid'] ]['pod'];														
 								
 				//$now		= date('Y-m-d H:i:s');
-				$table 	 	= $wpdb->prefix . $tables['pod_' . $_POST['cpodid'] ]['name'] ;					
-					
+				$table 	 	= $wpdb->prefix . $tables['pod_' . $_POST['cpodid'] ]['name'] ;	
+
+				//$child_pod 		=  pods( $tables['pod_' . $_POST['cpodid'] ]['name'] );	
 
 				$title		= '';
 
 				if( $tables['pod_' . $_POST['cpodid'] ]['name_field'] != '' && $tables['pod_' . $_POST['cpodid'] ]['name_label'] != '' ){
-					$title	= '' . $tables['pod_' . $_POST['cpodid'] ]['name_field'] ;		
-					  
+					$title	= '' . $tables['pod_' . $_POST['cpodid'] ]['name_field'] ;	
+
+					// if( isset( $child_pod->fields[ $tables['pod_' . $_POST['cpodid'] ]['name_field'] ] ) && is_numeric( $title )  ){
+					// 	$title		= $panda_repeater_field->simpods_area_field_value( $child_pod->fields[ $tables['pod_' . $_POST['cpodid'] ]['name_field'] ], $title );
+					// }					  
 				}
 
 				// if it is a wordpress post type, join wp_posts table
@@ -137,6 +152,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 					if( $label_html == '' ){
 						$name_field_html = '';
 						if( ! empty( $tables['pod_' . $_POST['cpodid'] ]['name_label'] ) ){
+
+
 							$name_field_html = ' <strong>' . $tables['pod_' . $_POST['cpodid'] ]['name_label']  . ': </strong>' . substr( preg_replace( '/\[.*?\]/is', '',  wp_strip_all_tags( $items[0][ $title ] ) ), 0, 80 ) . pprf_check_media_in_content( $items[0][ $title ] );
 
 						}

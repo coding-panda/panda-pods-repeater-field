@@ -411,9 +411,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 			}
 
-			if( ! is_numeric( $id ) ){
-				echo apply_filters( 'pprf_load_panda_repeater_reminder_msg', __('Please save the parent first to add ' . strtolower( $post_arr['post_title'] ) . '. ', 'panda-pods-repeater-field' ) ) ;
-				return;
+			if( ! is_numeric( $id ) || empty( $id ) ){
+				echo '<p class="pprf-reminder">' . apply_filters( 'pprf_load_panda_repeater_reminder_msg', __('Please save the parent first to add ' . strtolower( $post_arr['post_title'] ) . '. ', 'panda-pods-repeater-field' ) ) . '</p>';
+				//return;
 			}			
 			if( $tb_str != ''  ){
 				$table_info	 = $db_cla->get_pods_tb_info( 'pods_' . $tb_str );
@@ -629,11 +629,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						}
 						if( $label_html	== '' ){ 
 							$title 			= '';
-							
+
 							if( ! empty ( self::$tables['pod_' . $saved_table_id ]['name_label'] ) ){ // id doesn't have a label, sometimes, the index field is deleted by still registered in the database, so it return an empty label.
-								$title			= $row_obj[ self::$tables['pod_' . $saved_table_id ]['name_field'] ];	
-								// integration with Simpods MVC Area Field
-								if( isset( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ] ) && ! empty( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_label'] ] ) ){
+								$title			= $row_obj[ self::$tables['pod_' . $saved_table_id ]['name_field'] ];									
+								// integration with Simpods MVC Area Field								
+								if( isset( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ] ) ){
 									$title		= $this->simpods_area_field_value( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ], $title );
 								}	
 							}
