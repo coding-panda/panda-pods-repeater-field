@@ -411,9 +411,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 			}
 
-			if( ! is_numeric( $id ) ){
-				echo apply_filters( 'pprf_load_panda_repeater_reminder_msg', __('Please save the parent first to add ' . strtolower( $post_arr['post_title'] ) . '. ', 'panda-pods-repeater-field' ) ) ;
-				return;
+			if( ! is_numeric( $id ) || empty( $id ) ){
+				echo '<p class="pprf-reminder">' . apply_filters( 'pprf_load_panda_repeater_reminder_msg', __('Please save the parent first to add ' . strtolower( $post_arr['post_title'] ) . '. ', 'panda-pods-repeater-field' ) ) . '</p>';
+				//return;
 			}			
 			if( $tb_str != ''  ){
 				$table_info	 = $db_cla->get_pods_tb_info( 'pods_' . $tb_str );
@@ -539,7 +539,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				$query_str = '&podid=' . esc_attr( $parent_pod_id ) . '&tb=' . esc_attr( $saved_table_id ) . '&poditemid=' . esc_attr( $options['id'] ) ;
 				$repeater_field_id = 'panda-repeater-fields-' . esc_attr( $saved_table_id ) . '-' . esc_attr( $options['id'] ) ;
 				// if trash is enabled
-				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 ){
+				if( isset( $options['pandarepeaterfield_enable_trash'] ) && $options['pandarepeaterfield_enable_trash'] == 1 && is_numeric( $id ) && ! empty( $id ) ){
 					echo '<div  id="panda-repeater-fields-tabs-' . esc_attr( $saved_table_id ) . '-' . esc_attr( $options['id'] ) . '" class="pprf-left w100">
 							<div class="pprf-tab active" data-target="' . esc_attr( $saved_table_id ) . '-' . esc_attr( $options['id'] ) . '"><span class="dashicons dashicons-portfolio"></span></div>	
 							<div class="pprf-tab" data-target="' . esc_attr( $saved_table_id ) . '-' . esc_attr( $options['id'] ) . '"><span class="dashicons dashicons-trash"></span></span></div>	
@@ -629,11 +629,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						}
 						if( $label_html	== '' ){ 
 							$title 			= '';
-							
+
 							if( ! empty ( self::$tables['pod_' . $saved_table_id ]['name_label'] ) ){ // id doesn't have a label, sometimes, the index field is deleted by still registered in the database, so it return an empty label.
-								$title			= $row_obj[ self::$tables['pod_' . $saved_table_id ]['name_field'] ];	
-								// integration with Simpods MVC Area Field
-								if( isset( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ] ) && ! empty( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_label'] ] ) ){
+								$title			= $row_obj[ self::$tables['pod_' . $saved_table_id ]['name_field'] ];									
+								// integration with Simpods MVC Area Field								
+								if( isset( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ] ) ){
 									$title		= $this->simpods_area_field_value( $child_pod->fields[ self::$tables['pod_' . $saved_table_id ]['name_field'] ], $title );
 								}	
 							}
@@ -726,7 +726,9 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					</div>
 				 </div>';
 
-				echo $add_new_html;
+				if( is_numeric( $id ) && ! empty( $id ) ){ 
+					echo $add_new_html;
+				}
 				echo '<div id="panda-repeater-trash-info-' . $ids_in_css . '" data-enable-trash="' . esc_attr( $options['pandarepeaterfield_enable_trash'] ) . '"  style="display:none;"/></div>';
 				echo '<input type="hidden" name="' . esc_attr( $repeater_field_id ) . '-entry-limit" id="' . esc_attr( $repeater_field_id ) . '-entry-limit" value="' . esc_attr( $options['pandarepeaterfield_entry_limit'] ) . '">';
 				echo '<input type="hidden" name="' . $name . '" value="' . $token . '">';

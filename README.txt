@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.8.3
-Stable tag: 1.5.0
+Tested up to: 5.9.3
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Repeater fields for Pods Framework. Adding a repeatable field on pages.
 
 == Description ==
 
-Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
+Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.8 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
 
 = Introduction =
 [youtube https://www.youtube.com/watch?v=8oUeROi62o8]
@@ -142,6 +142,18 @@ function pprf_allow( $is_allowed, $get_arr ){
 	}
 	return  $is_allowed;
 
+}
+
+= How to remove the CSS and JavaScript enqueued by the plugin at the frontend =
+
+Add this code to your functions.php
+
+add_action( 'wp_enqueue_scripts', 'dequeue_scripts_and_styles', 11 );	
+
+function dequeue_scripts_and_styles() {	
+    wp_dequeue_script( 'panda-pods-repeater-scripts' );	 
+    wp_dequeue_style( 'panda-pods-repeater-general-styles' );
+    wp_dequeue_style( 'panda-pods-repeater-styles' );		       	   
 }
 
 == Screenshots ==
@@ -360,6 +372,18 @@ function pprf_allow( $is_allowed, $get_arr ){
 * add: use WordPress cache for checking if it is a panda pods repeater field
 * add: When a new entry is added, it will use the admin columns if required.
 
+= 1.5.1 - 12th February 2022 =
+* fix: Fixed the sorting problem because of WordPress 5.9.
+
+= 1.5.2 - 26th March 2022 =
+* fix: Fixed the sorting problem in settings because of WordPress 5.9.
+* fix: Fixed the problem that pandarf_insert couldn't insert files.
+* fix: Fixed the integration problem after Pods 2.8
+* fix: Fixed the problem that the "Please save the parent first" message stopped appearing.
+* fix: Fixed the problem that the child pod became available when the parent was not saved.
+* fix: Fixed the problem that a newly added item couldn't display admin columns
+
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -534,3 +558,14 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * add: use the cache of simpods_tables if available, to avoid the duplications of the query
 * add: use WordPress cache for checking if it is a panda pods repeater field
 * add: When a new entry is added, it will use the admin columns if required.
+
+= 1.5.1 =
+* fix: Fixed the sorting problem because of WordPress 5.9.
+
+= 1.5.2 =
+* fix: Fixed the sorting problem in settings because of WordPress 5.9.
+* fix: Fixed the problem that pandarf_insert couldn't insert files.
+* fix: Fixed the integration problem after Pods 2.8
+* fix: Fixed the problem that the "Please save the parent first" message stopped appearing.
+* fix: Fixed the problem that the child pod became available when the parent was not saved.
+* fix: Fixed the problem that a newly added item couldn't display admin columns

@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.5.0
+Version: 1.5.2
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.5.0' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.5.2' );
 
  
  
@@ -219,7 +219,7 @@ class Panda_Pods_Repeater_Field {
 	 * @since 1.0.0
 	 */
 	public function admin_enqueue_scripts() {
-		global $pprf_l10n;
+		global $pprf_l10n, $wp_version;
 		/**
 		 * All admin styles goes here
 		 */
@@ -236,9 +236,18 @@ class Panda_Pods_Repeater_Field {
 			wp_enqueue_style('pprf_fields');		 			
 
 		}
+
+
+		wp_register_script(  'panda-pods-repeater-jquery-ui', plugins_url( 'library/js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), false, true  );
 		
-		//wp_enqueue_script( 'panda-pods-repeater-resize-iframe', plugins_url( 'js/resize-iframe/iframeResizer.min.js', __FILE__ ), array( 'jquery' ), false, true );
-		wp_register_script(  'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true  );
+		if ( version_compare( $wp_version, '5.9', '=' ) ) {
+			
+			wp_register_script(  'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable', 'panda-pods-repeater-jquery-ui' ), false, true  );
+		} else {
+			wp_register_script(  'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true  );
+
+		}
+
 		wp_enqueue_script( 'panda-pods-repeater-admin-scripts' );
 		// prepare ajax
 		wp_localize_script( 
@@ -881,20 +890,20 @@ function pandarf_insert( $fields = array(), $attrs = array(), $show_bln = false 
 	$attrs  		= wp_parse_args( $attrs, $defaults );				
 
 	$now		= date('Y-m-d H:i:s');	
-	$table_str 	 	= esc_sql( $attrs['child_pod_name'] );		
+	$table 	 	= esc_sql( $attrs['child_pod_name'] );		
 	if( $attrs['full_child_pod_name'] == false ){				
-		$table_str 	 	= $wpdb->prefix . 'pods_' . $table_str;		
+		$table 	 	= $wpdb->prefix . 'pods_' . $table;		
 	} 
 	$para_arr  		= array();
 	$where_sql 		= '';
 	// get the last order
-	$query_str  	= $wpdb->prepare( 'SELECT MAX( CAST(`pandarf_order` AS UNSIGNED) ) AS last_order FROM `' . $table_str . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = "%s" AND `pandarf_pod_field_id` = %d' , array( $attrs['parent_pod_id'], $attrs['parent_pod_post_id'], $attrs['parent_pod_field_id'] ) );	
+	$query  	= $wpdb->prepare( 'SELECT MAX( CAST(`pandarf_order` AS UNSIGNED) ) AS last_order FROM `' . $table . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = "%s" AND `pandarf_pod_field_id` = %d' , array( $attrs['parent_pod_id'], $attrs['parent_pod_post_id'], $attrs['parent_pod_field_id'] ) );	
 
-	$order_arr   	= $wpdb->get_results( $query_str, ARRAY_A );	
+	$order_arr   	= $wpdb->get_results( $query, ARRAY_A );	
 
 	$order_int		= count( $order_arr ) > 0 ? $order_arr[0]['last_order'] + 1 : 1;
 
-	$pafields_arr	= array( 
+	$pandarf_data	= array( 
 							'pandarf_parent_pod_id'   => $attrs['parent_pod_id'], 
 							'pandarf_parent_post_id'  => $attrs['parent_pod_post_id'], 
 							'pandarf_pod_field_id' 	  => $attrs['parent_pod_field_id'], 
@@ -908,9 +917,10 @@ function pandarf_insert( $fields = array(), $attrs = array(), $show_bln = false 
 	// insert
 	$values_arr   	= array();
 	$keys	  	= array();
-	$fields   	= array_merge( $fields, $pafields_arr );
+	//$fields   	= array_merge( $fields, $pandarf_data );
 	$vals_arr 		= array();	 
-	foreach( $fields as $k_str => $v_str ){
+	//foreach( $fields as $k_str => $v_str ){
+	foreach( $pandarf_data as $k_str => $v_str ){
 		array_push( $keys, '`' . esc_sql( $k_str ) . '`' );	
 		if( is_numeric( $v_str ) ){
 			// if putting a dot at the end of an number, like 24., strpos will return false so it is treated as an integer
@@ -929,17 +939,23 @@ function pandarf_insert( $fields = array(), $attrs = array(), $show_bln = false 
 	$fields_str   	= join( ',', $keys ); 
 	$vals_str 		= join( ',', $vals_arr ); 	
 	//if( count(  $values_arr ) > 0 ){
-		$query_str 	= $wpdb->prepare( 'INSERT INTO `' . $table_str . '` ( ' . $fields_str . ' ) VALUES ( ' . $vals_str . ' );' , $values_arr );
+		$query 	= $wpdb->prepare( 'INSERT INTO `' . $table . '` ( ' . $fields_str . ' ) VALUES ( ' . $vals_str . ' );' , $values_arr );
 	//} else {
-		//$query_str 	= 'INSERT INTO `' . $table_str . '` ( ' . $fields_str . ' ) VALUES ( ' . $vals_str . ' );';
+		//$query_str 	= 'INSERT INTO `' . $table . '` ( ' . $fields_str . ' ) VALUES ( ' . $vals_str . ' );';
 	//}
 
 	if( $show_bln ){
-		echo $query_str ;
+		echo $query ;
 	}	
-	$done 	    = $wpdb->query( $query_str );	
+	$done 	    = $wpdb->query( $query );	
 	if( $done ){
-		return $wpdb->insert_id; 
+		$insert_id = $wpdb->insert_id;
+		//remove prefix to keep the pod table name
+		$table = ltrim( $table, $wpdb->prefix . 'pods_' );
+		$pod = pods( $table, $insert_id );
+
+		$pod->save( $fields    );		
+		return $insert_id; 
 	} 
 	return false; 
 }
@@ -1057,7 +1073,7 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 				}		
 				if( count( $items_arr ) == 1 ){
 					for( $i = 0; $i < count( $data_arr ); $i ++ ){
-						$attrs_arr	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parent_pod_name  );
+						$attrs	= apply_filters( 'pandarf_data_attrs', array(), $data_arr, $parent_pod_name  );
 						$fields	= array( 
 											'child_pod_name' 		=> $items_arr[0]['post_name'] , 
 											'parent_pod_id' 		=> $pprf_data[ $k_str ]['post_parent'], 
@@ -1066,7 +1082,7 @@ function pandarf_get_data( $data_arr, $parent_pod_name ){
 											) ;
 						$child_data	= 	get_pandarf_items( 
 														$fields,
-														$attrs_arr,
+														$attrs,
 														0
 													  );	
 										  
@@ -1159,7 +1175,7 @@ if( !is_admin() ){
  * @since 1.0.0
  */
 function pprf_enqueue_scripts() {
-	global $pprf_l10n;
+	global $pprf_l10n, $wp_version;
 	/**
 	 * All styles goes here
 	 */
@@ -1172,13 +1188,16 @@ function pprf_enqueue_scripts() {
 		wp_enqueue_style( 'dashicons' );
 		wp_register_style('pprf_fields', plugins_url( 'fields/css/pprf.min.css', __FILE__ ), array( 'panda-pods-repeater-general-styles', 'panda-pods-repeater-styles') );
 		wp_enqueue_style('pprf_fields');		 
-
 	}
 	/**
 	 * All scripts goes here
 	 */
-	
-	wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true );
+	if ( version_compare( $wp_version, '5.9', '=' ) ) {
+		wp_register_script( 'panda-pods-repeater-jquery-ui', plugins_url( 'library/js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), false, true  );
+		wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable', 'panda-pods-repeater-jquery-ui' ), false, true  );	
+	} else {
+		wp_register_script( 'panda-pods-repeater-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), false, true ); 
+	}
 
 	wp_enqueue_script( 'panda-pods-repeater-scripts' );
 	//translation
