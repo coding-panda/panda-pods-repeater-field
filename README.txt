@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 5.9.3
-Stable tag: 1.5.2
+Tested up to: 6.0.1
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,7 +31,7 @@ Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is th
 Please see the screenshots for instructions.
 
 = How to fetch data at the frontend =
-From Version 1.1.4, you can use pods_field(). e.g. in a single post template, pods_field( 'field_name' ) to fetch the data for the current page, otherwise use pods_field( 'pods_name', 'post_id', 'field_name' ) to fetch any data you want anywhere. To fetch data in the settings area, use pods_field( 'pods_name', false, 'field_name' ). To fetch data in the users area, use pods_field( 'user', 'user_id', 'field_name' ).
+From Version 1.1.4, you can use pods_field(). e.g. in a single post template, pods_field( 'field_name' ) to fetch the data for the current page, otherwise use pods_field( 'pods_name', 'post_id', 'field_name' ) to fetch any data you want anywhere. To fetch data from the settings area, use pods_field( 'pods_name', false, 'field_name' ). To fetch data from the users area, use pods_field( 'user', 'user_id', 'field_name' ).
 
 You can use the filters: pandarf_pods_field_attrs( array(), $value_ukn, $row_arr, $params_arr, $pods_obj ) and pandarf_data_attrs( array(), $data_arr, $parent_pod_name ) to alter the repeater data returned from pods_field().
 

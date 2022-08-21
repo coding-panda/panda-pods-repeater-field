@@ -3,7 +3,7 @@
 Plugin Name: Panda Pods Repeater Field
 Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
 Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
-Version: 1.5.2
+Version: 1.5.3
 Author: Dongjie Xu
 Author URI: http://www.multimediapanda.co.uk/
 Text Domain: panda-pods-repeater-field
@@ -1114,7 +1114,6 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 	$key 			= $field_name . '_' . $parent_id;
 	$pandarf_field 	= wp_cache_get( $key, 'pandarf_fields' );
 	
-
 	if ( false === $pandarf_field ) {
 		
 		$params 	=	array( $field_name );
@@ -1143,7 +1142,7 @@ function is_pandarf( $field_name, $parent_id = 0 ){
 				
 		wp_cache_set( $key, $pandarf_field, 'pandarf_fields' );
 	} 
-	return  $pandarf_field;
+	return $pandarf_field;
 	
 }	
 /**
@@ -1374,4 +1373,24 @@ function pprf_check_media_in_content( $content ){
 	}	
 
 	return 	$html;
+}
+
+/***
+ * parent items filter conditions for assigning child items
+ */
+function pprf_parent_filter_conditions( $parent_details = array(), $parrent_limit = 20, $page = 1 ){
+    $conditions    	=	array(
+		'limit' 	=> $parrent_limit,
+		'page'		=> (int) $page,
+	);
+    //normal post type fetch all published and draft posts
+    if( isset( $parent_details['type'] ) && $parent_details['type'] == 'post_type' ){
+
+        $conditions['where'] 	= 't.post_status = "publish" OR t.post_status = "draft"';	        		
+		$conditions['orderby'] 	= 't.post_title';	        	
+
+    }
+    $conditions = apply_filters( 'filter_pprf_parent_filter_conditions', $conditions, $parent_details );
+
+    return $conditions;
 }

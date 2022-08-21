@@ -23,7 +23,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 			add_action( 'wp_ajax_admin_pprf_update_order', 			array( $this, 'admin_pprf_update_order') );							
 			add_action( 'wp_ajax_admin_pprf_load_more', 			array( $this, 'admin_pprf_load_more') );				
 			add_action( 'wp_ajax_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );				
-						
+			add_action( 'wp_ajax_admin_pprf_load_parent_items',		array( $this, 'admin_pprf_load_parent_items') );					
 			// frontend
 
 			//add_action( 'wp_ajax_front_pprf_load_newly_added', 		array( $this, 'front_pprf_load_newly_added') );	
@@ -35,7 +35,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 		add_action( 'wp_ajax_nopriv_admin_pprf_delete_item', 			array( $this, 'admin_pprf_delete_item') );	
 		add_action( 'wp_ajax_nopriv_admin_pprf_update_order', 			array( $this, 'admin_pprf_update_order') );							
 		add_action( 'wp_ajax_nopriv_admin_pprf_load_more', 				array( $this, 'admin_pprf_load_more') );				
-		add_action( 'wp_ajax_nopriv_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );							
+		add_action( 'wp_ajax_nopriv_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );		
+		add_action( 'wp_ajax_nopriv_pprf_load_parent_items',			array( $this, 'admin_pprf_load_parent_items') );									
 /*		add_action( 'wp_ajax_nopriv_front_pprf_load_newly_added', 		array( $this, 'front_pprf_load_newly_added') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_delete_item', 			array( $this, 'front_pprf_delete_item') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_update_order', 			array( $this, 'front_pprf_update_order') );		*/		
@@ -466,5 +467,48 @@ class Panda_Pods_Repeater_Field_Ajax {
 		    wp_send_json_error( $data );	    	
 	    }
 	}	
-	
+
+
+	public function admin_pprf_load_parent_items(){
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+			$data	=	array( 'security' => false, 'updated' => false  );
+		    wp_send_json_error( $data );
+		} 		
+		if( $_POST['action'] != 'admin_pprf_load_parent_items' ){
+			$data	=	array( 'security' => true, 'updated' => false  );
+		    wp_send_json_error( $data );			
+		}
+		global $wpdb, $current_user;
+
+	    //check it is an Advanced Content Type or normal post type
+	    $parent_details	=	pprf_pod_details( (int) $_POST['podid'] );
+	                    
+
+	    $parrent_limit	= 	(int) $_POST['limit'];        
+	    $page			= 	(int) $_POST['page'];        
+	    $html 			= '';
+	    if( $parent_details ){
+	        $parent_table   = $parent_details['post_name'] ;
+	        $conditions 	= pprf_parent_filter_conditions( $parent_details, $parrent_limit, $page );
+
+			$parent_pod 	= pods( $parent_table, $conditions ); 
+
+			 if ( 0 < $parent_pod->total() ) { 
+    	
+		        while ( $parent_pod->fetch() ) { 		
+
+		        	$html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . '</option>'; 
+		        	
+				}	
+			}	
+		}
+
+		if( ! empty( $html ) ){
+			$data	= array( 'security' => true, 'items' => $html );
+	    	wp_send_json_success( $data );					
+	    } else {
+			$data	=	array( 'security' => true, 'items' => ''  );
+		    wp_send_json_error( $data );	    	
+	    }
+	}		
 }
