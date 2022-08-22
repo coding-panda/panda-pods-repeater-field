@@ -54,6 +54,7 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 			// $conditions['orderby'] 	= 't.post_title',	        	
 
 	  //   }
+        $parent_details['pprf_parent']  = $_GET['postid'];
 	    $conditions 	= pprf_parent_filter_conditions( $parent_details, $parrent_limit );
 	    if( ! empty( $conditions['limit'] ) ){
 	    	$parrent_limit 	= $conditions['limit'];
@@ -357,6 +358,7 @@ jQuery(document).ready( function($) {
 			page		: 	$('#pprf-field-parent-loader').val(),			
 			curPItemid	: 	'<?php echo esc_js( $_GET['poditemid'] );?>',
 			itemid		: 	'<?php echo esc_js( $_GET['itemid'] );?>',
+			postid		: 	'<?php echo esc_js( $_GET['postid'] );?>',
 			limit		: 	'<?php echo $parrent_limit;?>',
 		};
 		$('#pprf-reassign-loader').removeClass('hidden');

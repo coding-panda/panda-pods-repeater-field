@@ -489,6 +489,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	    $html 			= '';
 	    if( $parent_details ){
 	        $parent_table   = $parent_details['post_name'] ;
+	        $parent_details['pprf_parent']  = $_POST['postid'];
 	        $conditions 	= pprf_parent_filter_conditions( $parent_details, $parrent_limit, $page );
 
 			$parent_pod 	= pods( $parent_table, $conditions ); 
