@@ -54,12 +54,12 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
 			// $conditions['orderby'] 	= 't.post_title',	        	
 
 	  //   }
-        $parent_details['pprf_parent']  = $_GET['postid'];
+        $parent_details['pprf_parent']  = intval( $_GET['postid'] );
 	    $conditions 	= pprf_parent_filter_conditions( $parent_details, $parrent_limit );
 	    if( ! empty( $conditions['limit'] ) ){
 	    	$parrent_limit 	= $conditions['limit'];
 	    }
-	 
+	 	
 		$parent_pod 	= pods( $parent_table, $conditions ); 
 
 		$parents_total 	= $parent_pod->total_found();

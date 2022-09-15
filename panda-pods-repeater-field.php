@@ -1386,11 +1386,11 @@ function pprf_parent_filter_conditions( $parent_details = array(), $parrent_limi
     //normal post type fetch all published and draft posts
     if( isset( $parent_details['type'] ) && $parent_details['type'] == 'post_type' ){
 
-        $conditions['where'] 	= 't.post_status = "publish" OR t.post_status = "draft"';	        		
+        $conditions['where'] 	= '( t.post_status = "publish" OR t.post_status = "draft" )';	        		
 		$conditions['orderby'] 	= 't.post_title';	        	
 
     }
-    
+
     $conditions = apply_filters( 'filter_pprf_parent_filter_conditions', $conditions, $parent_details );
 
     return $conditions;
