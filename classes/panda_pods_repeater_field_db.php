@@ -194,13 +194,13 @@ class panda_pods_repeater_field_db {
 											 FROM `' . $wpdb->posts . '` AS ps_tb
 											 LEFT JOIN `' . $wpdb->postmeta . '` AS pm_tb ON ps_tb.`ID` = pm_tb.`post_id` AND pm_tb.`meta_key` = "type"					  
 											 WHERE ps_tb.`post_name` = "%s" AND ps_tb.`post_type` = "_pods_pod" LIMIT 0, 1', array( $table ) );
-			$items_arr 		= $wpdb->get_results( $query , ARRAY_A ); 		
+			$items 		= $wpdb->get_results( $query , ARRAY_A ); 		
 			
 			$table_data  = array( 'id' => 0, 'name' => '', 'type' => '' );
-			if( count( $items_arr ) > 0 ){
-				$table_data['id']   = $items_arr[0]['ID']; 	
-				$table_data['name'] = $items_arr[0]['post_name']; 	
-				$table_data['type'] = $items_arr[0]['type'] == ''? 'pod' : $items_arr[0]['type'] ; 				
+			if( count( $items ) > 0 ){
+				$table_data['id']   = $items[0]['ID']; 	
+				$table_data['name'] = $items[0]['post_name']; 	
+				$table_data['type'] = $items[0]['type'] == ''? 'pod' : $items[0]['type'] ; 				
 			}
 
 			wp_cache_add( $table, $table_data, 'pprf_table_data' );
@@ -338,4 +338,187 @@ class panda_pods_repeater_field_db {
 
 	}
 
+	/**
+	 * Duplicate the data of a repeater field 	 
+	 */ 
+    public function duplicate( $params = array() ){
+    	global $wpdb;
+    	$defaults = array(
+    		'pod_name'  			=> '',    		
+    		'parent_pod_id'			=> 0,    	
+    		'parent_id' 			=> 0,    	
+    		'parent_pod_field_id'	=> 0,    
+    		'new_parent_id' 		=> 0,	
+    		'item_id' 				=> 0,
+    	);
+    	$args 		= wp_parse_args( $params, $defaults );
+    	if( empty( $args['pod_name'] ) ){
+    		return false;
+    	}
+    	$now 	= date( 'Y-m-d H:i:s' );   
+    	$args['pod_name'] 				= esc_sql( $args['pod_name'] );
+    	$args['parent_pod_id'] 			= (int) $args['parent_pod_id'];
+    	$args['parent_id'] 				= (int) $args['parent_id'];
+    	$args['parent_pod_field_id'] 	= (int) $args['parent_pod_field_id'];
+    	$args['new_parent_id'] 			= (int) $args['new_parent_id'];
+    	$args['item_id'] 				= (int) $args['item_id'];
+
+
+    	$return = array(
+    		'new_id' => 0,
+    	);
+		$pod    = pods( $args['pod_name'] ); 
+
+
+		if( $pod ){
+
+	        $pod_fields 	= $pod->fields();    
+
+	        $panda_fields 	= array();
+	        // find out the repeater fields
+	        if( $pod_fields ){
+	        	foreach( $pod_fields as $field_name => $field_data ){
+	        		if( 'pandarepeaterfield' == $field_data->type ){
+
+	        			$panda_fields[ $field_name ] = array(
+	        				'pod_name' 				=> $field_data->pandarepeaterfield_table,
+	        				'parent_pod_id'			=> $pod->pod_data->id,    	
+	        				'parent_pod_field_id'	=> $field_data->id,    	
+	        			);
+	      
+	        		}
+	        	}			
+	        }
+
+			$table  = 'pods_' . $args['pod_name'];
+
+			if( $args['item_id'] !== 0 ){ // only duplicate one
+				$data 	= array(
+					$args['item_id']
+				);
+
+				$query 	= $wpdb->prepare('SELECT * 
+					FROM `' . $wpdb->prefix . $table .'` 				  
+					WHERE `id` = %d', 
+					$data
+				);
+
+			} else { // duplicate all children
+				$data 	= array(
+					$args['parent_pod_id'],
+					$args['parent_id'],
+					$args['parent_pod_field_id'],
+				);
+
+				$query 	= $wpdb->prepare('SELECT * 
+					FROM `' . $wpdb->prefix . $table .'` 				  
+					WHERE `pandarf_parent_pod_id` = %d AND 
+						`pandarf_parent_post_id` = %d AND 
+						`pandarf_pod_field_id` = %d', 
+					$data
+				);
+			}
+
+			$rows 			= $wpdb->get_results( $query , ARRAY_A ); 	
+
+			$date_fields 	= array(
+				'pandarf_created',
+				'pandarf_modified',
+				'sp_created',
+				'sp_modified',
+			);
+			$to_unset = array(
+				'id',
+				'sp_start',
+				'sp_end',
+				'deadline',
+			);
+
+
+			foreach( $rows as $i => $row ){
+				//
+				$old_id 		= $row['id'];							
+				$new_id 		= $pod->duplicate( $row['id'] );    
+		    	$return['new_id'] = $new_id;
+		
+				$row['pandarf_parent_post_id'] = $args['new_parent_id'];				
+				//$pod_user_id	= $funs->general_insert('pods_user', $insert );						
+
+				foreach( $date_fields as $date_field ){
+					if( isset( $row[ $date_field ] ) ){
+						$row[ $date_field ] = $now;
+					}
+				}	
+				foreach( $to_unset as $unset_field ){
+					if( isset( $row[ $unset_field ] ) ){
+						unset( $row[ $unset_field ] );
+					}
+				}				
+	            $where  =   array(
+	                'id' 	=> $new_id,                    
+	            );
+
+	            $updated  	= $this->update( $wpdb->prefix . $table, $row, $where );    
+
+				foreach( $row as $key => $value ){
+		            if( isset( $panda_fields[ $key ] ) ){
+
+	        			$panda_fields[ $key ]['parent_id'] 		= $old_id;
+	        			$panda_fields[ $key ]['new_parent_id'] 	= $new_id;		    		
+
+	        			$this->duplicate( $panda_fields[ $key ] );	            	
+		            }
+	        	}
+			} 			
+	        // use pods to duplicate in case there are some pods relationship fields
+	         	
+			//get all items from the database directly, don't use methods from classes as they may alter the data
+   	
+		}
+		return $return;
+    }
+	/**
+	 * Duplicate the data of a repeater field 	 
+	 */ 
+    public function update( $table, $data, $where ){
+    	global $wpdb;
+    	if( ! is_string( $table ) || !is_array( $data ) || ! is_array( $where ) || empty( $data ) || empty( $where )  ){
+    		return false;
+    	}
+    	$table 		= esc_sql( $table );
+		$updates 	= array();	
+		$values 	= array();	
+		
+		foreach ( $data as $key => $value ) {	
+			if ( is_numeric( $value ) ) {
+				$type = strpos( $value, '.' ) !== false ? '%f' : '%d';
+			} else {
+				$type = '%s';
+			}
+			array_push( $updates, '`' . $key . '` = ' . $type );
+			array_push( $values, $value );
+		}
+		$update_sql = implode( ',', $updates );   
+
+		$searches 	= array();
+		$count 		= count( $where ); 	
+		foreach ( $where as $key => $value ) {			
+			if ( is_numeric( $value ) ) {
+				strpos( $value, '.' ) !== false ? $type = '%d' : $value_type = '%f';
+			} else {
+				$type = '%s';
+			}
+			array_push( $searches, '`' . $key . '` = ' . $type );
+			array_push( $values, $value );
+		}
+
+		$search_sql = implode( ' AND ', $searches );
+		
+		$query 		= $wpdb->prepare( 'UPDATE `' . $table . '` SET ' . $update_sql . ' WHERE ' . $search_sql, $values );
+		$updated 	= $wpdb->query( $query );
+
+
+		return $updated;
+		
+    }
 }

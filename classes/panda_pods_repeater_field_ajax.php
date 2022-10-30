@@ -23,7 +23,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 			add_action( 'wp_ajax_admin_pprf_update_order', 			array( $this, 'admin_pprf_update_order') );							
 			add_action( 'wp_ajax_admin_pprf_load_more', 			array( $this, 'admin_pprf_load_more') );				
 			add_action( 'wp_ajax_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );				
-			add_action( 'wp_ajax_admin_pprf_load_parent_items',		array( $this, 'admin_pprf_load_parent_items') );					
+			add_action( 'wp_ajax_admin_pprf_load_parent_items',		array( $this, 'admin_pprf_load_parent_items') );	
+			add_action( 'wp_ajax_admin_pprf_duplicate', 			array( $this, 'admin_pprf_duplicate') );							
 			// frontend
 
 			//add_action( 'wp_ajax_front_pprf_load_newly_added', 		array( $this, 'front_pprf_load_newly_added') );	
@@ -36,7 +37,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 		add_action( 'wp_ajax_nopriv_admin_pprf_update_order', 			array( $this, 'admin_pprf_update_order') );							
 		add_action( 'wp_ajax_nopriv_admin_pprf_load_more', 				array( $this, 'admin_pprf_load_more') );				
 		add_action( 'wp_ajax_nopriv_admin_pprf_reassign', 				array( $this, 'admin_pprf_reassign') );		
-		add_action( 'wp_ajax_nopriv_pprf_load_parent_items',			array( $this, 'admin_pprf_load_parent_items') );									
+		add_action( 'wp_ajax_nopriv_pprf_load_parent_items',			array( $this, 'admin_pprf_load_parent_items') );	
+		add_action( 'wp_ajax_nopriv_admin_pprf_duplicate', 			array( $this, 'admin_pprf_duplicate') );											
 /*		add_action( 'wp_ajax_nopriv_front_pprf_load_newly_added', 		array( $this, 'front_pprf_load_newly_added') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_delete_item', 			array( $this, 'front_pprf_delete_item') );	
 		add_action( 'wp_ajax_nopriv_front_pprf_update_order', 			array( $this, 'front_pprf_update_order') );		*/		
@@ -497,8 +499,12 @@ class Panda_Pods_Repeater_Field_Ajax {
 			 if ( 0 < $parent_pod->total() ) { 
     	
 		        while ( $parent_pod->fetch() ) { 		
-
-		        	$html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . '</option>'; 
+		        	$draft = '';
+		        	
+		        	if( $parent_pod->display( 'post_status' ) == 'Draft' ){
+		        		$draft = esc_attr( ' - draft', 'panda-pods-repeater-field');
+		        	}
+		        	$html	.=	'<option value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
 		        	
 				}	
 			}	
@@ -510,6 +516,41 @@ class Panda_Pods_Repeater_Field_Ajax {
 	    } else {
 			$data	=	array( 'security' => true, 'items' => ''  );
 		    wp_send_json_error( $data );	    	
+	    }
+	}	
+
+	public function admin_pprf_duplicate(){
+		if ( ! wp_verify_nonce( $_POST['security'], 'panda-pods-repeater-field-nonce' ) ) {
+			$data	=	array( 'security' => false, 'updated' => false  );
+		    wp_send_json_error( $data );
+		} 		
+		if( $_POST['action'] != 'admin_pprf_duplicate' ){
+			$data	=	array( 'security' => true, 'updated' => false  );
+		    wp_send_json_error( $data );			
+		}
+		global $wpdb, $current_user;
+
+		$panda_pods_repeater_field_db = new panda_pods_repeater_field_db();
+
+		$tables  = maybe_unserialize( PPRF_ALL_TABLES );	
+
+    	$args = array(
+    		'pod_name'  			=> $tables[ 'pod_' . $_POST['cpodid'] ]['pod'],    		
+    		'parent_pod_id'			=> $_POST['podid'],    	
+    		'parent_id' 			=> $_POST['postid'],    	
+    		'parent_pod_field_id'	=> $_POST['poditemid'],    
+    		'new_parent_id' 		=> $_POST['new_post_id'],	
+    		'item_id' 				=> $_POST['item_id'],
+    	);
+
+		$done	= $panda_pods_repeater_field_db->duplicate( $args );
+		
+		if( ! empty( $done['new_id'] ) ){
+			$done['message'] = sprintf( esc_html_( 'Successed. Refresh or go to the parent you assigned to to have a look. The ID is: %d. ', 'panda-pods-repeater-field' ), $done['new_id'] );
+	    	wp_send_json_success( $done );					
+	    } else {
+			$done['message'] = esc_html_( 'Failed.', 'panda-pods-repeater-field');
+		    wp_send_json_error( $done );	    	
 	    }
 	}		
 }

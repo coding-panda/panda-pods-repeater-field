@@ -3,7 +3,7 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 6.0.1
+Tested up to: 6.0.3
 Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -383,6 +383,9 @@ function dequeue_scripts_and_styles() {
 * fix: Fixed the problem that the child pod became available when the parent was not saved.
 * fix: Fixed the problem that a newly added item couldn't display admin columns
 
+= 1.5.3 - 30th October 2022 =
+* add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
+* add: Added a duplication funtionality
 
 == Upgrade Notice ==
 
@@ -569,3 +572,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 * fix: Fixed the problem that the "Please save the parent first" message stopped appearing.
 * fix: Fixed the problem that the child pod became available when the parent was not saved.
 * fix: Fixed the problem that a newly added item couldn't display admin columns
+
+= 1.5.3 =
+* add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
+* add: Added a duplication funtionality

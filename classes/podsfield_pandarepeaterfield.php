@@ -225,12 +225,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'description'=> __( 'Display labels based on the Admin Table Columns. Only strings and numbers will be displayed.', 'panda-pods-repeater-field' ),			
             ),      
             self::$type . '_allow_reassign' => array(
-                'label' 	 => __( 'Allow Reassign', 'panda-pods-repeater-field' ),
+                'label' 	 => __( 'Allow Reassignment', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Allow reassigning an item to another parent', 'panda-pods-repeater-field' ),			
             ),    
+            
             self::$type . '_public_access' => array(
                 'label' 	 => __( 'Allow Public Access', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
@@ -244,7 +245,14 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'depends-on' => array( self::$type . '_public_access' => 0 ),
                 'group'		 => $roles_arr,	                
                 'description'=> __( 'Only a user role with edit_posts capability can access the field. Grand the access right to more roles here.', 'panda-pods-repeater-field' ),	                
-            ),                                          
+            ),  
+            self::$type . '_allow_duplicate' => array(
+                'label' 	 => __( 'Allow Duplication', 'panda-pods-repeater-field' ),
+                'default' 	 => '0',
+                'type' 		 => 'pick',
+                'data' 		 => $bln_arr,	
+                'description'=> __( 'Allow duplicating an item to another parent', 'panda-pods-repeater-field' ),			
+            ),                                                      
 /*            self::$type . '_delete_family_tree' => array(
                 'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',

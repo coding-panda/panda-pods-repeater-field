@@ -47,14 +47,14 @@ if( isset( $_GET['podid'] ) && is_numeric( $_GET['podid'] ) ){
    //      $conditions    	=	array(
    //      		'limit' 	=> $parrent_limit,
    //      	);
-	  //   //normal post type fetch all published and draft posts
-	  //   if( $parent_details['type'] == 'post_type' ){
+	    //normal post type fetch all published and draft posts
+	    if( $parent_details['type'] == 'post_type' ){
 
-	  //       $conditions['where'] 	= 't.post_status = "publish" OR t.post_status = "draft"',	        		
-			// $conditions['orderby'] 	= 't.post_title',	        	
+	        $conditions['where'] 	= 't.post_status = "publish" OR t.post_status = "draft"';	        					  	
 
-	  //   }
+	    }
         $parent_details['pprf_parent']  = intval( $_GET['postid'] );
+
 	    $conditions 	= pprf_parent_filter_conditions( $parent_details, $parrent_limit );
 	    if( ! empty( $conditions['limit'] ) ){
 	    	$parrent_limit 	= $conditions['limit'];
@@ -176,6 +176,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 		if( $parent_pod ){
 			
 			$reassignable	= false;
+			$duplicable		= false;
 			//get current field 
 			foreach( $parent_pod->fields as $k => $child_fields ){
 				if( $child_fields['id'] == $_GET['poditemid']	&& $child_fields['type'] == 'pandarepeaterfield' ){
@@ -183,16 +184,19 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					if( isset( $child_fields['options']['pandarepeaterfield_allow_reassign'] ) && $child_fields['options']['pandarepeaterfield_allow_reassign'] == 1 ){
 						$reassignable	= true;
 					}
+					if( isset( $child_fields['options']['pandarepeaterfield_allow_duplicate'] ) && $child_fields['options']['pandarepeaterfield_allow_duplicate'] == 1 ){
+						$duplicable		= true;
+					}					
 					break;
 				}
 			}
 
-			//If reassigning allowed
-			if( $reassignable ){
+			//If reassigning or duplicating is allowed
+			if( $reassignable || $duplicable ){
 				
 				$same_child_fields	=	pprf_same_child_tb_fields( $parent_pod, $child_table_name );				
 				//$all_rows = $parent_pod->data(); 
-				$parents_html	= '';				
+				$parents_html		= '';				
 
 			    if ( 0 < $parent_pod->total() ) { 
 			    	$parents_html	=	'<div class="pprf-left mgt10 mgb15 w100" id="pprf-bottom-wrap">';
@@ -219,7 +223,12 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 			        	if( $parent_pod->display( 'id' ) == $_GET['postid'] ){
 			        		$selected_html	=	'selected = "selected"';
 			        	}
-			        	$parents_html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . '</option>'; 
+			        	$draft = '';
+			        	
+			        	if( $parent_pod->display( 'post_status' ) == 'Draft' ){
+			        		$draft = esc_attr( ' - draft', 'panda-pods-repeater-field');
+			        	}
+			        	$parents_html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
 			        	
 					}
 					$parents_html	.=	'</select>';
@@ -238,8 +247,12 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					$parents_html	.=	'</label>';			
 
 					$parents_html	.=	'<label class="pprf-left">';
-					$parents_html	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10 mgt5">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
-
+					if( $reassignable ){
+						$parents_html	.=	'<button id="pprf-reassign-btn" class="pprf-btn pprf-left mgr10 mgt5">' . esc_html__('Assign', 'panda-pods-repeater-field' ) . '</button>';
+					}
+					if( $duplicable ){
+						$parents_html	.=	'<button id="pprf-duplicate-btn" class="pprf-btn pprf-left mgr10 mgt5">' . esc_html__('Duplicate', 'panda-pods-repeater-field' ) . '</button>';
+					}
 					$parents_html	.=	'<div id="pprf-reassign-loader" class="hidden pprf-left">	
 											<img src = "' . esc_url( PANDA_PODS_REPEATER_URL . 'images/dots-loading.gif' ) . '" alt="loading" class="pdt10"/>
 										 </div>	';		
@@ -247,6 +260,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 					
 					$parents_html	.=	'</div>';
 				}
+				
 				echo $parents_html;
 
 			}
@@ -255,6 +269,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 } else {
 	echo esc_html__('Invalid table', 'panda-pods-repeater-field' );
 }
+echo '<div id="pprf-reassign-ajax-message"></div>';
 echo '</div>';
 ?>
 <div id="pprf-on-page-data" data-saved="0"></div>
@@ -346,6 +361,31 @@ jQuery(document).ready( function($) {
 			}
 		);	
 	})
+	$('#pprf-duplicate-btn').on('click', function(){
+		var data_obj = {
+			action 		: 	'admin_pprf_duplicate',		
+			security 	: 	ajax_script.nonce,
+			podid 		:  	'<?php echo esc_js( $_GET['podid'] ); ?>',			
+			cpodid		:   '<?php echo esc_js( $_GET['tb'] ); ?>',		
+			postid		: 	'<?php echo esc_js( $_GET['postid'] ); ?>',		
+			new_post_id	: 	$('#pprf-parent-items-sel').val(),
+			poditemid	: 	$('#pprf-field-sel').val(),
+			curPItemid	: 	'<?php echo esc_js( $_GET['poditemid'] );?>',
+			item_id		: 	'<?php echo esc_js( $_GET['itemid'] );?>',
+		};
+		$('#pprf-reassign-loader').removeClass('hidden');
+		$('#pprf-reassign-ajax-message').html( '' );
+		$.post(
+			ajax_script.ajaxurl, 
+			data_obj, 
+			function( response_obj ){				
+				$('#pprf-reassign-loader').addClass('hidden');
+				
+				$('#pprf-reassign-ajax-message').html( response_obj['data']['message'] );
+				
+			}
+		);	
+	})	
 	<?php
 	}
 	?>
