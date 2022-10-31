@@ -1088,7 +1088,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		//$cItemID_int  = $id_int;
 		$parent_table_name     = '';
 		$query_arr	  = array();
-		if( isset( $_SERVER['HTTP_REFERER'] ) ){
+		// admin_pprf_duplicate uses Pods duplicate method which trigger the post save as well, so it  messes some pandarf_parent_post_ids. It must be stopped if it is from admin_pprf_duplicate
+		if( isset( $_SERVER['HTTP_REFERER'] ) && ( !isset( $_POST['action'] ) || ( isset( $_POST['action'] ) && $_POST['action'] != 'admin_pprf_duplicate' ) ) ){
 			
 			$loc_arr = explode( '?page=panda-pods-repeater-field&', $_SERVER['HTTP_REFERER'] );
 			if( isset( $loc_arr[1] ) ){
@@ -1170,32 +1171,32 @@ class PodsField_Pandarepeaterfield extends PodsField {
 			} else {
 
 			// saving a pod table, not a post type table, deprecated, now require saving parent post first
-			if( isset( $_POST ) && is_array( $_POST ) ){	
+				// if( isset( $_POST ) && is_array( $_POST ) ){	
 			
-				foreach( $_POST as $field_str => $v_str ){
-						if( is_string( $v_str ) ){ 	
+				// 	foreach( $_POST as $field_str => $v_str ){
+				// 		if( is_string( $v_str ) ){ 	
 						
-							$target_arr 	= explode( '_', $v_str );
+				// 			$target_arr 	= explode( '_', $v_str );
 						
-							if( $target_arr[ count( $target_arr ) - 1 ] == 'pandarf' ){
+				// 			if( $target_arr[ count( $target_arr ) - 1 ] == 'pandarf' ){
 								
-								$childPodID_int = $target_arr[1];
-								// get the child pod name
-								$query  	= $wpdb->prepare( 'SELECT `post_name` FROM `' . $wpdb->posts . '` WHERE ID = %d LIMIT 0, 1' , array( $childPodID_int ) );	
+				// 				$childPodID_int = $target_arr[1];
+				// 				// get the child pod name
+				// 				$query  	= $wpdb->prepare( 'SELECT `post_name` FROM `' . $wpdb->posts . '` WHERE ID = %d LIMIT 0, 1' , array( $childPodID_int ) );	
 					
-								$item_arr  	= $wpdb->get_results( $query, ARRAY_A );	
+				// 				$item_arr  	= $wpdb->get_results( $query, ARRAY_A );	
 		
-								if( isset( $item_arr[0] ) ){
-									// search the token in the child table and update
-									$query  	= $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . 'pods_' . $item_arr[0]['post_name'] . '` SET `pandarf_parent_post_id` = %d WHERE `pandarf_parent_post_id` = %s ' , array( $id_int, $v_str ) );	
+				// 				if( isset( $item_arr[0] ) ){
+				// 					// search the token in the child table and update
+				// 					$query  	= $wpdb->prepare( 'UPDATE `' . $wpdb->prefix . 'pods_' . $item_arr[0]['post_name'] . '` SET `pandarf_parent_post_id` = %d WHERE `pandarf_parent_post_id` = %s ' , array( $id_int, $v_str ) );	
 			
-									$item_arr  	= $wpdb->query( $query );							
-								}
-							}	
+				// 					$item_arr  	= $wpdb->query( $query );							
+				// 				}
+				// 			}	
 	
-						}
-					}
-				}
+				// 		}
+				// 	}
+				// }
 				
 			} 
 			

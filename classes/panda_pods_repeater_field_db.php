@@ -441,8 +441,7 @@ class panda_pods_repeater_field_db {
 				$new_id 		= $pod->duplicate( $row['id'] );    
 		    	$return['new_id'] = $new_id;
 		
-				$row['pandarf_parent_post_id'] = $args['new_parent_id'];				
-				//$pod_user_id	= $funs->general_insert('pods_user', $insert );						
+				$row['pandarf_parent_post_id'] = $args['new_parent_id'];											
 
 				foreach( $date_fields as $date_field ){
 					if( isset( $row[ $date_field ] ) ){

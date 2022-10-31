@@ -546,10 +546,10 @@ class Panda_Pods_Repeater_Field_Ajax {
 		$done	= $panda_pods_repeater_field_db->duplicate( $args );
 		
 		if( ! empty( $done['new_id'] ) ){
-			$done['message'] = sprintf( esc_html_( 'Successed. Refresh or go to the parent you assigned to to have a look. The ID is: %d. ', 'panda-pods-repeater-field' ), $done['new_id'] );
+			$done['message'] = sprintf( esc_html__( 'Succeed. Refresh or go to the parent you assigned to to have a look. The ID is: %d. ', 'panda-pods-repeater-field' ), $done['new_id'] );
 	    	wp_send_json_success( $done );					
 	    } else {
-			$done['message'] = esc_html_( 'Failed.', 'panda-pods-repeater-field');
+			$done['message'] = esc_html__( 'Failed.', 'panda-pods-repeater-field');
 		    wp_send_json_error( $done );	    	
 	    }
 	}		

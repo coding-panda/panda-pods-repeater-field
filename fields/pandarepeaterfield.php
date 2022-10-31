@@ -382,7 +382,7 @@ jQuery(document).ready( function($) {
 				$('#pprf-reassign-loader').addClass('hidden');
 				
 				$('#pprf-reassign-ajax-message').html( response_obj['data']['message'] );
-				
+				pprf_resize_window();
 			}
 		);	
 	})	
