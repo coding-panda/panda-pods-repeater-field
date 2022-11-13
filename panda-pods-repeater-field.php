@@ -696,6 +696,7 @@ function get_pandarf_items( $fields = array(), $attrs = array(), $showQuery_bln 
 		  'limit'           	=> 0,	
 		  'count_only'			=> false,
 		  'full_child_pod_name'	=> false,
+		  'include_trashed'		=> false,
 	);		
 	$attrs  = wp_parse_args( $attrs, $defaults );						
 
@@ -763,7 +764,7 @@ function get_pandarf_items( $fields = array(), $attrs = array(), $showQuery_bln 
 			if( is_object( $field ) ){ 
 				if( isset( $field->type ) && $field->type == 'pandarepeaterfield' && $filters['parent_pod_field_id'] == $field->id ) {
 					
-					if( isset( $field->options['pandarepeaterfield_enable_trash'] ) && $field->options['pandarepeaterfield_enable_trash'] == 1 ){ // if trash enabled, only load those not trashed 
+					if( isset( $field->options['pandarepeaterfield_enable_trash'] ) && $field->options['pandarepeaterfield_enable_trash'] == 1 && false == $attrs['include_trashed'] ){ // if trash enabled, also not forced to include trashed only load those not trashed 
 						$where_sql .= ' AND `pandarf_trash` != 1';
 					
 					}

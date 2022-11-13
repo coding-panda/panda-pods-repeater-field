@@ -386,6 +386,7 @@ function dequeue_scripts_and_styles() {
 = 1.5.3 - 30th October 2022 =
 * add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
 * add: Added a duplication funtionality
+* add: Added a funtionality to delete data tree: when a parent item is deleted, all its descendents will be deleted too.
 
 == Upgrade Notice ==
 
@@ -576,3 +577,4 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.5.3 =
 * add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
 * add: Added a duplication funtionality
+* add: Added a funtionality to delete data tree: when a parent item is deleted, all its descendents will be deleted too. 

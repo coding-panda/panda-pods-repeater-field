@@ -253,13 +253,13 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Allow duplicating an item to another parent', 'panda-pods-repeater-field' ),			
             ),                                                      
-/*            self::$type . '_delete_family_tree' => array(
-                'label' 	 => __( 'Delete family tree', 'panda-pods-repeater-field' ),
+			self::$type . '_delete_data_tree' => array(
+                'label' 	 => __( 'Delete data tree', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,				
-                'description'=> __( 'When a parent item is deleted, delete all its decendents.', 'panda-pods-repeater-field' ),
-            ), */                            
+                'description'=> __( 'When a parent item is deleted, delete all its descendents.', 'panda-pods-repeater-field' ),
+            ),                            
 		);
 
 		return $options;
@@ -1003,6 +1003,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0.0
 	 */
 	public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
+	
 /*		global $wpdb;
 		
 		if( $options['type'] == 'pandarepeaterfield' && $options['pandarepeaterfield_delete_family_tree'] == 1 ){ // just to ensure
@@ -1237,9 +1238,16 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0.0
 	 */	
 	public function pods_post_delete( $item_obj, $pods_arr, $podsAPI_obj ) {
-		
+
 		global $wpdb, $current_user;
 						
+		$db_cla 	    = new panda_pods_repeater_field_db();
+	    $for_repeater_pod = array(
+    		'pod_name'  			=> $item_obj->pod,			       		
+    		'item_id' 				=> $item_obj->id,
+		);
+		$db_cla->delete_data_posterity( $for_repeater_pod );
+					
 		$item_obj 	 = apply_filters( 'pprf_filter_pods_post_delete', $item_obj, $pods_arr, $podsAPI_obj );	
 			
 		do_action( 'pprf_action_pods_post_delete', $item_obj, $pods_arr, $podsAPI_obj );
