@@ -228,7 +228,7 @@ if( isset( $_GET['tb'] ) && is_numeric( $_GET['tb'] ) && array_key_exists( 'pod_
 			        	if( $parent_pod->display( 'post_status' ) == 'Draft' ){
 			        		$draft = esc_attr( ' - draft', 'panda-pods-repeater-field');
 			        	}
-			        	$parents_html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
+			        	$parents_html	.=	'<option ' . $selected_html . ' value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">ID: ' . esc_attr( $parent_pod->display( 'id' ) ) . ' - ' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
 			        	
 					}
 					$parents_html	.=	'</select>';
