@@ -386,9 +386,7 @@ jQuery(document).ready( function($) {
 			}
 		);	
 	})	
-	<?php
-	}
-	?>
+
 	$('#pprf-field-parent-loader').on('change', function(){
 		var data_obj = {
 			action 		: 	'admin_pprf_load_parent_items',		
@@ -413,6 +411,9 @@ jQuery(document).ready( function($) {
 			}
 		);	
 	})	
+	<?php
+	}
+	?>	
 	//remove update messages
 	$('.updated, .update-nag').remove();
 	// remove admin outlook

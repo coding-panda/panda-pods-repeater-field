@@ -1246,7 +1246,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
     		'pod_name'  			=> $item_obj->pod,			       		
     		'item_id' 				=> $item_obj->id,
 		);
-		$db_cla->delete_data_posterity( $for_repeater_pod );
+		$db_cla->delete_item_descendants( $for_repeater_pod );
 					
 		$item_obj 	 = apply_filters( 'pprf_filter_pods_post_delete', $item_obj, $pods_arr, $podsAPI_obj );	
 			

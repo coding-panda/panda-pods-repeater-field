@@ -3,7 +3,7 @@
 * collection of functions can be used pods panda repeater field database
 *
 * @package panda_pods_repeater_field
-* @author: Dongjie Xu
+* @author Dongjie Xu
 * @since 20/05/2014 
 */
 class panda_pods_repeater_field_db {
@@ -522,16 +522,24 @@ class panda_pods_repeater_field_db {
     }
 
 	/**
-	 * Delete all data in all posterity 	 
+	 * Delete all data in all posterity if the "Delete item descendants" option is picked
 	 */ 
-    public function delete_data_posterity( $params = array() ){
+   public function delete_item_descendants( $params = array() ){
     	global $wpdb;
+    	// a filter to decide if you want to carry on
+    	$carry_on = true;
+    	$carry_on = apply_filters( 'pprf_carry_on_delete_item_descendants', $carry_on, $params );
+
+    	if( $carry_on != true ){
+    		return false;
+    	}
+
     	$defaults = array(
     		'pod_name'  			=> '',    		       		
     		'item_id' 				=> 0,
     	);
     	$args 		= wp_parse_args( $params, $defaults );
-    	if( empty( $args['pod_name'] ) ){
+    	if( empty( $args['pod_name'] ) || empty( $args['item_id'] ) ){
     		return false;
     	}
     	$now 	= date( 'Y-m-d H:i:s' );   
@@ -547,6 +555,7 @@ class panda_pods_repeater_field_db {
         		if( 'pandarepeaterfield' == $field_data->type ){
         			
         			if( ! empty( $field_data->pandarepeaterfield_delete_data_tree ) ){
+        				
 						$for_child_data = array(
 							'child_pod_name' 	  => $field_data->pandarepeaterfield_table,	
 							'parent_pod_id'		  => $pod->pod_data->id,    	
@@ -554,10 +563,10 @@ class panda_pods_repeater_field_db {
 							'parent_pod_field_id' => $field_data->id, 					    	
 				    	);													
 	        			
-	        			$args = array(
+	        			$for_pandarf_items = array(
 	        				'include_trashed' => true,
 	        			);
-	        			$child_data = get_pandarf_items( $for_child_data, $args );
+	        			$child_data = get_pandarf_items( $for_child_data, $for_pandarf_items );
 						$for_repeater_pod = array(
 				    		'pod_name'  			=> $field_data->pandarepeaterfield_table,			       		
 				    		'item_id' 				=> 0,
@@ -567,7 +576,7 @@ class panda_pods_repeater_field_db {
 	        				foreach( $child_data as $child ){        							
 			        			// Send the child pod into the same procedure. Do it before deleting the parent item so if something goes wrong, the parent item is still available.
 			        			$for_repeater_pod['item_id'] = $child['id'];
-			        			$this->delete_data_posterity( $for_repeater_pod );        					
+			        			$this->delete_item_descendants( $for_repeater_pod );        					
 								$table = $wpdb->prefix . 'pods_' . $field_data->pandarepeaterfield_table;
 								$query = $wpdb->prepare( 'DELETE FROM `' . $table . '` WHERE `id` = %d', $child['id'] );
 
