@@ -504,7 +504,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		        	if( $parent_pod->display( 'post_status' ) == 'Draft' ){
 		        		$draft = esc_attr( ' - draft', 'panda-pods-repeater-field');
 		        	}
-		        	$html	.=	'<option value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
+		        	$html	.=	'<option value="' . esc_attr( $parent_pod->display( 'id' ) ) . '">ID: ' . esc_attr( $parent_pod->display( 'id' ) ) . ' - ' . esc_attr( $parent_pod->display( 'name' ) ) . $draft . '</option>'; 
 		        	
 				}	
 			}	

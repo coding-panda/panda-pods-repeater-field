@@ -3,7 +3,7 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 6.0.3
+Tested up to: 6.1.1
 Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -383,10 +383,11 @@ function dequeue_scripts_and_styles() {
 * fix: Fixed the problem that the child pod became available when the parent was not saved.
 * fix: Fixed the problem that a newly added item couldn't display admin columns
 
-= 1.5.3 - 30th October 2022 =
+= 1.5.3 - 14th December 2022 =
 * add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
 * add: Added a duplication funtionality
-* add: Added a funtionality to delete data tree: when a parent item is deleted, all its descendents will be deleted too.
+* add: Added a funtionality to delete item descendants: when a parent item is deleted, all its descendants will be deleted too.
+* add: Added a constant to toggle the functionality of deleting item descendants to ensure users get the message that backups should be created before using it.
 * add: Added IDs to the parents dropdown list.
 
 == Upgrade Notice ==
@@ -578,5 +579,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 = 1.5.3 =
 * add: pprf_parent_filter_conditions() to filter the parents dropdown for reassignment and duplication
 * add: Added a duplication funtionality
-* add: Added a funtionality to delete data tree: when a parent item is deleted, all its descendents will be deleted too. 
+* add: Added a funtionality to delete item descendants: when a parent item is deleted, all its descendants will be deleted too.
+* add: Added a constant to toggle the functionality of deleting item descendants to ensure users get the message that backups should be created before using it.
 * add: Added IDs to the parents dropdown list.

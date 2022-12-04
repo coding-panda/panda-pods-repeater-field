@@ -253,15 +253,18 @@ class PodsField_Pandarepeaterfield extends PodsField {
                 'data' 		 => $bln_arr,	
                 'description'=> __( 'Allow duplicating an item to another parent', 'panda-pods-repeater-field' ),			
             ),                                                      
-			self::$type . '_delete_data_tree' => array(
-                'label' 	 => __( 'Delete data tree', 'panda-pods-repeater-field' ),
+                           
+		);
+		// To emable deleting item descendants. Add it to the configure.php file. Only do it to if you have daily backup and backup before deleting an item. The plugin author is not responsible for any data loss
+		if( defined( 'PANDA_PODS_REPEATER_DELETE_ITEM_DESCENDANTS' ) ){
+			$options[ self::$type . '_delete_data_tree' ] = array(
+                'label' 	 => __( 'Delete item descendants', 'panda-pods-repeater-field' ),
                 'default' 	 => '0',
                 'type' 		 => 'pick',
                 'data' 		 => $bln_arr,				
-                'description'=> __( 'When a parent item is deleted, delete all its descendents.', 'panda-pods-repeater-field' ),
-            ),                            
-		);
-
+                'description'=> __( 'When a parent item is deleted, delete all its descendants. Please make sure you have backups to cover any data loss.', 'panda-pods-repeater-field' ),
+            ); 			
+		}
 		return $options;
 	}
 

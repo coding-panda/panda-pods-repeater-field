@@ -22,7 +22,8 @@ define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_VERSION', '1.5.3' );
-
+// To emable deleting item descendants. Add it to the configure.php file. Only do it to if you have daily backup and backup before deleting an item. The plugin author is not responsible for any data loss
+//define( 'PANDA_PODS_REPEATER_DELETE_ITEM_DESCENDANTS', true );
  
  
 /**
@@ -33,7 +34,7 @@ define( 'PANDA_PODS_REPEATER_VERSION', '1.5.3' );
  * @since 1.0.0
  */
 class Panda_Pods_Repeater_Field {
-
+ 
 	var $menu_title 		= 'Panda Pods Repeater Field';
 	//public $can_elementor	= false;
 	const TYPE_NAME	   		= 'pandarepeaterfield';

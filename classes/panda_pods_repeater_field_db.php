@@ -525,6 +525,10 @@ class panda_pods_repeater_field_db {
 	 * Delete all data in all posterity if the "Delete item descendants" option is picked
 	 */ 
    public function delete_item_descendants( $params = array() ){
+		// To emable deleting item descendants. Add it to the configure.php file. Only do it to if you have daily backup and backup before deleting an item. The plugin author is not responsible for any data loss
+		if( ! defined( 'PANDA_PODS_REPEATER_DELETE_ITEM_DESCENDANTS' ) ){
+			return false;
+		}   	
     	global $wpdb;
     	// a filter to decide if you want to carry on
     	$carry_on = true;
