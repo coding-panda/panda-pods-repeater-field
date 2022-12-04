@@ -4,3 +4,5 @@ package.json
 package-lock.json
 gulpfile.js
 gulpconfig.json
+gulpftpconfig.json
+gulpftpconfig-local.json
