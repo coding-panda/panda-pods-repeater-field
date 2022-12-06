@@ -22,8 +22,19 @@ if( strpos( $_SERVER['REQUEST_URI'], 'wp-admin') && isset( $_GET['page'] ) && $_
 	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
 	wp_head();
 }
-
+if( isset( $_GET ) && count( $_GET ) > 0 ){
+	foreach( $_GET as $key => $value ){
+		$_GET[ $key ]	= str_replace(array( '(', ')' ), '', esc_attr( $value ) );
+	}
+}
 $_GET = array_map('wp_strip_all_tags', $_GET);
+
+$int_fields = array( 'itemid', 'podid', 'success', 'postid', 'poditemid' );
+foreach( $int_fields as $int_field ){
+	if( isset( $_GET[ $int_field ] ) ){
+		$_GET[ $int_field ] = intval( $_GET[ $int_field ] );
+	}
+}
 
 $is_allowed = true;
 
@@ -277,9 +288,6 @@ echo '</div>';
 <br/>
 <div class="click-to-close-arrow aligncenter" title="Click this bar to close" ><?php esc_html_e('Click here to collapse', 'panda-pods-repeater-field' ); ?></div>
 
-<?php
-//include_once( ABSPATH . 'wp-admin/admin-footer.php' );
-?>
 <script type="text/javascript">
 
 var pprf_loaded_resized 	= false;
@@ -439,11 +447,7 @@ jQuery(document).ready( function($) {
 
 	
 	<?php
-	if( isset( $_GET ) && count( $_GET ) > 0 ){
-		foreach( $_GET as $key => $value ){
-			$_GET[ $key ]	= esc_attr( $value );
-		}
-	}
+
 	// if successfully added a new one
 	if( isset( $_GET['success'] ) && $_GET['success'] == 1 && isset( $_GET['iframe_id'] ) && strpos( $_GET['iframe_id'], 'panda-repeater-add-new' ) === 0 ){
 		global $wpdb;

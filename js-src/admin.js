@@ -74,7 +74,7 @@ function pprf_new( podid, postid, cpodid, authorid , iframeid, poditemid, parent
 }
 
 function pprf_build_item_html( items, podid, postid, cpodid, authorid , iframeid, poditemid, parent_name, is_repeated ){
-	if( typeof items['id'] == 'undefined' || !jQuery.isNumeric( items['id'] ) ){
+	if( typeof items['id'] == 'undefined' || !jQuery.isNumeric( items['id'] ) || !jQuery.isNumeric( podid ) ){
 		return '';
 	}
 //console.log(items);

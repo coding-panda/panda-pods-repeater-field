@@ -544,8 +544,15 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				//parent iframe $options['id'] pods field id
 				
 				$parent_iframe_id = '';
-				if( isset( $_GET ) && isset( $_GET['iframe_id'] ) ){
-					$parent_iframe_id = $_GET['iframe_id'];
+				if( isset( $_GET ) ){
+					if( isset( $_GET ) && count( $_GET ) > 0 ){
+						foreach( $_GET as $key => $value ){
+							$_GET[ $key ]	= str_replace(array( '(', ')' ), '', esc_attr( $value ) );
+						}
+					}
+					if( isset( $_GET['iframe_id'] ) ){
+						$parent_iframe_id = $_GET['iframe_id'] ;
+					}
 				}
 				$query_str = '&podid=' . esc_attr( $parent_pod_id ) . '&tb=' . esc_attr( $saved_table_id ) . '&poditemid=' . esc_attr( $options['id'] ) ;
 				$repeater_field_id = 'panda-repeater-fields-' . esc_attr( $saved_table_id ) . '-' . esc_attr( $options['id'] ) ;
