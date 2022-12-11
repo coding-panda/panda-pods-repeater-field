@@ -357,9 +357,11 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 */
 	public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		global $wpdb, $current_user;
-	
-		$is_allowed = 	true;
-		$in_admin	=	true;	
+		
+		$is_allowed 	= true;
+		$in_admin		= true;	
+		$nonce 			= wp_create_nonce('load-pprf-page');
+		$nonce_query	= '&_wpnonce=' . $nonce;
 
 		if( isset( $options['pandarepeaterfield_public_access'] ) && $options['pandarepeaterfield_public_access'] == 1 ){ 
 			$is_allowed = true;			
@@ -636,7 +638,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 						$row_obj['id']	= esc_attr( $row_obj['id'] );
 										
 						$ids_in_css     = esc_attr( $saved_table_id . '-' . $row_obj['id'] . '-' . $options['id'] );
-						$full_url 		= esc_attr( $src_str . 'piframe_id=' . $parent_iframe_id . '&iframe_id=panda-repeater-edit-' . $ids_in_css . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] );	
+						$full_url 		= esc_attr( $src_str . 'piframe_id=' . $parent_iframe_id . '&iframe_id=panda-repeater-edit-' . $ids_in_css . '' . $query_str . '&postid=' . $id . '&itemid=' . $row_obj['id'] . $nonce_query );	
 
 
 						$label_html		= ''; 
@@ -714,7 +716,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 				$ids_in_css     	= esc_attr( $saved_table_id . '-' . $options['id'] ); // one less id compared to the added ones
 				
-				$full_url 	= esc_attr( $src_str . 'piframe_id=' . $parent_iframe_id . '&iframe_id=panda-repeater-add-new-' . $ids_in_css . '' . $query_str . '&postid=' . $token );
+				$full_url 	= esc_attr( $src_str . 'piframe_id=' . $parent_iframe_id . '&iframe_id=panda-repeater-add-new-' . $ids_in_css . '' . $query_str . '&postid=' . $token . $nonce_query );
 				$hidden_css		= '';
 				if( $limited && count( $entries ) == $options['pandarepeaterfield_entry_limit'] ){
 					$hidden_css	=	'hidden';	

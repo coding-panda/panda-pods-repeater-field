@@ -488,7 +488,7 @@ jQuery(document).ready( function($) {
 <script type="text/javascript">
 	
 if ( window == window.top ) {
-   document.body.innerHTML = 'Access denied!';
+  // document.body.innerHTML = 'Access denied!';
 }
 </script>
 <?php
