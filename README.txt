@@ -37,7 +37,7 @@ You can use the filters: pandarf_pods_field_attrs( array(), $value_ukn, $row_arr
 
 From Version 1.1.6, if the field type is "file", it will return the file ids, then use WordPress APIs like get_attached_file(), wp_get_attachment_image_src() etc to get the file details. Relation types of 'user', 'post type', 'pod' and 'media' will now return the saved ID.
 
-You can also use this API to fetch data: pandarf_items_fn( $fields_arr, $attrs, $showQuery_bln ). Please see the Screenshots section for how to find ids.
+You can also use this API to fetch data: pandarf_items_fn( $fields_arr, $attrs, $show_query ). Please see the Screenshots section for how to find ids.
 
 $fields_arr search repeater field table 
 array(
@@ -61,7 +61,7 @@ array(
 	'add_tb_prefix'	=> true, // add $table_prefix to the table name. Default to ture
 )
 
-$showQuery_bln
+$show_query
 If set to true, it will print out the sql command. For debugging purpose. Default to false.
 
 An example of basic usage. IDs from the Screenshots section:
@@ -71,7 +71,7 @@ or pandarf_items_fn before v1.4.11
 It will return the items attached to the post from Comic Contents.
 
 = How to insert data at the frontend =
-You can use this API to insert data: pandarf_insert( $fields_arr, $prf_arr, $showQuery_bln ). Please see the screenshots for how to find ids.
+You can use this API to insert data: pandarf_insert( $fields_arr, $prf_arr, $show_query ). Please see the screenshots for how to find ids.
 
 $fields_arr extra fields other than panda repeater fields to insert: 
 array( 
@@ -89,7 +89,7 @@ array(
 	'add_tb_prefix'	=> true, // add $table_prefix to the table name. Default to ture
 )
 
-$showQuery_bln
+$show_query
 If set to true, it will print out the sql command. For debugging purpose. Default to false.
 
 This API will return the wpdb inserted ID if successful, or false on failure. 

@@ -87,7 +87,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 
 	public function __construct () {
 		if( !class_exists( 'panda_pods_repeater_field_db' ) ){
-			include_once( PANDA_PODS_REPEATER_DIR . 'classes/panda_pods_repeater_field_db.php' );
+			include_once( PANDA_PODS_REPEATER_DIR . 'classes/class-panda-pods-repeater-field-db.php' );
 		}
 
 		if( !defined( 'PPRF_PODS_TABLES' ) ){
@@ -365,7 +365,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 		if( isset( $options['pandarepeaterfield_public_access'] ) && $options['pandarepeaterfield_public_access'] == 1 ){ 
 			$is_allowed = true;			
-		}		
+		}
 
 		
 		$is_allowed = apply_filters( 'pprf_load_panda_repeater_allow_input', $is_allowed, $in_admin, $name, $value, $options, $pod, $id );
