@@ -2,7 +2,7 @@
 /**
  * Panda Pods Repeater Field
  *
- * @package   Panda Pods Repeater Field
+ * @package   panda_pods_repeater_field
  * @author    Dongjie Xu
  * @copyright Dongjie Xu
  * @license   GPL v2 or later
@@ -15,6 +15,10 @@
  * Author URI: http://www.multimediapanda.co.uk/
  * Text Domain: panda-pods-repeater-field
  * Domain Path: /languages
+ */
+
+/**
+ * The plugin initial file
  */
 
 /**
@@ -210,7 +214,7 @@ function pandarf_pods_data( $table, $searches = array(
 		$class_name = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files_arr[0] ) ) ) );
 		include_once $file_str;
 
-		$db_cla      = new panda_pods_repeater_field_db();
+		$db_cla      = new Panda_Pods_Repeater_Field_DB();
 		$table_info  = $db_cla->get_pods_tb_info( 'pods_' . $table );
 		$table_short = 'pod' === $table_info['type'] ? 't' : 'd';
 
@@ -812,10 +816,10 @@ function pprf_enqueue_scripts() {
 	wp_register_style( 'panda-pods-repeater-styles', plugins_url( 'css/front-end.min.css', __FILE__ ), array( 'panda-pods-repeater-general-styles' ), '1.2.0' );
 	wp_enqueue_style( 'panda-pods-repeater-styles' );
 
-	if ( isset( $_GET ) && isset( $_GET['page'] ) && isset( $_GET['_wpnonce'] ) ) {
-		$page     = sanitize_title( wp_unslash( $_GET['page'] ) );
-		$_wpnonce = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
-		if ( wp_verify_nonce( $_wpnonce, 'load-pprf-page' ) ) {
+	if ( isset( $_GET ) && isset( $_GET['page'] ) && isset( $_GET['pprf_nonce'] ) ) {
+		$page     	= sanitize_title( wp_unslash( $_GET['page'] ) );
+		$pprf_nonce = sanitize_text_field( wp_unslash( $_GET['pprf_nonce'] ) );
+		if ( wp_verify_nonce( $pprf_nonce, 'load-pprf-page' ) ) {
 			if ( 'panda-pods-repeater-field' === $_GET['page'] ) {
 				wp_enqueue_style( 'dashicons' );
 				wp_register_style( 'pprf_fields', plugins_url( 'fields/css/pprf.min.css', __FILE__ ), array( 'panda-pods-repeater-general-styles', 'panda-pods-repeater-styles' ), '1.0.0' );

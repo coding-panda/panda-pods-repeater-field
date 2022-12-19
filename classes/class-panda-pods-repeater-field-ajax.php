@@ -2,14 +2,14 @@
 /**
  * The class file for ajax
  *
- * @package Panda Pods Repeater Field
+ * @package panda_pods_repeater_field
  * @author  Dongjie Xu
  */
 
 /**
  * AJax class, collection for AJax functions
  *
- * @package Panda Pods Repeater Field
+ * @package panda_pods_repeater_field
  * @author Dongjie Xu
  * @since 09/02/2016
  */
@@ -50,7 +50,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function define_pprf_all_tables() {
 		if ( ! defined( 'PPRF_ALL_TABLES' ) ) {
-			$db_cla = new panda_pods_repeater_field_db();
+			$db_cla = new Panda_Pods_Repeater_Field_DB();
 			$tables = $db_cla->get_tables();
 			define( 'PPRF_ALL_TABLES', maybe_serialize( $tables ) );
 		}
@@ -195,7 +195,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function admin_pprf_load_newly_added() {
 		// phpcs:ignore
-		if ( !isset( $_POST['action'] ) || 'admin_pprf_load_newly_added' !== $_POST['action'] ) {
+		if ( !isset( $_POST['action'] ) || 'admin_pprf_load_newly_added' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			wp_send_json_error();
 		}
 		// Nonce verification conducted in pprf_load_newly_added().
@@ -206,7 +206,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function front_pprf_load_newly_added() {
 		// phpcs:ignore
-		if ( !isset( $_POST['action'] ) || 'front_pprf_load_newly_added' !== $_POST['action'] ) {
+		if ( !isset( $_POST['action'] ) || 'front_pprf_load_newly_added' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			wp_send_json_error();
 		}
 		// Nonce verification conducted in pprf_load_newly_added().
@@ -344,7 +344,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function admin_pprf_delete_item() {
 		// phpcs:ignore
-		if ( ! isset( $_POST['action'] ) || 'admin_pprf_delete_item' !== $_POST['action'] ) {
+		if ( ! isset( $_POST['action'] ) || 'admin_pprf_delete_item' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			die();
 		}
 		// Nonce verification conducted in pprf_delete_item().
@@ -356,7 +356,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function front_pprf_delete_item() {
 		// phpcs:ignore
-		if ( ! isset( $_POST['action'] ) || 'front_pprf_delete_item' !== $_POST['action'] ) {
+		if ( ! isset( $_POST['action'] ) || 'front_pprf_delete_item' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			die();
 		}
 		// Nonce verification conducted in pprf_delete_item().
@@ -429,7 +429,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function admin_pprf_update_order() {
 		// phpcs:ignore
-		if ( ! isset( $_POST['action'] ) || 'admin_pprf_update_order' !== $_POST['action'] ) {
+		if ( ! isset( $_POST['action'] ) || 'admin_pprf_update_order' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			$data_arr = array( 'action' => false );
 			wp_send_json_error( $data_arr );
 		}
@@ -536,7 +536,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 	 */
 	public function admin_pprf_load_more() {
 		// phpcs:ignore
-		if ( ! isset( $_POST['action'] ) || 'admin_pprf_load_more' !== $_POST['action'] ) {
+		if ( ! isset( $_POST['action'] ) || 'admin_pprf_load_more' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			$data = array( 'action' => false );
 			wp_send_json_error( $data );
 		}
@@ -721,7 +721,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		global $wpdb, $current_user;
 
-		$panda_pods_repeater_field_db = new panda_pods_repeater_field_db();
+		$panda_pods_repeater_field_db = new Panda_Pods_Repeater_Field_DB();
 
 		$tables = maybe_unserialize( PPRF_ALL_TABLES );
 

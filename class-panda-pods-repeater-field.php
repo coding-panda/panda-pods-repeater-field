@@ -157,11 +157,11 @@ class Panda_Pods_Repeater_Field {
 		/**
 		 * All admin scripts goes here
 		 */
-		if ( isset( $_SERVER['REQUEST_URI'] ) && isset( $_GET ) && isset( $_GET['page'] ) && isset( $_GET['_wpnonce'] ) ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && isset( $_GET ) && isset( $_GET['page'] ) && isset( $_GET['pprf_nonce'] ) ) {
 			$request_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 			$page        = sanitize_title( wp_unslash( $_GET['page'] ) );
-			$_wpnonce    = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
-			if ( wp_verify_nonce( $_wpnonce, 'load-pprf-page' ) ) {
+			$pprf_nonce  = sanitize_text_field( wp_unslash( $_GET['pprf_nonce'] ) );
+			if ( wp_verify_nonce( $pprf_nonce, 'load-pprf-page' ) ) {
 				if ( false !== strpos( $request_uri, 'wp-admin' ) && 'panda-pods-repeater-field' === $page ) {
 					wp_register_style( 'pprf_fields', plugins_url( 'fields/css/pprf.min.css', __FILE__ ), array( 'panda-pods-repeater-general-styles', 'panda-pods-repeater-admin-styles' ), '1.0.0' );
 					wp_enqueue_style( 'pprf_fields' );
