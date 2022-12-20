@@ -58,13 +58,13 @@ class Panda_Pods_Repeater_Field {
 		}
 
 		if ( $class_bln ) {
-			// create an instance to store pods adavance custom tables.
+			// Create an instance to store pods adavance custom tables.
 			$panda_repeater_field = new podsfield_pandarepeaterfield();
-			// ajax.
+			// Ajax.
 			$repeater_field_ajax = new Panda_Pods_Repeater_Field_Ajax();
 
 			foreach ( PodsField_Pandarepeaterfield::$act_tables as $tb_str => $tbn_str ) {
-				// after pod saved.
+				// After pod saved.
 				add_action( 'pods_api_post_save_pod_item_' . $tbn_str, array( $panda_repeater_field, 'pods_post_save' ), 10, 3 );
 				add_action( 'pods_api_post_delete_pod_item_' . $tbn_str, array( $panda_repeater_field, 'pods_post_delete' ), 10, 3 );
 			}

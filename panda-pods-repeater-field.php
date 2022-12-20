@@ -980,23 +980,23 @@ function pprf_check_media_in_content( $content ) {
 	preg_match_all( '/(<img .*?>|\[img.*?\]|\[image.*?\])/is', $content, $tags );
 
 	if ( ! empty( $tags[0] ) ) {
-		$html .= ' <span class="dashicons dashicons-format-image" title ="' . esc_attr__( 'Contains images', 'panda-pods-repeater-field' ) . '"></span>';
+		$html .= ' <span class="dashicons dashicons-format-image mgr5" title ="' . esc_attr__( 'Contains images', 'panda-pods-repeater-field' ) . '"></span>';
 	}
 	preg_match_all( '/(<video .*?>|\[video.*?\])/is', $content, $tags );
 
 	if ( ! empty( $tags[0] ) ) {
-		$html .= ' <span class="dashicons dashicons-format-video" title ="' . esc_attr__( 'Contains videos', 'panda-pods-repeater-field' ) . '"></span>';
+		$html .= ' <span class="dashicons dashicons-format-video mgr5" title ="' . esc_attr__( 'Contains videos', 'panda-pods-repeater-field' ) . '"></span>';
 	}
 
 	preg_match_all( '/(<audio .*?>|\[audio.*?\])/is', $content, $tags );
 
 	if ( ! empty( $tags[0] ) ) {
-		$html .= ' <span class="dashicons dashicons-format-audio"  title ="' . esc_attr__( 'Contains audio', 'panda-pods-repeater-field' ) . '"></span>';
+		$html .= ' <span class="dashicons dashicons-format-audio mgr5"  title ="' . esc_attr__( 'Contains audio', 'panda-pods-repeater-field' ) . '"></span>';
 	}
 	preg_match_all( '/(\[.*?\])/is', $content, $tags );
 
 	if ( ! empty( $tags[0] ) ) {
-		$html .= ' <span class="dashicons dashicons-wordpress"  title ="' . esc_attr__( 'Maybe contain shortcode', 'panda-pods-repeater-field' ) . '"></span>';
+		$html .= ' <span class="dashicons dashicons-wordpress mgr5"  title ="' . esc_attr__( 'Maybe contain shortcode', 'panda-pods-repeater-field' ) . '"></span>';
 	}
 
 	return $html;
