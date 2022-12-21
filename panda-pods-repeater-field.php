@@ -36,20 +36,21 @@ define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_VERSION', '1.5.4' );
+
 /**
  * To emable deleting item descendants. Add it to the configure.php file. Only do it to if you have daily backup and backup before deleting an item. The plugin author is not responsible for any data loss.
  *
  * @example define( 'PANDA_PODS_REPEATER_DELETE_ITEM_DESCENDANTS', true );
  */
 
-include_once PANDA_PODS_REPEATER_DIR . '/class-panda-pods-repeater-field.php';
+require_once PANDA_PODS_REPEATER_DIR . '/class-panda-pods-repeater-field.php';
 
 add_action( 'plugins_loaded', 'panda_repeater_safe_activate' );
 /**
  * Initialize class, if Pods is active.
  */
 function panda_repeater_safe_activate() {
-
+	define( 'PANDA_PODS_REPEATER_NONCE', wp_create_nonce( 'load-pprf-page' ) );
 	if ( function_exists( 'pods_register_field_type' ) ) {
 		pods_register_field_type( 'pandarepeaterfield', PANDA_PODS_REPEATER_DIR . 'classes/class-podsfield-pandarepeaterfield.php' );
 	}
@@ -340,7 +341,7 @@ function get_pandarf_items( $fields = array(), $attrs = array(), $show_query = f
 					}
 					if ( isset( $field->options['pandarepeaterfield_order_by'] ) && ! empty( $field->options['pandarepeaterfield_order_by'] ) ) { // different order field.
 						if ( 'pandarf_order' === $attrs['order_by'] && ! empty( $field->options['pandarepeaterfield_order_by'] ) ) { // if not changed by the filter, load the saved one.
-							$attrs['order_by'] = $field->options['pandarepeaterfield_order_by'];
+							$attrs['order_by'] = sanitize_text_field( wp_unslash( $field->options['pandarepeaterfield_order_by'] ) );
 						}
 					}
 					if ( isset( $field->options['pandarepeaterfield_order'] ) && ! empty( $field->options['pandarepeaterfield_order'] ) ) { // different order field.
@@ -817,7 +818,7 @@ function pprf_enqueue_scripts() {
 	wp_enqueue_style( 'panda-pods-repeater-styles' );
 
 	if ( isset( $_GET ) && isset( $_GET['page'] ) && isset( $_GET['pprf_nonce'] ) ) {
-		$page     	= sanitize_title( wp_unslash( $_GET['page'] ) );
+		$page       = sanitize_title( wp_unslash( $_GET['page'] ) );
 		$pprf_nonce = sanitize_text_field( wp_unslash( $_GET['pprf_nonce'] ) );
 		if ( wp_verify_nonce( $pprf_nonce, 'load-pprf-page' ) ) {
 			if ( 'panda-pods-repeater-field' === $_GET['page'] ) {
@@ -1027,4 +1028,43 @@ function pprf_parent_filter_conditions( $parent_details = array(), $parent_limit
 	$conditions = apply_filters( 'filter_pprf_parent_filter_conditions', $conditions, $parent_details );
 
 	return $conditions;
+}
+
+/**
+ * Add iFrame to allowed wp_kses_post tags
+ *
+ * @param array  $tags Allowed tags, attributes, and/or entities.
+ * @param string $context Context to judge allowed tags by. Allowed values are 'post'.
+ *
+ * @link https://gist.github.com/bjorn2404/8afe35383a29d2dd1135ae0a39dc018c
+ * @example add_filter( 'wp_kses_allowed_html', 'pprf_custom_wpkses_post_tags', 10, 2 );
+ *
+ * @return array
+ */
+function pprf_custom_wpkses_post_tags( $tags, $context ) {
+
+	if ( 'post' === $context ) {
+		$tags['iframe'] = array(
+			'src'             => true,
+			'height'          => true,
+			'width'           => true,
+			'frameborder'     => true,
+			'allowfullscreen' => true,
+			'name'            => true,
+			'id'              => true,
+			'style'           => true,
+			'class'           => true,
+		);
+		$tags['input']  = array(
+			'type'   => true,
+			'value'  => true,
+			'name'   => true,
+			'id'     => true,
+			'style'  => true,
+			'class'  => true,
+			'data-*' => true,
+		);
+	}
+
+	return $tags;
 }

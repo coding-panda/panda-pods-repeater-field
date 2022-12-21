@@ -479,9 +479,9 @@ jQuery(document).ready( function($) {
 		if ( 0 === strpos( $iframe_id, 'panda-repeater-add-new' ) ) {
 			global $wpdb;
 
-			$item_title = str_replace( array( '(', ')' ), '', get_the_title( $pod_item_id ) );
+			$item_title = wp_strip_all_tags( str_replace( array( '(', ')' ), '', get_the_title( $pod_item_id ) ) );
 			?>
-			parent.pprf_new( <?php echo (int) $pod_id; ?>, "<?php echo (int) $current_post_id; ?>", <?php echo (int) $pod_table_id; ?>, <?php echo (int) $current_user->ID; ?>, '<?php echo esc_js( $iframe_id ); ?>', <?php echo (int) $pod_item_id; ?>, '<?php echo esc_js( $item_title ); ?>' );
+			parent.pprf_new( <?php echo (int) $pod_id; ?>, <?php echo (int) $current_post_id; ?>, <?php echo (int) $pod_table_id; ?>, <?php echo (int) $current_user->ID; ?>, '<?php echo esc_js( $iframe_id ); ?>', <?php echo (int) $pod_item_id; ?>, '<?php echo esc_js( $item_title ); ?>' );
 			<?php
 		}
 	}

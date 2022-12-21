@@ -373,10 +373,10 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		global $wpdb, $current_user;
 
-		$is_allowed  = true;
-		$in_admin    = true;
-		$nonce       = wp_create_nonce( 'load-pprf-page' );
-		$nonce_query = '&pprf_nonce=' . $nonce;
+		$is_allowed = true;
+		$in_admin   = true;
+
+		$nonce_query = '&pprf_nonce=' . PANDA_PODS_REPEATER_NONCE;
 
 		if ( isset( $options['pandarepeaterfield_public_access'] ) && 1 === (int) $options['pandarepeaterfield_public_access'] ) {
 			$is_allowed = true;
@@ -486,7 +486,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 					$table_fields = $db_cla->get_fields( 'pods_' . $tb_str );
 					$fields       = array_column( $table_fields, 'Field' );
 
-					$options['pandarepeaterfield_order_by'] = esc_sql( $options['pandarepeaterfield_order_by'] );
+					$options['pandarepeaterfield_order_by'] = esc_sql( sanitize_text_field( wp_unslash( $options['pandarepeaterfield_order_by'] ) ) );
 
 					if ( in_array( $options['pandarepeaterfield_order_by'], $fields, true ) ) {
 						$order_sql   = '`' . $options['pandarepeaterfield_order_by'] . '` ';
@@ -1083,95 +1083,104 @@ class PodsField_Pandarepeaterfield extends PodsField {
 
 		// Admin_pprf_duplicate uses Pods duplicate method which trigger the post save as well, so it  messes some pandarf_parent_post_ids. It must be stopped if it is from admin_pprf_duplicate.
 		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+			$http_referer = esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
+
+			$referer_variables = wp_parse_url( $http_referer );
+
+			parse_str( $referer_variables['query'], $query_arr );
+			if ( ! isset( $query_arr['podid'] ) || ! isset( $query_arr['postid'] ) || ! isset( $query_arr['poditemid'] ) || ! isset( $query_arr['tb'] ) ) {
+				return $pieces;
+			}
+			if ( ! is_numeric( $query_arr['podid'] ) || ! is_numeric( $query_arr['postid'] ) || ! is_numeric( $query_arr['poditemid'] ) || ! is_numeric( $query_arr['tb'] ) ) {
+				return $pieces;
+			}
 			$security_checked = false;
-			if ( isset( $_POST['security'] ) ) {
-				$security = sanitize_text_field( wp_unslash( $_POST['security'] ) );
-				if ( wp_verify_nonce( $security, 'panda-pods-repeater-field-nonce' ) ) {
+			if ( isset( $query_arr['pprf_nonce'] ) ) {
+				$security = sanitize_text_field( wp_unslash( $query_arr['pprf_nonce'] ) );
+				if ( wp_verify_nonce( $security, 'load-pprf-page' ) ) {
 					$security_checked = true;
 				}
 			}
+
 			if ( true === $security_checked ) {
-				if ( ( ! isset( $_POST['action'] ) || ( isset( $_POST['action'] ) && 'admin_pprf_duplicate' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) ) ) {
-					$url_variables = explode( '?page=panda-pods-repeater-field&', esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) );
+				if ( ! isset( $_POST['action'] ) || ( isset( $_POST['action'] ) && 'admin_pprf_duplicate' !== sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) ) {
 
-					if ( isset( $url_variables[1] ) ) {
-
-						parse_str( $url_variables[1], $query_arr );
+					if ( ! empty( $query_arr ) ) {
 						/**
 						 * Don't need to check array_key_exists( 'pod_' . $query_arr['podid'], $tables_arr ) as meta storage tabe is not in the list.
 						 * update panda keys after saving a child.
 						 */
-						if ( isset( $query_arr['podid'] ) && is_numeric( $query_arr['podid'] ) ) {
+						$now = gmdate( 'Y-m-d H:i:s' );
 
-							$now = gmdate( 'Y-m-d H:i:s' );
-							// Fetch the child table name.
-							$query        = $wpdb->prepare( 'SELECT * FROM `' . $wpdb->posts . '`  WHERE `ID` = %d LIMIT 0, 1', array( $query_arr['tb'] ) );
-							$child_tables = $wpdb->get_results(
-								// phpcs:ignore
-								$query, ARRAY_A 
-							); // db call ok. no cache ok.
-							$parent_table_name = $child_tables[0]['post_name'];
-							$table_full_name   = $wpdb->prefix . 'pods_' . $parent_table_name;
+						$query        = $wpdb->prepare( 'SELECT * FROM `' . $wpdb->posts . '`  WHERE `ID` = %d LIMIT 0, 1', array( $query_arr['tb'] ) );
+						$child_tables = $wpdb->get_results(
+							// phpcs:ignore
+							$query, ARRAY_A 
+						); // db call ok. no cache ok.
+						$parent_table_name = $child_tables[0]['post_name'];
+						$table_full_name   = $wpdb->prefix . 'pods_' . $parent_table_name;
+						$table_full_name   = esc_sql( sanitize_text_field( wp_unslash( $table_full_name ) ) );
+						$query             = $wpdb->prepare(
+							// phpcs:ignore
+							'SELECT * FROM `' . $table_full_name . '` WHERE `id` = %d LIMIT 0, 1', array( $id ) 
+						);
+						$item_arr = $wpdb->get_results(
+							// phpcs:ignore
+							$query, ARRAY_A 
+						); // db call ok. no cache ok.
 
-							$query    = $wpdb->prepare( 'SELECT * FROM `%s`  WHERE `id` = %d LIMIT 0, 1', array( $table_full_name, $id ) );
-							$item_arr = $wpdb->get_results(
-								// phpcs:ignore
-								$query, ARRAY_A 
-							); // db call ok. no cache ok.
+						if ( is_array( $item_arr ) && count( $item_arr ) > 0 ) {
 
-							if ( is_array( $item_arr ) && count( $item_arr ) > 0 ) {
+							$values_arr = array();
 
-								$values_arr = array();
+							$update_query = ' `pandarf_parent_pod_id` = %d';
+							array_push( $values_arr, $query_arr['podid'] );
+							$update_query .= ', `pandarf_parent_post_id` = %d';
+							array_push( $values_arr, $query_arr['postid'] );
+							$update_query .= ', `pandarf_pod_field_id` = %d';
+							array_push( $values_arr, $query_arr['poditemid'] );
+							$update_query .= ', `pandarf_modified` = %s';
+							array_push( $values_arr, $now );
+							$update_query .= ', `pandarf_modified_author` = %d';
+							array_push( $values_arr, $current_user->ID );
 
-								$update_query = ' `pandarf_parent_pod_id` = %d';
-								array_push( $values_arr, $query_arr['podid'] );
-								$update_query .= ', `pandarf_parent_post_id` = %s';
-								array_push( $values_arr, $query_arr['postid'] );
-								$update_query .= ', `pandarf_pod_field_id` = %d';
-								array_push( $values_arr, $query_arr['poditemid'] );
-								$update_query .= ', `pandarf_modified` = %s';
-								array_push( $values_arr, $now );
-								$update_query .= ', `pandarf_modified_author` = %d';
-								array_push( $values_arr, $current_user->ID );
-
-								// Order.
-								if ( $is_new_item ) {
-									pprf_updated_tables( $table_full_name, 'remove' );
-									if ( false === pprf_updated_tables( $table_full_name ) ) {
-										$db_cla->update_columns( $parent_table_name );
-									}
-
-									$query = $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM `%s` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = %s AND `pandarf_pod_field_id` = %d', array( $table_full_name, $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );
-
-									$order_arr = $wpdb->get_results(
-										// phpcs:ignore
-										$query, ARRAY_A 
-									); // db call ok. no cache ok.
-									$update_query .= ', `pandarf_order` = %d';
-									array_push( $values_arr, ( $order_arr[0]['last_order'] + 1 ) );
+							// Order.
+							if ( $is_new_item ) {
+								pprf_updated_tables( $table_full_name, 'remove' );
+								if ( false === pprf_updated_tables( $table_full_name ) ) {
+									$db_cla->update_columns( $parent_table_name );
 								}
 
-								// If first time update.
-								if ( '' === $item_arr[0]['pandarf_created'] || '0000-00-00 00:00:00' === $item_arr[0]['pandarf_created'] ) {
-									$update_query .= ', `pandarf_created` = %s';
-									array_push( $values_arr, $now );
-								}
-								if ( '' === $item_arr[0]['pandarf_author'] || 0 === (int) $item_arr[0]['pandarf_author'] ) {
-									$update_query .= ', `pandarf_author` = %d';
-									array_push( $values_arr, $current_user->ID );
-								}
-								array_push( $values_arr, $id );
+								$query = $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM %s WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = %d AND `pandarf_pod_field_id` = %d', array( $table_full_name, $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );
 
-								$query = $wpdb->prepare(
-									// phpcs:ignore
-									'UPDATE  `' . $table_full_name . '` SET ' . $update_query . ' WHERE id = %d', $values_arr 
-								);
-
-								$items_bln = $wpdb->query(
+								$order_arr = $wpdb->get_results(
 									// phpcs:ignore
 									$query, ARRAY_A 
 								); // db call ok. no cache ok.
+								$update_query .= ', `pandarf_order` = %d';
+								array_push( $values_arr, ( $order_arr[0]['last_order'] + 1 ) );
 							}
+
+							// If first time update.
+							if ( '' === $item_arr[0]['pandarf_created'] || '0000-00-00 00:00:00' === $item_arr[0]['pandarf_created'] ) {
+								$update_query .= ', `pandarf_created` = %s';
+								array_push( $values_arr, $now );
+							}
+							if ( '' === $item_arr[0]['pandarf_author'] || 0 === (int) $item_arr[0]['pandarf_author'] ) {
+								$update_query .= ', `pandarf_author` = %d';
+								array_push( $values_arr, $current_user->ID );
+							}
+							array_push( $values_arr, $id );
+
+							$query = $wpdb->prepare(
+								// phpcs:ignore
+								'UPDATE  `' . $table_full_name . '` SET ' . $update_query . ' WHERE id = %d', $values_arr 
+							);
+
+							$items_bln = $wpdb->query(
+								// phpcs:ignore
+								$query, ARRAY_A 
+							); // db call ok. no cache ok.
 						}
 					}
 				}
@@ -1184,6 +1193,7 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				'parent' => '',
 				'child'  => '',
 			);
+
 			if ( isset( $tables_arr[ 'pod_' . $query_arr['podid'] ] ) ) {
 				$related_tables['parent'] = $tables_arr[ 'pod_' . $query_arr['podid'] ];
 			}

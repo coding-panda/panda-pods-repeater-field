@@ -72,7 +72,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		global $wpdb, $current_user;
 
-		$tables = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables = (array) json_decode( PPRF_ALL_TABLES );
 
 		if ( isset( $_POST['podid'] ) && is_numeric( $_POST['podid'] ) && isset( $_POST['cpodid'] ) && is_numeric( $_POST['cpodid'] ) && isset( $_POST['postid'] ) && isset( $_POST['authorid'] ) && is_numeric( $_POST['authorid'] ) && isset( $_POST['poditemid'] ) && is_numeric( $_POST['poditemid'] ) ) {
 
@@ -84,11 +84,13 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 			// Update panda keys.
 			if ( array_key_exists( 'pod_' . $child_pod_id, $tables ) ) {
-				$field_options   = array();
-				$parent_pod_name = '';
+				$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ];
+				$field_options                    = array();
+				$parent_pod_name                  = '';
 				// Get the parent field.
 				if ( array_key_exists( 'pod_' . $pod_id, $tables ) ) { // Custom settings don't have a parent table.
-					$parent_pod_name = $tables[ 'pod_' . $pod_id ]['pod'];
+					$tables[ 'pod_' . $pod_id ] = (array) $tables[ 'pod_' . $pod_id ];
+					$parent_pod_name            = $tables[ 'pod_' . $pod_id ]['pod'];
 				} else {
 					$parent_post = get_post( $pod_id, ARRAY_A );
 					if ( ! empty( $parent_post ) && '_pods_pod' === $parent_post['post_type'] ) {
@@ -230,7 +232,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 		global $wpdb, $current_user;
 
-		$tables = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables = (array) json_decode( PPRF_ALL_TABLES );
 
 		if ( isset( $_POST['podid'] ) && is_numeric( $_POST['podid'] ) && isset( $_POST['cpodid'] ) && is_numeric( $_POST['cpodid'] ) && isset( $_POST['postid'] ) && isset( $_POST['authorid'] ) && is_numeric( $_POST['authorid'] ) && isset( $_POST['itemid'] ) && is_numeric( $_POST['itemid'] ) && isset( $_POST['poditemid'] ) && is_numeric( $_POST['poditemid'] ) ) {
 			$pod_id       = (int) $_POST['podid'];
@@ -242,8 +244,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 			// Update panda keys.
 			if ( array_key_exists( 'pod_' . $child_pod_id, $tables ) ) {
-
-				$table_str = esc_sql( $wpdb->prefix . $tables[ 'pod_' . $child_pod_id ]['name'] );
+				$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ];
+				$table_str                        = esc_sql( sanitize_text_field( wp_unslash( $wpdb->prefix . $tables[ 'pod_' . $child_pod_id ]['name'] ) ) );
 
 				$wheres   = array();
 				$join_sql = '';
@@ -257,37 +259,32 @@ class Panda_Pods_Repeater_Field_Ajax {
 					}
 				}
 				// Fetch the child item data and see if the item belong to the current post.
-				$where_sql = '   `t`.`pandarf_parent_pod_id`  = %d
-							   	  AND `t`.`pandarf_parent_post_id` = %d
-							   	  AND `t`.`pandarf_pod_field_id`   = %d ';
-
-				$wheres = array( $pod_id, $post_id, $pod_item_id, $item_id );
-
 				$query = $wpdb->prepare(
 					// phpcs:ignore
-					'SELECT * FROM `' . $table_str . '` AS t ' . $join_sql . ' WHERE ' . $where_sql . ' AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1', 
-					$wheres
+					'SELECT * FROM `' . $table_str . '` AS t ' . $join_sql . ' WHERE `t`.`pandarf_parent_pod_id`  = %d AND `t`.`pandarf_parent_post_id` = %d AND `t`.`pandarf_pod_field_id`   = %d AND `t`.`id` = %d ORDER BY `t`.`id` DESC LIMIT 0, 1', 
+					array( $pod_id, $post_id, $pod_item_id, $item_id )
 				);
 				// phpcs:ignore
 				$item_arr = $wpdb->get_results(
 					// phpcs:ignore
 					$query, ARRAY_A 
 				);
-				if ( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) && $item_id === $item_arr[0]['id'] ) {
+
+				if ( is_array( $item_arr ) && isset( $item_arr[0]['id'] ) && $item_id === (int) $item_arr[0]['id'] ) {
 
 					$delete_action = 'delete';
 
 					if ( isset( $_POST['trash'] ) ) {
-						$to_trash = sanitize_text_field( wp_unslash( $_POST['trash'] ) );
+						$to_trash = (int) $_POST['trash'];
 					} else {
-						$to_trash = '2';
-					}
-					if ( '0' === $to_trash ) {
+						$to_trash = 2;
+					} 
+					if ( 0 === $to_trash ) {
 
 						$query = $wpdb->prepare(
 							// phpcs:ignore
-							'UPDATE `%s` SET `pandarf_trash` = 0 WHERE `id` = %d;', 
-							array( $table_str, $item_id )
+							'UPDATE `' . $table_str . '` SET `pandarf_trash` = 0 WHERE `id` = %d;', 
+							array( $item_id )
 						);
 						// phpcs:ignore
 						$deleted = $wpdb->query(
@@ -296,9 +293,9 @@ class Panda_Pods_Repeater_Field_Ajax {
 						);
 						$delete_action = 'restore';
 					}
-					if ( '1' === $to_trash ) { // If $to_trash == 1, the table should be already updated.
+					if ( 1 === $to_trash ) { // If $to_trash == 1, the table should be already updated.
 
-						$query = $wpdb->prepare( 'UPDATE `%s` SET `pandarf_trash` = 1 WHERE `id` = %d;', array( $table_str, $item_id ) );
+						$query = $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;', array( $item_id ) );
 						// phpcs:ignore
 						$deleted = $wpdb->query(
 							// phpcs:ignore
@@ -306,7 +303,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 						);
 						$delete_action = 'trash';
 					}
-					if ( '2' === $to_trash ) {
+					if ( 2 === $to_trash ) {
 						$pod_obj = pods( $tables[ 'pod_' . $child_pod_id ]['pod'], absint( $item_id ) );
 						if ( $pod_obj->exists() ) {
 							$deleted = $pod_obj->delete( $item_id );
@@ -381,7 +378,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		global $wpdb, $current_user;
 
-		$tables      = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables      = (array) json_decode( PPRF_ALL_TABLES );
 		$pprf_id     = '';
 		$return_data = array( 'pprf_id' => '' );
 		if ( isset( $_POST['order'] ) && is_array( $_POST['order'] ) ) {
@@ -395,6 +392,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 				if ( count( $ids_arr ) >= 3 ) {
 					// If the pods table is listed.
 					if ( isset( $tables[ 'pod_' . $ids_arr[1] ] ) ) {
+						$tables[ 'pod_' . $ids_arr[1] ] = (array) $tables[ 'pod_' . $ids_arr[1] ];
 						if ( '' === $pprf_id ) {
 							$pprf_id = $ids_arr[1] . '-' . $ids_arr[3];
 						}
@@ -454,7 +452,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 		global $wpdb, $current_user;
 
-		$tables = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables = (array) json_decode( PPRF_ALL_TABLES );
 
 		$tb_str = '';
 		if ( isset( $_POST['saved_tb'] ) && is_numeric( $_POST['saved_tb'] ) ) {
@@ -510,8 +508,8 @@ class Panda_Pods_Repeater_Field_Ajax {
 		}
 
 		// If it is a WordPress post type, join wp_posts table.
-		$join_sql = '';
-
+		$join_sql                           = '';
+		$tables[ 'pod_' . $saved_table_id ] = (array) $tables[ 'pod_' . $saved_table_id ];
 		if ( 'post_type' === $tables[ 'pod_' . $saved_table_id ]['type'] ) {
 			$join_sql = 'INNER JOIN  `' . $wpdb->prefix . 'posts` AS post_tb ON post_tb.ID = main_tb.id';
 		}
@@ -559,6 +557,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 			$data = array(
 				'security' => false,
 				'updated'  => false,
+				'message'  => '',
 			);
 			wp_send_json_error( $data );
 		}
@@ -566,16 +565,18 @@ class Panda_Pods_Repeater_Field_Ajax {
 			$data = array(
 				'security' => true,
 				'updated'  => false,
+				'message'  => 'Wrong action.',
 			);
 			wp_send_json_error( $data );
 		}
 		global $wpdb, $current_user;
 
-		$tables = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables = (array) json_decode( PPRF_ALL_TABLES );
 		if ( ! isset( $_POST['cpodid'] ) || ! isset( $_POST['postid'] ) || ! isset( $_POST['poditemid'] ) || ! isset( $_POST['itemid'] ) ) {
 			$data = array(
 				'security' => true,
 				'updated'  => false,
+				'message'  => 'Wrong params.',
 			);
 			wp_send_json_error( $data );
 		}
@@ -585,12 +586,14 @@ class Panda_Pods_Repeater_Field_Ajax {
 		$pod_item_id  = sanitize_text_field( wp_unslash( $_POST['poditemid'] ) );
 		$item_id      = sanitize_text_field( wp_unslash( $_POST['itemid'] ) );
 
+		$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ] ;
+		$table = esc_sql( sanitize_text_field( wp_unslash( $tables[ 'pod_' . $child_pod_id ]['name'] ) ) );
 		$query = $wpdb->prepare(
-			'UPDATE `' . $wpdb->prefix . '%s`
+			'UPDATE `' . $wpdb->prefix . $table . '`
 									  	SET  `pandarf_parent_post_id` 	=  %d,
 											 `pandarf_pod_field_id` 	=  %d
 									  	WHERE  `id` = %d',
-			array( $tables[ 'pod_' . $child_pod_id ]['name'], $post_id, $pod_item_id, $item_id )
+			array( $post_id, $pod_item_id, $item_id )
 		);
 
 		$done = $wpdb->query(
@@ -601,12 +604,14 @@ class Panda_Pods_Repeater_Field_Ajax {
 			$data = array(
 				'security' => true,
 				'updated'  => $done,
+				'message'  => 'Done.',
 			);
 			wp_send_json_success( $data );
 		} else {
 			$data = array(
 				'security' => true,
 				'updated'  => false,
+				'message'  => 'Update failed.',
 			);
 			wp_send_json_error( $data );
 		}
@@ -723,10 +728,13 @@ class Panda_Pods_Repeater_Field_Ajax {
 
 		$panda_pods_repeater_field_db = new Panda_Pods_Repeater_Field_DB();
 
-		$tables = maybe_unserialize( PPRF_ALL_TABLES );
+		$tables       = (array) json_decode( PPRF_ALL_TABLES );
+		$child_pod_id = (int) $_POST['cpodid'];
+
+		$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ];
 
 		$args = array(
-			'pod_name'            => $tables[ 'pod_' . (int) $_POST['cpodid'] ]['pod'],
+			'pod_name'            => $tables[ 'pod_' . $child_pod_id ]['pod'],
 			'parent_pod_id'       => (int) $_POST['podid'],
 			'parent_id'           => (int) $_POST['postid'],
 			'parent_pod_field_id' => (int) $_POST['poditemid'],

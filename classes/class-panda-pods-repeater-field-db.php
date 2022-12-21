@@ -286,7 +286,9 @@ class Panda_Pods_Repeater_Field_DB {
 	 */
 	public function update_columns( $table ) {
 		global $wpdb;
-		$table      = esc_sql( $table );
+
+		$table = esc_sql( sanitize_text_field( wp_unslash( $table ) ) );
+
 		self::$keys = $this->escape_sqls( self::$keys );
 		foreach ( self::$keys as $key => $values ) {
 			$key      = esc_sql( $key );
@@ -322,10 +324,10 @@ class Panda_Pods_Repeater_Field_DB {
 	 */
 	public function check_column_existence( $table, $column ) {
 		global $wpdb;
-
+		$table  = esc_sql( sanitize_text_field( wp_unslash( $table ) ) );
 		$result = $wpdb->query(
 			// phpcs:ignore
-			$wpdb->prepare( 'SHOW COLUMNS FROM `' . $wpdb->prefix . '%s` LIKE %s', array( $table, $column ) ) 
+			$wpdb->prepare( 'SHOW COLUMNS FROM `' . $wpdb->prefix . $table . '` LIKE %s', array( $column ) ) 
 		); // db call ok. no cache ok.
 
 		return $result;
@@ -342,21 +344,19 @@ class Panda_Pods_Repeater_Field_DB {
 	public function get_fields( $table, $add_prefix = true, $shown_query = false ) {
 		global $wpdb;
 
-		$table = esc_sql( stripslashes( $table ) );
+		$table = esc_sql( sanitize_text_field( wp_unslash( $table ) ) );
 
 		if ( $add_prefix && stripos( $table, $wpdb->prefix ) !== 0 ) {
 			$table = $wpdb->prefix . $table;
 		}
-		$table     = esc_sql( $table );
+
 		$cache_key = 'pprf_table_field_data';
 		$items     = wp_cache_get( $table, $cache_key );
 
 		if ( false === $items ) {
 
-			$query = $wpdb->prepare(
-				// phpcs:ignore
-				'SHOW FIELDS FROM `%s`', array( $table ) 
-			);
+			$query = 'SHOW FIELDS FROM ' . $table;
+
 			if ( $shown_query ) {
 				echo esc_html( $query );
 			}
@@ -451,11 +451,13 @@ class Panda_Pods_Repeater_Field_DB {
 			'item_id'             => 0,
 		);
 		$args     = wp_parse_args( $params, $defaults );
+		
 		if ( empty( $args['pod_name'] ) ) {
 			return false;
 		}
+		
 		$now                         = gmdate( 'Y-m-d H:i:s' );
-		$args['pod_name']            = esc_sql( $args['pod_name'] );
+		$args['pod_name']            = sanitize_text_field( wp_unslash( $args['pod_name'] ) );
 		$args['parent_pod_id']       = (int) $args['parent_pod_id'];
 		$args['parent_id']           = (int) $args['parent_id'];
 		$args['parent_pod_field_id'] = (int) $args['parent_pod_field_id'];
@@ -487,16 +489,15 @@ class Panda_Pods_Repeater_Field_DB {
 				}
 			}
 
-			$table = 'pods_' . $args['pod_name'];
+			$table = esc_sql( 'pods_' . $args['pod_name'] );
 
 			if ( 0 !== $args['item_id'] ) { // Only duplicate one.
 
 				$query = $wpdb->prepare(
 					'SELECT * 
-					FROM `' . $wpdb->prefix . '%s` 				  
+					FROM `' . $wpdb->prefix . $table . '` 				  
 					WHERE `id` = %d',
-					array(
-						$table,
+					array(						
 						$args['item_id'],
 					)
 				);
@@ -504,13 +505,9 @@ class Panda_Pods_Repeater_Field_DB {
 			} else { // Duplicate all children.
 
 				$query = $wpdb->prepare(
-					'SELECT * 
-					FROM `' . $wpdb->prefix . '%s` 				  
-					WHERE `pandarf_parent_pod_id` = %d AND 
-						`pandarf_parent_post_id` = %d AND 
-						`pandarf_pod_field_id` = %d',
+					// phpcs:ignore
+					'SELECT * FROM `' . $wpdb->prefix . $table . '` WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = %d AND `pandarf_pod_field_id` = %d',
 					array(
-						$table,
 						$args['parent_pod_id'],
 						$args['parent_id'],
 						$args['parent_pod_field_id'],
@@ -586,7 +583,7 @@ class Panda_Pods_Repeater_Field_DB {
 		if ( ! is_string( $table ) || ! is_array( $data ) || ! is_array( $where ) || empty( $data ) || empty( $where ) ) {
 			return false;
 		}
-		$table   = esc_sql( $table );
+		$table   = esc_sql( sanitize_text_field( wp_unslash( $table ) ) );
 		$updates = array();
 		$values  = array();
 
@@ -688,15 +685,20 @@ class Panda_Pods_Repeater_Field_DB {
 						if ( ! empty( $child_data ) ) {
 							foreach ( $child_data as $child ) {
 								// Send the child pod into the same procedure. Do it before deleting the parent item so if something goes wrong, the parent item is still available.
-								$for_repeater_pod['item_id'] = $child['id'];
-								$this->delete_item_descendants( $for_repeater_pod );
-								$table = $wpdb->prefix . 'pods_' . $field_data->pandarepeaterfield_table;
-								$query = $wpdb->prepare( 'DELETE FROM `%s` WHERE `id` = %d', array( $table, $child['id'] ) );
-
-								$wpdb->query(
-									// phpcs:ignore
-									$query 
-								); // db call ok. no cache ok.
+								if( ! empty( $child['id'] ) ){
+									$for_repeater_pod['item_id'] = $child['id'];
+									$this->delete_item_descendants( $for_repeater_pod );
+									$table = $wpdb->prefix . 'pods_' . $field_data->pandarepeaterfield_table;
+									$table = esc_sql( sanitize_text_field( wp_unslash( $table ) ) );
+									$query = $wpdb->prepare(
+										// phpcs:ignore
+										'DELETE FROM `' . $table . '` WHERE `id` = %d', array( $child['id'] ) 
+									);
+									$wpdb->query(
+										// phpcs:ignore
+										$query 
+									); // db call ok. no cache ok.
+								}
 							}
 						}
 					}

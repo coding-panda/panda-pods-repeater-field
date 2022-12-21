@@ -39,25 +39,28 @@ class Panda_Pods_Repeater_Field {
 		);
 
 		$active_plugins = get_option( 'active_plugins' );
-		$class_bln      = true;
+		$has_classes    = true;
 		$files_count    = count( $files );
 
 		for ( $i = 0; $i < $files_count; $i ++ ) {
-			$file_str = dirname( __FILE__ ) . '/classes/' . $files[ $i ] . '.php';
+			$file = dirname( __FILE__ ) . '/classes/' . $files[ $i ] . '.php';
 
-			if ( file_exists( $file_str ) ) {
-				$class_name = str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $files[ $i ] ) ) ) );
-				include_once $file_str;
+			if ( file_exists( $file ) ) {
+				$class_name = str_replace( '-', '_', $files[ $i ] );
+				$class_name = substr( $class_name, 6 );
+
+				include_once $file;
 
 				if ( ! class_exists( $class_name ) ) {
-					$class_bln = false;
+
+					$has_classes = false;
 				}
 			} else {
-				$class_bln = false;
+				$has_classes = false;
 			}
 		}
 
-		if ( $class_bln ) {
+		if ( true === $has_classes ) {
 			// Create an instance to store pods adavance custom tables.
 			$panda_repeater_field = new podsfield_pandarepeaterfield();
 			// Ajax.
@@ -171,7 +174,7 @@ class Panda_Pods_Repeater_Field {
 
 		if ( version_compare( $wp_version, '5.9', '=' ) ) {
 
-			wp_register_script( 'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable', 'panda-pods-repeater-jquery-ui' ), '1.0.0', true );
+			wp_register_script( 'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable', 'panda-pods-repeater-jquery-ui' ), '1.0.1', true );
 		} else {
 			wp_register_script( 'panda-pods-repeater-admin-scripts', plugins_url( 'js/admin.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-resizable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), '1.0.0', true );
 
@@ -201,8 +204,11 @@ class Panda_Pods_Repeater_Field {
 		);
 		wp_localize_script(
 			'panda-pods-repeater-admin-scripts',
-			'PANDA_PODS_REPEATER_URL',
-			array( PANDA_PODS_REPEATER_URL )
+			'PANDA_PODS_REPEATER_CONSTANTS',
+			array(
+				'url'   => PANDA_PODS_REPEATER_URL,
+				'nonce' => PANDA_PODS_REPEATER_NONCE,
+			)
 		);
 
 	}
