@@ -278,7 +278,7 @@ class Panda_Pods_Repeater_Field_Ajax {
 						$to_trash = (int) $_POST['trash'];
 					} else {
 						$to_trash = 2;
-					} 
+					}
 					if ( 0 === $to_trash ) {
 
 						$query = $wpdb->prepare(
@@ -295,7 +295,10 @@ class Panda_Pods_Repeater_Field_Ajax {
 					}
 					if ( 1 === $to_trash ) { // If $to_trash == 1, the table should be already updated.
 
-						$query = $wpdb->prepare( 'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;', array( $item_id ) );
+						$query = $wpdb->prepare(
+							// phpcs:ignore
+							'UPDATE `' . $table_str . '` SET `pandarf_trash` = 1 WHERE `id` = %d;', array( $item_id ) 
+						);
 						// phpcs:ignore
 						$deleted = $wpdb->query(
 							// phpcs:ignore
@@ -586,13 +589,11 @@ class Panda_Pods_Repeater_Field_Ajax {
 		$pod_item_id  = sanitize_text_field( wp_unslash( $_POST['poditemid'] ) );
 		$item_id      = sanitize_text_field( wp_unslash( $_POST['itemid'] ) );
 
-		$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ] ;
-		$table = esc_sql( sanitize_text_field( wp_unslash( $tables[ 'pod_' . $child_pod_id ]['name'] ) ) );
-		$query = $wpdb->prepare(
-			'UPDATE `' . $wpdb->prefix . $table . '`
-									  	SET  `pandarf_parent_post_id` 	=  %d,
-											 `pandarf_pod_field_id` 	=  %d
-									  	WHERE  `id` = %d',
+		$tables[ 'pod_' . $child_pod_id ] = (array) $tables[ 'pod_' . $child_pod_id ];
+		$table                            = esc_sql( sanitize_text_field( wp_unslash( $tables[ 'pod_' . $child_pod_id ]['name'] ) ) );
+		$query                            = $wpdb->prepare(
+			// phpcs:ignore
+			'UPDATE `' . $wpdb->prefix . $table . '` SET `pandarf_parent_post_id` = %d, `pandarf_pod_field_id` = %d WHERE `id` = %d',
 			array( $post_id, $pod_item_id, $item_id )
 		);
 

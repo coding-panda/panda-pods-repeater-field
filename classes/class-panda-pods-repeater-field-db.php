@@ -451,11 +451,11 @@ class Panda_Pods_Repeater_Field_DB {
 			'item_id'             => 0,
 		);
 		$args     = wp_parse_args( $params, $defaults );
-		
+
 		if ( empty( $args['pod_name'] ) ) {
 			return false;
 		}
-		
+
 		$now                         = gmdate( 'Y-m-d H:i:s' );
 		$args['pod_name']            = sanitize_text_field( wp_unslash( $args['pod_name'] ) );
 		$args['parent_pod_id']       = (int) $args['parent_pod_id'];
@@ -494,10 +494,9 @@ class Panda_Pods_Repeater_Field_DB {
 			if ( 0 !== $args['item_id'] ) { // Only duplicate one.
 
 				$query = $wpdb->prepare(
-					'SELECT * 
-					FROM `' . $wpdb->prefix . $table . '` 				  
-					WHERE `id` = %d',
-					array(						
+					// phpcs:ignore
+					'SELECT * FROM `' . $wpdb->prefix . $table . '`	WHERE `id` = %d',
+					array(
 						$args['item_id'],
 					)
 				);
@@ -685,7 +684,7 @@ class Panda_Pods_Repeater_Field_DB {
 						if ( ! empty( $child_data ) ) {
 							foreach ( $child_data as $child ) {
 								// Send the child pod into the same procedure. Do it before deleting the parent item so if something goes wrong, the parent item is still available.
-								if( ! empty( $child['id'] ) ){
+								if ( ! empty( $child['id'] ) ) {
 									$for_repeater_pod['item_id'] = $child['id'];
 									$this->delete_item_descendants( $for_repeater_pod );
 									$table = $wpdb->prefix . 'pods_' . $field_data->pandarepeaterfield_table;

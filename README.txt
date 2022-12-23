@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 6.1.1
-Stable tag: 1.5.4
+Stable tag: 1.5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -393,6 +393,12 @@ function dequeue_scripts_and_styles() {
 = 1.5.4 - 6th December 2022 =
 * fix: Fixed a security issue.
 
+= 1.5.5 - 22th December 2022 =
+* update: Applied coding standards.
+
+= 1.5.6 - 23th December 2022 =
+* update: Applied more coding standards.
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -588,3 +594,9 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.5.4 =
 * fix: Fixed a security issue.
+
+= 1.5.5 =
+* update: Applied coding standards.
+
+= 1.5.6 =
+* update: Applied more coding standards.

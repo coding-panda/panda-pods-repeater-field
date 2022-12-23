@@ -13,12 +13,83 @@
  */
 class Panda_Pods_Repeater_Field {
 	/**
+	 * The allowed html tags for html outputs
+	 *
+	 * @var array
+	 * @since 1.5.6
+	 */
+	public $allowed_html_tags = array(
+		'strong' => array(),
+		'span'   => array(
+			'class' => true,
+			'title' => true,
+		),
+		'div'    => array(
+			'class'  => true,
+			'title'  => true,
+			'id'     => true,
+			'data-*' => true,
+			'style'  => true,
+		),
+		'iframe' => array(
+			'src'             => true,
+			'height'          => true,
+			'width'           => true,
+			'frameborder'     => true,
+			'allowfullscreen' => true,
+			'name'            => true,
+			'id'              => true,
+			'style'           => true,
+			'class'           => true,
+		),
+		'img'    => array(
+			'class' => true,
+			'title' => true,
+			'id'    => true,
+			'src'   => true,
+			'alt'   => true,
+			'style' => true,
+		),
+		'label'    => array(
+			'class' => true,
+			'id'    => true,
+			'style' => true,
+		),	
+		'select'    => array(
+			'class' => true,
+			'id'    => true,
+			'style' => true,
+			'name' 	=> true,	
+			'disabled' => true,			
+		),			
+		'option' 	=> array(
+			'class' => true,
+			'value' => true,
+			'style' => true,
+			'selected' => true,
+			'disabled' => true,
+		),	
+		'button' 	=> array(
+			'class' => true,
+			'id'    => true,
+			'style' => true,
+			'name' 	=> true,	
+			'disabled' => true,	
+			'data-*' => true,			
+		),			
+	);
+	/**
 	 * Title to use in the menu.
 	 *
 	 * @var string $menu_title
 	 */
 	public $menu_title = 'Panda Pods Repeater Field';
-	const TYPE_NAME    = 'pandarepeaterfield';
+	/**
+	 * The name of the field.
+	 *
+	 * @var string TYPE_NAME
+	 */
+	const TYPE_NAME = 'pandarepeaterfield';
 	/**
 	 * Constructor for the Panda_Pods_Repeater_Field class
 	 *
@@ -66,10 +137,10 @@ class Panda_Pods_Repeater_Field {
 			// Ajax.
 			$repeater_field_ajax = new Panda_Pods_Repeater_Field_Ajax();
 
-			foreach ( PodsField_Pandarepeaterfield::$act_tables as $tb_str => $tbn_str ) {
+			foreach ( PodsField_Pandarepeaterfield::$act_tables as $pod_table_id => $pod_table_name ) {
 				// After pod saved.
-				add_action( 'pods_api_post_save_pod_item_' . $tbn_str, array( $panda_repeater_field, 'pods_post_save' ), 10, 3 );
-				add_action( 'pods_api_post_delete_pod_item_' . $tbn_str, array( $panda_repeater_field, 'pods_post_delete' ), 10, 3 );
+				add_action( 'pods_api_post_save_pod_item_' . $pod_table_name, array( $panda_repeater_field, 'pods_post_save' ), 10, 3 );
+				add_action( 'pods_api_post_delete_pod_item_' . $pod_table_name, array( $panda_repeater_field, 'pods_post_delete' ), 10, 3 );
 			}
 			add_action( 'pods_admin_ui_setup_edit_fields', array( $panda_repeater_field, 'field_table_fields' ), 10, 2 );
 

@@ -211,6 +211,8 @@ do_action( 'pandarf_item_top', $get_data );
 
 if ( '' !== $pod_table_id ) {
 
+	global $panda_pods_repeater_field;
+
 	if ( array_key_exists( 'pod_' . $pod_table_id, PodsField_Pandarepeaterfield::$act_tables ) ) {
 		$table_name = PodsField_Pandarepeaterfield::$act_tables[ 'pod_' . $pod_table_id ];
 
@@ -312,9 +314,11 @@ if ( '' !== $pod_table_id ) {
 
 						$parents_html .= '</div>';
 					}
-					// phpcs:ignore
-					echo $parents_html;
 
+					echo wp_kses(
+						$parents_html,
+						$panda_pods_repeater_field->allowed_html_tags
+					);
 				}
 			}
 		}
