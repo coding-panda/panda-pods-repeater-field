@@ -14,14 +14,16 @@ global $current_user, $wpdb;
 $is_admin = false;
 
 if ( isset( $_SERVER['REQUEST_URI'] ) ) { // Is_admin doesn't work for nested fields.
+	if ( false === function_exists( 'sanitize_text_field' ) ) {
+		die( 'No frontend.' );
+	}
 	$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 	if ( false !== strpos( $request_uri, 'wp-admin' ) ) {
 		$is_admin = true;
 	}
 }
 if ( false === $is_admin ) {
-	require_once dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php';
-	wp_head();
+	die( 'No frontend.' );
 }
 $security_checked = false;
 if ( isset( $_GET['pprf_nonce'] ) ) {
@@ -83,35 +85,16 @@ if ( isset( $pod_id ) && is_numeric( $pod_id ) ) {
 
 		$parent_pages = $parent_pod->total_pages();
 
-		if ( ! $is_allowed ) {
-			// Get current field.
-			foreach ( $parent_pod->fields as $k => $child_fields ) {
-				if ( $child_fields['id'] === $pod_item_id && 'pandarepeaterfield' === $child_fields['type'] ) {
-
-					if ( isset( $child_fields['options']['pandarepeaterfield_public_access'] ) && 1 === (int) $child_fields['options']['pandarepeaterfield_public_access'] ) { // Allowed for public access.
-						$is_allowed = true;
-					} else {
-
-						if ( is_user_logged_in() ) {
-							foreach ( $current_user->roles as $role_assigned ) { // The user role can access.
-								$ok = get_post_meta( $child_fields['id'], $role_assigned, true );
-								if ( $ok ) {
-									$is_allowed = true;
-									break;
-								}
-							}
-						}
-					}
-
-					break;
-				}
-			}
-		}
 	}
 }
 
+$get_data = array();
+if ( isset( $_GET ) ) {
+	$get_data = wp_unslash( $_GET );
+	$get_data = array_map( 'sanitize_text_field', $get_data );
+}
 
-$is_allowed = apply_filters( 'pprf_load_panda_repeater_allow', $is_allowed, $_GET );
+$is_allowed = apply_filters( 'pprf_load_panda_repeater_allow', $is_allowed, $get_data );
 if ( false === $is_allowed ) {
 	die( 'You do not have permission to load this item.' );
 }
@@ -206,7 +189,7 @@ html {
 
 <?php
 echo '<div id="pprf-form" class="pprf-wid-' . esc_attr( $wid_str ) . '">';
-$get_data = isset( $_GET ) ? $_GET : array();
+
 do_action( 'pandarf_item_top', $get_data );
 
 if ( '' !== $pod_table_id ) {

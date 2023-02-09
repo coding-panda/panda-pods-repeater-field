@@ -247,20 +247,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				'data'        => $bln_arr,
 				'description' => __( 'Allow reassigning an item to another parent', 'panda-pods-repeater-field' ),
 			),
-			self::$type . '_public_access'       => array(
-				'label'       => __( 'Allow Public Access', 'panda-pods-repeater-field' ),
-				'default'     => '0',
-				'type'        => 'pick',
-				'data'        => $bln_arr,
-				'dependency'  => true,
-				'description' => __( 'Allow not logged in users to access the field. Not recommended. A user role with edit_posts capability can always access the field.', 'panda-pods-repeater-field' ),
-			),
-			self::$type . '_role_access'         => array( // This is saved into _posts.
-				'label'       => __( 'Access Allowed To User Roles', 'panda-pods-repeater-field' ),
-				'depends-on'  => array( self::$type . '_public_access' => 0 ),
-				'group'       => $roles_arr,
-				'description' => __( 'Only a user role with edit_posts capability can access the field. Grand the access right to more roles here.', 'panda-pods-repeater-field' ),
-			),
 			self::$type . '_allow_duplicate'     => array(
 				'label'       => __( 'Allow Duplication', 'panda-pods-repeater-field' ),
 				'default'     => '0',
