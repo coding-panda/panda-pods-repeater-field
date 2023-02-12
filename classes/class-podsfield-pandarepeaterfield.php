@@ -1221,14 +1221,46 @@ class PodsField_Pandarepeaterfield extends PodsField {
 		return $item;
 	}
 	/**
-	 * If a table is set as a field, check and update the table's fields
+	 * If a table is set as a field, check and update the table's fields. For Pods before 2.8.
 	 *
 	 * @param array  $pod_data Pod data.
 	 * @param object $obj From Pod.
 	 */
 	public function field_table_fields( $pod_data, $obj ) {
 
-		foreach ( $pod_data['fields'] as $field_data ) {
+		$this->update_pod_table( $pod_data['fields'], $obj );
+
+	}
+	/**
+	 * If a table is set as a field, check and update the table's fields.  For Pods after 2.7.
+	 *
+	 * @param array  $pod       The Pod config data to be used for saving groups/fields.
+	 * @param object $params    The list of parameters used to save this pod.
+	 * @param bool   $sanitized Whether the data was sanitized already.
+	 * @param bool   $db        Whether to save the data to the database.
+	 * @return array  $pod
+	 */
+	public function filter_table_fields( $pod, $params, $sanitized, $db ) {
+
+		if ( isset( $pod['groups'] ) ) {
+			if ( isset( $pod['groups']['more_fields'] ) ) {
+				if ( isset( $pod['groups']['more_fields']['fields'] ) ) {
+					$this->update_pod_table( $pod['groups']['more_fields']['fields'], $params );
+				}
+			}
+		}
+
+		return $pod;
+
+	}
+	/**
+	 * If a table is set as a field, check and update the table's fields
+	 *
+	 * @param array  $pod_fields Pod data.
+	 * @param object $obj From Pod.
+	 */
+	public function update_pod_table( $pod_fields, $obj ) {
+		foreach ( $pod_fields as $field_data ) {
 			if ( $field_data['type'] === self::$type && isset( $field_data['pandarepeaterfield_table'] ) ) {
 				$db_cla      = new Panda_Pods_Repeater_Field_DB();
 				$saved_table = $field_data['pandarepeaterfield_table'];
@@ -1257,8 +1289,8 @@ class PodsField_Pandarepeaterfield extends PodsField {
 				}
 			}
 		}
-
 	}
+
 
 	/**
 	 * Save tables

@@ -49,12 +49,12 @@ class Panda_Pods_Repeater_Field_DB {
 		'pandarf_created'         => array(
 			'type'     => 'DATETIME',
 			'settings' => 'NOT NULL',
-			'default'  => 'DEFAULT "0000-00-00 00:00:00"',
+			'default'  => '',
 		),
 		'pandarf_modified'        => array(
 			'type'     => 'DATETIME',
 			'settings' => 'NOT NULL',
-			'default'  => 'DEFAULT "0000-00-00 00:00:00"',
+			'default'  => '',
 		),
 		'pandarf_modified_author' => array(
 			'type'     => 'int(11)',

@@ -4,7 +4,7 @@ Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
 Tested up to: 6.1.1
-Stable tag: 1.5.9
+Stable tag: 1.5.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -408,6 +408,9 @@ function dequeue_scripts_and_styles() {
 = 1.5.9 - 29th December 2022 =
 * update: Re-organised the positions of some code.
 
+= 1.5.10 - 12th February 2023 =
+* fix: Fixed the problem that the custom database fields were not created after Pods 2.7.
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -618,3 +621,6 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.5.9 =
 * update: Re-organised the positions of some code.
+
+= 1.5.10 =
+* fix: Fixed the problem that the custom database fields were not created after Pods 2.7.
