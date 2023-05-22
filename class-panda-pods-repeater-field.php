@@ -137,15 +137,19 @@ class Panda_Pods_Repeater_Field {
 			$panda_repeater_field = new podsfield_pandarepeaterfield();
 			// Ajax.
 			$repeater_field_ajax = new Panda_Pods_Repeater_Field_Ajax();
-			// Before Pods 2.8.
+			
 			foreach ( PodsField_Pandarepeaterfield::$act_tables as $pod_table_id => $pod_table_name ) {
 				// After pod saved.
+
+				// Worked before Pods 2.8. 
 				add_action( 'pods_api_post_save_pod_item_' . $pod_table_name, array( $panda_repeater_field, 'pods_post_save' ), 10, 3 );
 				add_action( 'pods_api_post_delete_pod_item_' . $pod_table_name, array( $panda_repeater_field, 'pods_post_delete' ), 10, 3 );
+				// Afer the release of Pods 2.8. Should work, need testing
+			
 			}
 			// Before Pods 2.8.
 			add_action( 'pods_admin_ui_setup_edit_fields', array( $panda_repeater_field, 'field_table_fields' ), 10, 2 );
-			// Afer Pods 2.7.
+			// Afer the release of Pods 2.8.
 			add_filter( 'pods_api_save_pod_config_data', array( $panda_repeater_field, 'filter_table_fields' ), 10, 4 );
 		}
 

@@ -10,7 +10,7 @@
  * Plugin Name: Panda Pods Repeater Field
  * Plugin URI: https://wordpress.org/plugins/panda-pods-repeater-field/
  * Description: Panda Pods Repeater Field is a plugin for Pods Framework. The beauty of it is that it is not just a repeater field. It is a quick way to set up a relational database and present the data on the same page. It takes the advantage of Pods table storage, so you don’t need to worry that the posts and postmeta data table may expand dramatically and slow down the page loading. This plugin is compatible with Pods Framework 2.6.1 or later. To download Pods Framework, please visit http://pods.io/. After each update, please clear the cache to make sure the CSS and JS are updated. Usually, Ctrl + F5 will do the trick.
- * Version: 1.5.10
+ * Version: 1.5.11
  * Author: Dongjie Xu
  * Author URI: http://www.multimediapanda.co.uk/
  * Text Domain: panda-pods-repeater-field
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'PANDA_PODS_REPEATER_SLUG', plugin_basename( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_URL', plugin_dir_url( __FILE__ ) );
 define( 'PANDA_PODS_REPEATER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PANDA_PODS_REPEATER_VERSION', '1.5.10' );
+define( 'PANDA_PODS_REPEATER_VERSION', '1.5.11' );
 
 /**
  * To emable deleting item descendants. Add it to the configure.php file. Only do it to if you have daily backup and backup before deleting an item. The plugin author is not responsible for any data loss.
@@ -333,7 +333,7 @@ function get_pandarf_items( $fields = array(), $attrs = array(), $show_query = f
 				$field = (object) $field; // so it works in before and after pods 2.8.
 			}
 			if ( is_object( $field ) ) {
-				if ( isset( $field->type ) && 'pandarepeaterfield' === $field->type && $filters['parent_pod_field_id'] === $field->id ) {
+				if ( isset( $field->type ) && 'pandarepeaterfield' === $field->type && (int) $filters['parent_pod_field_id'] === $field->id ) {
 
 					if ( isset( $field->options['pandarepeaterfield_enable_trash'] ) && ! empty( $field->options['pandarepeaterfield_enable_trash'] ) && false === $attrs['include_trashed'] ) { // if trash enabled, also not forced to include trashed only load those not trashed.
 						$where_sql .= ' AND `pandarf_trash` != 1';

@@ -3,8 +3,8 @@ Contributors: Coding Panda
 Donate link: http://www.multimediapanda.co.uk/product/panda-pods-repeater-field/
 Tags: pods, repeater field, storage
 Requires at least: 3.8
-Tested up to: 6.1.1
-Stable tag: 1.5.10
+Tested up to: 6.2
+Stable tag: 1.5.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,34 +97,6 @@ This API will return the wpdb inserted ID if successful, or false on failure.
 An example of basic usage. IDs from the Screenshots section:
 $id_int = pandarf_insert( array( 'name' => "hello panda" ), array( 'child_pod_name' => 'comic_item', 'parent_pod_id' => 2273, 'parent_pod_post_id' => 2275, 'parent_pod_field_id' => 2274, 'user_id' => $current_user->ID ) );
 
-= How to allow the repeater field in a Pod from at the frontend =
-
-
-add_filter('pprf_load_panda_repeater_allow_input', 'pprf_allow_frontend_input', 10, 7 ); 
-
-/**
- * The repeater field is only for admin area. If you want it to be available for the frontend users, you can use this filter
- * Please note nested fields are treated as frontend even the parent field loaded in the admin. No soluction for now
- *
- * @param  boolean $is_allowed allow the input item to be displayed
- * @param  array   $in_admin is in the admin area
- * @param  string  $name
- * @param  mixed   $value
- * @param  array   $options
- * @param  array   $pod
- * @param  int     $id
- * @return boolean still allow or not
- */
-function pprf_allow_frontend_input( $is_allowed, $in_admin, $name_str, $value_ukn, $options_arr, $pod_obj, $id_int  ){
-	if( !is_admin() ){		
-		if( $pod_obj->pod == 'your_pod_slug' ){
-			$is_allowed	=	true;			
-		}		
-	}
-	return  $is_allowed;
-}
-
-add_filter('pprf_load_panda_repeater_allow', 'pprf_allow', 11, 2);
 
 /**
  * The repeater field is only for logged in users with edit_posts capability 
@@ -411,6 +383,10 @@ function dequeue_scripts_and_styles() {
 = 1.5.10 - 12th February 2023 =
 * fix: Fixed the problem that the custom database fields were not created after Pods 2.7.
 
+= 1.5.11 - 30th April 2023 =
+* fix: Fixed the problem that items were fetched from trash as well.
+* update: Removed the instructions to use the repeater form at the frontend.
+
 == Upgrade Notice ==
 
 = 1.0.6 =
@@ -624,3 +600,7 @@ Debug: somehow pods->delete() didn't work, use $wpdb query for now
 
 = 1.5.10 =
 * fix: Fixed the problem that the custom database fields were not created after Pods 2.7.
+
+= 1.5.11 =
+* fix: Fixed the problem that items were fetched from trash as well.
+* update: Removed the instructions to use the repeater form at the frontend.
