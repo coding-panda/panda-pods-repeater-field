@@ -313,28 +313,34 @@ class Panda_Pods_Repeater_Field_Ajax {
 						}
 					}
 					if ( $deleted ) {
-						$data_arr = array(
-							'id'          => $item_arr[0]['id'],
-							'pod_idx'     => $tables[ 'pod_' . $child_pod_id ]['name_field'],
-							'pod_idx_val' => '',
-							'ppod_fie_id' => $pod_item_id,
-							'action'      => $delete_action,
+						$data = array(
+							'id'          	=> $item_arr[0]['id'],
+							'pod_idx'     	=> $tables[ 'pod_' . $child_pod_id ]['name_field'],
+							'pod_idx_val' 	=> '',
+							'ppod_fie_id' 	=> $pod_item_id,
+							'action'      	=> $delete_action,
+							'pod'			=> $tables[ 'pod_' . $child_pod_id ],
 						);
 						if ( ! empty( $item_arr[0][ $tables[ 'pod_' . $child_pod_id ]['name_label'] ] ) ) {
-							$data_arr['pod_idx_val'] = $item_arr[0][ $tables[ 'pod_' . $child_pod_id ]['name_field'] ];
+							$data['pod_idx_val'] = $item_arr[0][ $tables[ 'pod_' . $child_pod_id ]['name_field'] ];
 						}
-						wp_send_json_success( $data_arr );
+
+						do_action( 'after_pprf_delete_item', $data );
+
+						wp_send_json_success( $data );
 					}
 				} else {
-					$data_arr = array(
+					$data = array(
 						'id'          => '',
 						'pod_idx'     => '',
 						'pod_idx_val' => '',
 						'ppod_fie_id' => '',
 						'action'      => '',
 					);
-					wp_send_json_error( $data_arr );
+					wp_send_json_error( $data );
 				}
+
+
 			}
 		}
 		die();

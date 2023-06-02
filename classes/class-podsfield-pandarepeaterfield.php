@@ -945,7 +945,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		return $value;
 	}
 
@@ -965,7 +964,6 @@ class PodsField_Pandarepeaterfield extends PodsField {
 	 * @since 1.0.0
 	 */
 	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		return null;
 	}
 
