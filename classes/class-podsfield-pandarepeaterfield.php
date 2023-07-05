@@ -1132,14 +1132,31 @@ class PodsField_Pandarepeaterfield extends PodsField {
 									$db_cla->update_columns( $parent_table_name );
 								}
 
-								$query = $wpdb->prepare( 'SELECT MAX(`pandarf_order`) AS last_order FROM %s WHERE `pandarf_parent_pod_id` = %d AND `pandarf_parent_post_id` = %d AND `pandarf_pod_field_id` = %d', array( $table_full_name, $query_arr['podid'], $query_arr['postid'], $query_arr['poditemid'] ) );
+								$query = $wpdb->prepare( '
+									SELECT MAX(`pandarf_order`) AS last_order 
+									FROM %s WHERE `pandarf_parent_pod_id` = %d 
+									AND `pandarf_parent_post_id` = %d 
+									AND `pandarf_pod_field_id` = %d', 
+									array( 
+										$table_full_name, 
+										$query_arr['podid'], 
+										$query_arr['postid'], 
+										$query_arr['poditemid'] 
+									) 
+								);
 
-								$order_arr = $wpdb->get_results(
+								$orders = $wpdb->get_results(
 									// phpcs:ignore
 									$query, ARRAY_A 
 								); // db call ok. no cache ok.
 								$update_query .= ', `pandarf_order` = %d';
-								array_push( $values_arr, ( $order_arr[0]['last_order'] + 1 ) );
+								if( ! empty( $orders ) ){
+									$last_order = intval( $orders[0]['last_order'] );
+									
+								} else {
+									$last_order = 0;
+								}
+								array_push( $values_arr, ( $last_order + 1 ) );
 							}
 
 							// If first time update.
